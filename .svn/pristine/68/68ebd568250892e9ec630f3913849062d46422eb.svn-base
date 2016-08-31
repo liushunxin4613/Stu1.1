@@ -1,0 +1,112 @@
+package com.fengyang.fragment;
+
+import java.util.ArrayList;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.fengyang.activity.MallActivity;
+import com.fengyang.activity.PartTimeActivity;
+import com.fengyang.activity.SecondHandActivity;
+import com.fengyang.adapter.HomeGridViewAdapter;
+import com.fengyang.customLib.ExpandGridView;
+import com.fengyang.customLib.SlideView;
+import com.fengyang.model.HomeGridItem;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.util.ui.AccordionTransformer;
+
+public class HomeFragment extends Fragment {
+
+	private SlideView slideView;
+
+	private ExpandGridView gridView;
+
+	private static final String TAG = "homeFragment";
+
+	@Override
+	public View onCreateView(LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		Log.i(TAG, "onCreateView");
+		View rootView = inflater.inflate(R.layout.fragment_home, container,
+				false);
+		slideView = (SlideView) rootView.findViewById(R.id.slideViewContainer);
+		gridView = (ExpandGridView) rootView.findViewById(R.id.home_grid);
+
+		slideView.setTransformer(new AccordionTransformer());
+		slideView.setUp(new int[] { R.drawable.item_2, R.drawable.item_3,
+				R.drawable.item_4, R.drawable.item_1 }, 5000);
+		slideView.setDuration(300);
+
+		ArrayList<HomeGridItem> datalist = new ArrayList<HomeGridItem>();
+		datalist.add(new HomeGridItem(getResources().getString(
+				R.string.homepage_parttime_TV), R.drawable.home_page_parttime));
+		datalist.add(new HomeGridItem(getResources().getString(
+				R.string.homepage_second_hand_TV),
+				R.drawable.home_page_second_hand));
+		datalist.add(new HomeGridItem(getResources().getString(
+				R.string.homepage_oubamall_BT), R.drawable.home_page_mall));
+		datalist.add(new HomeGridItem(getResources().getString(
+				R.string.homepage_add_TV), R.drawable.home_page_add));
+
+		HomeGridViewAdapter adapter = new HomeGridViewAdapter(datalist,
+				getActivity());
+		gridView.setAdapter(adapter);
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				switch (position) {
+				case 0:
+					startActivity(new Intent(getActivity(),
+							PartTimeActivity.class));
+					break;
+				case 1:
+					startActivity(new Intent(getActivity(),
+							SecondHandActivity.class));
+					break;
+				case 2:
+					startActivity(new Intent(getActivity(), MallActivity.class));
+					break;
+				case 3:
+					MainActivity.showToast(getActivity(),
+							R.string.pleace_wait_for_wonderful);
+					break;
+
+				default:
+					break;
+				}
+			}
+		});
+		return rootView;
+	}
+
+	@Override
+	public void setMenuVisibility(boolean menuVisible) {
+		super.setMenuVisibility(menuVisible);
+		if (this.getView() != null)
+			this.getView()
+					.setVisibility(menuVisible ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		slideView.startPlay();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		slideView.stopPlay();
+	}
+}

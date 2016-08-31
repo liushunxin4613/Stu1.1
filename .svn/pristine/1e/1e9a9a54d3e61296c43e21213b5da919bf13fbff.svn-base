@@ -1,0 +1,132 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * AppPartComment entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppPartComment implements java.io.Serializable {
+
+	// Fields
+
+	private Long commentId;
+	private AppPartTime appPartTime;
+	private User oubaMember;
+	private String commentUserName;
+	private String commentContent;
+	private Short commentRank;
+	private Timestamp commentTime;
+	private Short commentIf;
+	private Set appPartCommentPictures = new HashSet(0);
+
+	// Constructors
+
+	/** default constructor */
+	public AppPartComment() {
+	}
+
+	/** minimal constructor */
+	public AppPartComment(AppPartTime appPartTime, User oubaMember,
+			String commentUserName, String commentContent, Short commentRank,
+			Timestamp commentTime, Short commentIf) {
+		this.appPartTime = appPartTime;
+		this.oubaMember = oubaMember;
+		this.commentUserName = commentUserName;
+		this.commentContent = commentContent;
+		this.commentRank = commentRank;
+		this.commentTime = commentTime;
+		this.commentIf = commentIf;
+	}
+
+	/** full constructor */
+	public AppPartComment(AppPartTime appPartTime, User oubaMember,
+			String commentUserName, String commentContent, Short commentRank,
+			Timestamp commentTime, Short commentIf, Set appPartCommentPictures) {
+		this.appPartTime = appPartTime;
+		this.oubaMember = oubaMember;
+		this.commentUserName = commentUserName;
+		this.commentContent = commentContent;
+		this.commentRank = commentRank;
+		this.commentTime = commentTime;
+		this.commentIf = commentIf;
+		this.appPartCommentPictures = appPartCommentPictures;
+	}
+
+	// Property accessors
+
+	public Long getCommentId() {
+		return this.commentId;
+	}
+
+	public void setCommentId(Long commentId) {
+		this.commentId = commentId;
+	}
+
+	public AppPartTime getAppPartTime() {
+		return this.appPartTime;
+	}
+
+	public void setAppPartTime(AppPartTime appPartTime) {
+		this.appPartTime = appPartTime;
+	}
+
+	public User getOubaMember() {
+		return this.oubaMember;
+	}
+
+	public void setOubaMember(User oubaMember) {
+		this.oubaMember = oubaMember;
+	}
+
+	public String getCommentUserName() {
+		return this.commentUserName;
+	}
+
+	public void setCommentUserName(String commentUserName) {
+		this.commentUserName = commentUserName;
+	}
+
+	public String getCommentContent() {
+		return this.commentContent;
+	}
+
+	public void setCommentContent(String commentContent) {
+		this.commentContent = commentContent;
+	}
+
+	public Short getCommentRank() {
+		return this.commentRank;
+	}
+
+	public void setCommentRank(Short commentRank) {
+		this.commentRank = commentRank;
+	}
+
+	public Timestamp getCommentTime() {
+		return this.commentTime;
+	}
+
+	public void setCommentTime(Timestamp commentTime) {
+		this.commentTime = commentTime;
+	}
+
+	public Short getCommentIf() {
+		return this.commentIf;
+	}
+
+	public void setCommentIf(Short commentIf) {
+		this.commentIf = commentIf;
+	}
+
+	public Set getAppPartCommentPictures() {
+		return this.appPartCommentPictures;
+	}
+
+	public void setAppPartCommentPictures(Set appPartCommentPictures) {
+		this.appPartCommentPictures = appPartCommentPictures;
+	}
+
+}

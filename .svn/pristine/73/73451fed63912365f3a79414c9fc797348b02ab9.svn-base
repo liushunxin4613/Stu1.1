@@ -1,0 +1,75 @@
+package com.fengyang.activity;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.fengyang.stu.R;
+import com.fengyang.util.UpdateManager;
+import com.fengyang.util.VersionUtils;
+import com.fengyang.util.ui.ImmersionActivity;
+
+/**
+ * 
+ * @author 邢梦玲
+ * 
+ */
+public class VersionInfoActivity extends ImmersionActivity {
+
+	private static final String TAG = "VersionInfoActivity";
+	private TextView txt_version;
+	private TextView txt_info;
+	private UpdateManager mUpdateManager;
+	private RelativeLayout update;
+	private boolean isUpdate;
+
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_version_info);
+		setStatusColor(getResources().getColor(R.color.immersionColor));
+		getActionBar().setDisplayShowHomeEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayShowTitleEnabled(true);
+
+		txt_version = (TextView) findViewById(R.id.version_code);
+		txt_info = (TextView) findViewById(R.id.version_info);
+		update = (RelativeLayout) findViewById(R.id.update);
+		mUpdateManager = new UpdateManager(getApplicationContext());
+		isUpdate = mUpdateManager.isUpdate();
+		if (!isUpdate) {
+			txt_info.setText(getResources().getString(R.string.soft_update_no));
+		} else {
+			txt_info.setText(getResources()
+					.getString(R.string.soft_have_update));
+		}
+		txt_version.setText(getString(R.string.soft_update_version,
+				VersionUtils.getVersionName(this)));
+
+		update.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+
+				// 检查软件更新
+				mUpdateManager.checkUpdate(isUpdate);
+			}
+		});
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+}

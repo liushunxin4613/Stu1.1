@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_user"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/Tv_dialog_man"
+        style="@style/publish_item_dialog_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_kuang"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="@string/publish_user_sex_man" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        style="@style/publish_item_dialog_style"
+        android:background="@color/line_gray" />
+
+    <TextView
+        android:id="@+id/Tv_dialog_woman"
+        style="@style/publish_item_dialog_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_kuang"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="@string/publish_user_sex_woman" />
+
+</LinearLayout>

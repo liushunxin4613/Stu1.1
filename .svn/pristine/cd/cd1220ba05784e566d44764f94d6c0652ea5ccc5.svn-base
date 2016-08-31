@@ -1,0 +1,129 @@
+package com.fengyang.activity;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+
+import com.fengyang.dialog.ConfirmDialog;
+import com.fengyang.fragment.PublishAuthenticationManFragment;
+import com.fengyang.fragment.PublishAuthenticationSellerFragment;
+import com.fengyang.stu.R;
+import com.fengyang.util.ui.ImmersionActivity;
+
+public class PublishAuthenticationActivity extends ImmersionActivity {
+
+	private String authentication;
+	private static final String TAG = "publishAuthenticationActivity";
+	public static final String KEY_PHONE_TYPE = "phone";
+	public static final String KEY_AUTHENTICATION_TYPE = "authentication";
+	public static final String TYPE_STU = "Student";
+	public static final String TYPE_MERCHANT = "merchant";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_publish_authentication);
+		setStatusColor(getResources().getColor(R.color.immersionColor));
+
+		Intent intent = getIntent();
+		authentication = intent.getStringExtra(KEY_AUTHENTICATION_TYPE);
+		setActionBar();
+
+		if (savedInstanceState == null) {
+			Fragment fragment = null;
+			if (TYPE_STU.equals(authentication)) {
+				fragment = PublishAuthenticationManFragment.getInstance();
+			} else if (TYPE_MERCHANT.equals(authentication)) {
+				fragment = PublishAuthenticationSellerFragment.getInstance();
+			}
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.Fm_publish_authentication, fragment).commit();
+		}
+	}
+
+	private void setActionBar() {
+		getActionBar().setDisplayShowHomeEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+		String ac = "";
+		if (TYPE_STU.equals(authentication)) {
+			ac = this.getResources().getString(R.string.fragment_me_auth_stu);
+		} else if (TYPE_MERCHANT.equals(authentication)) {
+			ac = this.getResources().getString(
+					R.string.fragment_me_auth_merchant);
+		}
+		getActionBar().setTitle(ac);
+		getActionBar().setDisplayShowTitleEnabled(true);
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_null, menu);
+		return true;
+	}
+
+	@Override
+	public void onBackPressed() {
+		goBack();
+	}
+
+	/**
+	 * »ØÍË
+	 */
+	private void goBack() {
+		if (!popFragment()) {
+			ConfirmDialog dialog = new ConfirmDialog(
+					ConfirmDialog.CONFIRM_STYLE_CENTER,
+					getString(R.string.publish_second_exit_title),
+					getString(R.string.publish_second_exit_msg),
+					getString(R.string.publish_second_exit_yes),
+					getString(R.string.dialog_cancel));
+			dialog.setOnclickListener(new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
+						Log.i(TAG, "finish activity");
+						finish();
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						break;
+					}
+				}
+			});
+			dialog.show(getSupportFragmentManager().beginTransaction(), TAG);
+		}
+	}
+
+	/**
+	 * ÒÆ³ýÈÝÆ÷ÖÐÕ»¶¥µÄFragment
+	 * 
+	 * @return true:ÒÆ³ý³É¹¦ ; false:ÒÆ³ýÊ§°Ü£¬¼´backStackÖÐÃ»ÓÐFragment
+	 * 
+	 */
+	private boolean popFragment() {
+		int count = getSupportFragmentManager().getBackStackEntryCount();
+		Log.i(TAG, "BackStackEntryCount = " + count);
+		if (count > 0) {
+			getSupportFragmentManager().popBackStack();
+			return true;
+		}
+		return false;
+	}
+}

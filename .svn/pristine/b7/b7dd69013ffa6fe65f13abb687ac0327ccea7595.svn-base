@@ -1,0 +1,16 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.fengyang.activity.FlashActivity" >
+
+    <ImageView
+        android:id="@+id/flash_imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/image_string"
+        android:scaleType="fitXY"
+        android:src="@drawable/flash_bg"
+         />
+
+</RelativeLayout>

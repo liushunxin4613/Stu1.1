@@ -1,0 +1,115 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        
+        <item name="android:actionBarStyle">@style/MyActionbarStyle</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="android:actionBarWidgetTheme">@style/Theme.MyActionbar.widget</item>
+        <item name="android:checkboxStyle">@style/CustomCheckBox</item>
+    </style>
+
+    <style name="myAppTheme" parent="@android:style/Theme.Holo.Light">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:alertDialogTheme">@style/StuDialog.Theme</item>
+        <item name="android:dialogTheme">@style/StuDialog.Theme</item>
+    </style>
+
+    <!-- Application NoActionBar theme. -->
+    <style name="AppThemeNoActionbar" parent="@android:style/Theme.Holo.Light.NoActionBar">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:checkboxStyle">@style/CustomCheckBox</item>
+    </style>
+
+    <!-- Application Fullscreen theme. -->
+    <style name="AppThemeFullscreen" parent="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:checkboxStyle">@style/CustomCheckBox</item>
+    </style>
+
+    <style name="StuDialog.Theme" parent="@android:style/Theme.Holo.Light.Dialog"></style>
+
+    <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_selector</item>
+    </style>
+
+    <!-- Bottom Dialog theme. -->
+    <style name="StuDialogTheme.Bottom" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:windowAnimationStyle">@style/StuAnimation.Dialog.Bottom</item>
+    </style>
+
+    <style name="StuAnimation.Dialog.Bottom" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/dialog_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_bottom_out</item>
+    </style>
+
+    <!-- Center Dialog theme. -->
+    <style name="StuDialogTheme.Center" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:windowAnimationStyle">@style/StuAnimation.Dialog.Center</item>
+    </style>
+
+    <style name="StuAnimation.Dialog.Center" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/dialog_center_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_center_out</item>
+    </style>
+
+    <!-- Loading Dialog Theme -->
+    <style name="StuDialogTheme.Loading" parent="@android:style/Theme.Dialog">
+        <item name="android:windowAnimationStyle">@style/StuAnimation.Dialog.Loading</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="StuAnimation.Dialog.Loading" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/dialog_center_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_center_out</item>
+    </style>
+
+    <!-- Styles -->
+    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_menu</item>
+    </style>
+
+    <style name="Theme.MyActionbar.widget" parent="@android:style/Theme.Holo.Light">
+        <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
+    </style>
+
+    <!-- Action Bar overflow menu 的背景颜色 -->
+    <style name="MyPopupMenu" parent="android:Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">#E9FFFFFF</item>
+    </style>
+
+    <style name="MyActionbarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/immersionColor</item>
+        <item name="android:backgroundSplit">@color/immersionColor</item>
+        <item name="android:displayOptions">useLogo</item>
+        <item name="android:titleTextStyle">@style/MyActionBarTitleTextStyle</item>
+    </style>
+
+    <style name="MyActionBarTitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <!-- 自定义loading dialog -->
+    <style name="fresh_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/loading_bg</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="welcome_enter_text" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+</resources>

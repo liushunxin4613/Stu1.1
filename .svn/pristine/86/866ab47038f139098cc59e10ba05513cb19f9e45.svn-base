@@ -1,0 +1,247 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
+/**
+ * SysAdmin entity. @author MyEclipse Persistence Tools
+ */
+
+public class SysAdmin implements java.io.Serializable {
+
+	// Fields
+
+	private Integer adminId;
+	private String adminName;
+	private String adminTruename;
+	private String adminAvatar;
+	private Boolean adminSex;
+	private Date adminBirthday;
+	private String adminPasswd;
+	private String adminEmail;
+	private String adminMobile;
+	private Integer adminLoginNum;
+	private Timestamp adminTime;
+	private Timestamp adminLoginTime;
+	private Timestamp adminOldLoginTime;
+	private String adminLoginIp;
+	private String adminOldLoginIp;
+	private Integer adminAreaid;
+	private Integer adminCityid;
+	private Integer adminProvinceid;
+	private String adminAreainfo;
+	private Integer adminLimits;
+
+	// Constructors
+
+	/** default constructor */
+	public SysAdmin() {
+	}
+
+	/** minimal constructor */
+	public SysAdmin(String adminName, String adminPasswd, String adminEmail,
+			Integer adminLoginNum, Timestamp adminTime,
+			Timestamp adminLoginTime, Timestamp adminOldLoginTime,
+			Integer adminLimits) {
+		this.adminName = adminName;
+		this.adminPasswd = adminPasswd;
+		this.adminEmail = adminEmail;
+		this.adminLoginNum = adminLoginNum;
+		this.adminTime = adminTime;
+		this.adminLoginTime = adminLoginTime;
+		this.adminOldLoginTime = adminOldLoginTime;
+		this.adminLimits = adminLimits;
+	}
+
+	/** full constructor */
+	public SysAdmin(String adminName, String adminTruename, String adminAvatar,
+			Boolean adminSex, Date adminBirthday, String adminPasswd,
+			String adminEmail, String adminMobile, Integer adminLoginNum,
+			Timestamp adminTime, Timestamp adminLoginTime,
+			Timestamp adminOldLoginTime, String adminLoginIp,
+			String adminOldLoginIp, Integer adminAreaid, Integer adminCityid,
+			Integer adminProvinceid, String adminAreainfo, Integer adminLimits) {
+		this.adminName = adminName;
+		this.adminTruename = adminTruename;
+		this.adminAvatar = adminAvatar;
+		this.adminSex = adminSex;
+		this.adminBirthday = adminBirthday;
+		this.adminPasswd = adminPasswd;
+		this.adminEmail = adminEmail;
+		this.adminMobile = adminMobile;
+		this.adminLoginNum = adminLoginNum;
+		this.adminTime = adminTime;
+		this.adminLoginTime = adminLoginTime;
+		this.adminOldLoginTime = adminOldLoginTime;
+		this.adminLoginIp = adminLoginIp;
+		this.adminOldLoginIp = adminOldLoginIp;
+		this.adminAreaid = adminAreaid;
+		this.adminCityid = adminCityid;
+		this.adminProvinceid = adminProvinceid;
+		this.adminAreainfo = adminAreainfo;
+		this.adminLimits = adminLimits;
+	}
+
+	// Property accessors
+
+	public Integer getAdminId() {
+		return this.adminId;
+	}
+
+	public void setAdminId(Integer adminId) {
+		this.adminId = adminId;
+	}
+
+	public String getAdminName() {
+		return this.adminName;
+	}
+
+	public void setAdminName(String adminName) {
+		this.adminName = adminName;
+	}
+
+	public String getAdminTruename() {
+		return this.adminTruename;
+	}
+
+	public void setAdminTruename(String adminTruename) {
+		this.adminTruename = adminTruename;
+	}
+
+	public String getAdminAvatar() {
+		return this.adminAvatar;
+	}
+
+	public void setAdminAvatar(String adminAvatar) {
+		this.adminAvatar = adminAvatar;
+	}
+
+	public Boolean getAdminSex() {
+		return this.adminSex;
+	}
+
+	public void setAdminSex(Boolean adminSex) {
+		this.adminSex = adminSex;
+	}
+
+	public Date getAdminBirthday() {
+		return this.adminBirthday;
+	}
+
+	public void setAdminBirthday(Date adminBirthday) {
+		this.adminBirthday = adminBirthday;
+	}
+
+	public String getAdminPasswd() {
+		return this.adminPasswd;
+	}
+
+	public void setAdminPasswd(String adminPasswd) {
+		this.adminPasswd = adminPasswd;
+	}
+
+	public String getAdminEmail() {
+		return this.adminEmail;
+	}
+
+	public void setAdminEmail(String adminEmail) {
+		this.adminEmail = adminEmail;
+	}
+
+	public String getAdminMobile() {
+		return this.adminMobile;
+	}
+
+	public void setAdminMobile(String adminMobile) {
+		this.adminMobile = adminMobile;
+	}
+
+	public Integer getAdminLoginNum() {
+		return this.adminLoginNum;
+	}
+
+	public void setAdminLoginNum(Integer adminLoginNum) {
+		this.adminLoginNum = adminLoginNum;
+	}
+
+	public Timestamp getAdminTime() {
+		return this.adminTime;
+	}
+
+	public void setAdminTime(Timestamp adminTime) {
+		this.adminTime = adminTime;
+	}
+
+	public Timestamp getAdminLoginTime() {
+		return this.adminLoginTime;
+	}
+
+	public void setAdminLoginTime(Timestamp adminLoginTime) {
+		this.adminLoginTime = adminLoginTime;
+	}
+
+	public Timestamp getAdminOldLoginTime() {
+		return this.adminOldLoginTime;
+	}
+
+	public void setAdminOldLoginTime(Timestamp adminOldLoginTime) {
+		this.adminOldLoginTime = adminOldLoginTime;
+	}
+
+	public String getAdminLoginIp() {
+		return this.adminLoginIp;
+	}
+
+	public void setAdminLoginIp(String adminLoginIp) {
+		this.adminLoginIp = adminLoginIp;
+	}
+
+	public String getAdminOldLoginIp() {
+		return this.adminOldLoginIp;
+	}
+
+	public void setAdminOldLoginIp(String adminOldLoginIp) {
+		this.adminOldLoginIp = adminOldLoginIp;
+	}
+
+	public Integer getAdminAreaid() {
+		return this.adminAreaid;
+	}
+
+	public void setAdminAreaid(Integer adminAreaid) {
+		this.adminAreaid = adminAreaid;
+	}
+
+	public Integer getAdminCityid() {
+		return this.adminCityid;
+	}
+
+	public void setAdminCityid(Integer adminCityid) {
+		this.adminCityid = adminCityid;
+	}
+
+	public Integer getAdminProvinceid() {
+		return this.adminProvinceid;
+	}
+
+	public void setAdminProvinceid(Integer adminProvinceid) {
+		this.adminProvinceid = adminProvinceid;
+	}
+
+	public String getAdminAreainfo() {
+		return this.adminAreainfo;
+	}
+
+	public void setAdminAreainfo(String adminAreainfo) {
+		this.adminAreainfo = adminAreainfo;
+	}
+
+	public Integer getAdminLimits() {
+		return this.adminLimits;
+	}
+
+	public void setAdminLimits(Integer adminLimits) {
+		this.adminLimits = adminLimits;
+	}
+
+}

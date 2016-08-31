@@ -1,0 +1,167 @@
+package com.fengyang.fragment;
+
+import java.util.List;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.fengyang.activity.SecondDetailActivity;
+import com.fengyang.adapter.SecondCollectAdapter;
+import com.fengyang.customLib.DynamicListView;
+import com.fengyang.customLib.DynamicListView.LoadMoreListener;
+import com.fengyang.customLib.DynamicListView.RefreshListener;
+import com.fengyang.db.CollectDAO;
+import com.fengyang.model.SecondCollection;
+import com.fengyang.service.CollectionService;
+import com.fengyang.service.InitUserService;
+import com.fengyang.stu.R;
+import com.fengyang.stu.StuApplication;
+import com.fengyang.util.Config;
+
+public class SecondCollectFragment extends Fragment implements RefreshListener,
+		LoadMoreListener, OnItemClickListener {
+
+	private DynamicListView listView;
+
+	private SecondCollectAdapter adapter;
+
+	private CollectDAO dao;
+
+	private int uId;
+
+	private int page;
+
+	private static final String TAG = "SecondCollectFragment";
+	public static final String ACTION_SECOND_COLLECT_UPDATE = "updateSecondData";
+	public static final String ACTION_SECOND_COLLECT_INSERT = "insertSecondData";
+	public static final String ACTION_SECOND_COLLECT_DELETE = "deleteSecondData";
+	public static final String KEY_UPDATE_SID = "updateSecondId";
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_collect_second,
+				container, false);
+		listView = (DynamicListView) rootView
+				.findViewById(R.id.second_collect_lv);
+
+		listView.setOnItemClickListener(this);
+
+		dao = new CollectDAO(getActivity());
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(ACTION_SECOND_COLLECT_UPDATE);
+		filter.addAction(ACTION_SECOND_COLLECT_DELETE);
+		filter.addAction(ACTION_SECOND_COLLECT_INSERT);
+		filter.addAction(InitUserService.ACTION_LOGINED);
+		filter.addAction(InitUserService.ACTION_LOGIN_OUT);
+		filter.addAction(CollectionService.ACTION_SYNC_SECOND_COLLECT_FINISH);
+		getActivity().registerReceiver(receiver, filter);
+		StuApplication application = (StuApplication) getActivity()
+				.getApplication();
+		if (application.isLogin()) {
+			loadData();
+			listView.setOnItemClickListener(this);
+			listView.setOnRefreshListener(this);
+		}
+		return rootView;
+	}
+
+	private void loadData() {
+		StuApplication application = (StuApplication) getActivity()
+				.getApplication();
+		uId = application.getUser().getId();
+		page = 0;
+		List<SecondCollection> data = dao.querySecond(uId, ++page,
+				Config.LIST_PAGE_SIZE);
+		if (data.size() < Config.LIST_PAGE_SIZE)
+			listView.setOnMoreListener(null);
+		adapter = new SecondCollectAdapter(data, getActivity());
+		listView.setAdapter(adapter);
+	}
+
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.i(TAG, "action = " + intent.getAction());
+			if (intent.getAction().equals(ACTION_SECOND_COLLECT_INSERT)) {
+				int sId = intent.getIntExtra(KEY_UPDATE_SID, -1);
+				adapter.insertItem(dao.querySecondById(uId, sId));
+			} else if (intent.getAction().equals(ACTION_SECOND_COLLECT_DELETE)) {
+				int sId = intent.getIntExtra(KEY_UPDATE_SID, -1);
+				adapter.reomveItemById(sId);
+			} else if (intent.getAction()
+					.equals(InitUserService.ACTION_LOGINED)) {
+				loadData();
+				listView.setOnItemClickListener(SecondCollectFragment.this);
+				listView.setOnRefreshListener(SecondCollectFragment.this);
+			} else if (intent.getAction().equals(
+					InitUserService.ACTION_LOGIN_OUT)) {
+				adapter.clear();
+				listView.setOnItemClickListener(null);
+				listView.setOnRefreshListener(null);
+			} else if (intent.getAction().equals(
+					CollectionService.ACTION_SYNC_SECOND_COLLECT_FINISH)) {
+				loadData();
+				listView.doneRefresh();
+			}
+		}
+	};
+
+	@Override
+	public void onDestroy() {
+		getActivity().unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+
+	@Override
+	public boolean onRefresh(DynamicListView dynamicListView) {
+		Intent service = new Intent(getActivity(), CollectionService.class);
+		service.putExtra(CollectionService.KEY_START_SERVICE_FOR,
+				CollectionService.TASK_SYNC_SECOND_COLLECT);
+		getActivity().startService(service);
+		return false;
+	}
+
+	@Override
+	public boolean onLoadMore(DynamicListView dynamicListView) {
+		List<SecondCollection> data = dao.querySecond(uId, ++page,
+				Config.LIST_PAGE_SIZE);
+		adapter.addItems(data);
+		if (data.size() < Config.LIST_PAGE_SIZE)
+			listView.setOnMoreListener(null);
+		return true;
+	}
+
+	@Override
+	public void onCancelLoadMore(DynamicListView dynamicListView) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onCancelRefresh(DynamicListView dynamicListView) {
+		Intent intent = new Intent(CollectionService.ACTION_CANCEL_REQUEST);
+		intent.putExtra(CollectionService.KEY_STOP_SERVICE_FOR,
+				CollectionService.TASK_SYNC_SECOND_COLLECT);
+		getActivity().sendBroadcast(intent);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Intent intent = new Intent(getActivity(), SecondDetailActivity.class);
+		intent.putExtra(SecondDetailActivity.KEY_SECOND_HAND_ID, (int) id);
+		startActivity(intent);
+	}
+}

@@ -1,0 +1,306 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.fengyang.activity.PartDetailHistoryActivity" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="100dp" >
+
+            <View
+                style="@style/detail_line_style"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/container_padding" >
+
+                <TextView
+                    android:id="@+id/part_detail_title"
+                    style="@style/detail_title_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start" />
+
+                <TextView
+                    android:id="@+id/part_detail_publisher_type"
+                    style="@style/mid_gray_textstyle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/view_margin_large"
+                    android:layout_marginStart="@dimen/view_margin_large" />
+            </LinearLayout>
+
+            <View
+                style="@style/detail_line_style"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/container_padding" >
+
+                <TextView
+                    android:id="@+id/part_detail_pay"
+                    style="@style/detail_price_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/container_padding"
+                android:paddingEnd="@dimen/container_padding"
+                android:paddingLeft="@dimen/container_padding"
+                android:paddingRight="@dimen/container_padding"
+                android:paddingStart="@dimen/container_padding" >
+
+                <TextView
+                    style="@style/mid_black_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/detail_part_pay_way"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/part_detail_payType"
+                    style="@style/mid_black_textstyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/container_padding"
+                android:paddingLeft="@dimen/container_padding"
+                android:paddingRight="@dimen/container_padding"
+                android:paddingStart="@dimen/container_padding" >
+
+                <TextView
+                    android:id="@+id/part_detail_publish_date"
+                    style="@style/small_gray_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:drawableLeft="@drawable/ic_create_time"
+                    android:drawablePadding="6dp"
+                    android:drawableStart="@drawable/ic_create_time"
+                    android:gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/part_detail_visited"
+                    style="@style/small_gray_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:drawableLeft="@drawable/ic_visited"
+                    android:drawablePadding="6dp"
+                    android:drawableStart="@drawable/ic_visited"
+                    android:gravity="center_vertical" />
+            </FrameLayout>
+
+            <View
+                style="@style/detail_line_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|start"
+                android:padding="@dimen/container_padding"
+                android:shrinkColumns="1" >
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        style="@style/detail_text_titlestyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/detail_part_timeType" />
+
+                    <TextView
+                        android:id="@+id/part_detail_partType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingMultiplier="1.5" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/part_detail_workTime_t"
+                        style="@style/detail_text_titlestyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="4dp"
+                        android:text="@string/detail_part_endTime" />
+
+                    <TextView
+                        android:id="@+id/part_detail_workTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingMultiplier="1.5"
+                        android:paddingTop="4dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        style="@style/detail_text_titlestyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingMultiplier="1.5"
+                        android:paddingTop="4dp"
+                        android:text="@string/detail_part_num" />
+
+                    <TextView
+                        android:id="@+id/part_detail_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingMultiplier="1.5"
+                        android:paddingTop="4dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        style="@style/detail_text_titlestyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="4dp"
+                        android:text="@string/detail_part_phone" />
+
+                    <TextView
+                        android:id="@+id/part_detail_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingMultiplier="1.5"
+                        android:paddingTop="4dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        style="@style/detail_text_titlestyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="4dp"
+                        android:text="@string/detail_part_area" />
+
+                    <TextView
+                        android:id="@+id/part_detail_area"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingMultiplier="1.5"
+                        android:paddingTop="4dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        style="@style/detail_text_titlestyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="4dp"
+                        android:text="@string/detail_part_address" />
+
+                    <TextView
+                        android:id="@+id/part_detail_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingMultiplier="1.6"
+                        android:paddingTop="4dp" />
+                </TableRow>
+            </TableLayout>
+
+            <View
+                style="@style/detail_line_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <TextView
+                android:id="@+id/part_detail_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.5"
+                android:padding="@dimen/container_padding" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/detail_bottom"
+        android:gravity="end"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/part_detail_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/textview_selector"
+            android:clickable="true"
+            android:drawableLeft="@drawable/ic_edit_btn"
+            android:drawablePadding="@dimen/container_padding_small"
+            android:drawableStart="@drawable/ic_edit_btn"
+            android:gravity="center_vertical"
+            android:onClick="onClick"
+            android:padding="@dimen/container_padding_small"
+            android:text="@string/history_part_edit" />
+
+        <View
+            style="@style/item_line_style_vertical"
+            android:layout_width="1px"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/part_detail_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/textview_selector"
+            android:clickable="true"
+            android:drawableLeft="@drawable/ic_delete_btn"
+            android:drawablePadding="@dimen/container_padding_small"
+            android:drawableStart="@drawable/ic_delete_btn"
+            android:gravity="center_vertical"
+            android:onClick="onClick"
+            android:padding="@dimen/container_padding_small"
+            android:text="@string/history_part_delete" />
+    </LinearLayout>
+
+</FrameLayout>

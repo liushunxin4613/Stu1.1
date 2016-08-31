@@ -1,0 +1,283 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.fengyang.activity.SecondDetailActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="100dp" >
+
+            <com.fengyang.customLib.DetailSildeView
+                android:id="@+id/slideViewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:layerType="hardware" >
+
+                <com.fengyang.customLib.FixViewPager
+                    android:id="@+id/image_slide_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:layout_marginTop="2dp" />
+
+                <LinearLayout
+                    android:id="@+id/view_dot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:background="@drawable/dot_bg"
+                    android:gravity="end"
+                    android:orientation="horizontal"
+                    android:paddingBottom="4dp"
+                    android:paddingEnd="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingTop="4dp" >
+                </LinearLayout>
+            </com.fengyang.customLib.DetailSildeView>
+
+            <View
+                style="@style/detail_line_style"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="0dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/container_padding" >
+
+                <TextView
+                    android:id="@+id/second_detail_title"
+                    style="@style/detail_title_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start" />
+
+                <TextView
+                    android:id="@+id/second_detail_publisher_type"
+                    style="@style/mid_gray_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/view_margin_large"
+                    android:layout_marginStart="@dimen/view_margin_large" />
+            </LinearLayout>
+
+            <View
+                style="@style/detail_line_style"
+                android:layout_width="match_parent"
+                android:layout_height="1dp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/container_padding" >
+
+                <TextView
+                    android:id="@+id/second_detail_price"
+                    style="@style/detail_price_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/second_detail_num"
+                    style="@style/mid_black_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/container_padding"
+                android:paddingLeft="@dimen/container_padding"
+                android:paddingRight="@dimen/container_padding"
+                android:paddingStart="@dimen/container_padding" >
+
+                <TextView
+                    android:id="@+id/second_detail_publish_date"
+                    style="@style/small_gray_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:drawableLeft="@drawable/ic_create_time"
+                    android:drawablePadding="6dp"
+                    android:drawableStart="@drawable/ic_create_time"
+                    android:gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/second_detail_visited"
+                    style="@style/small_gray_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:drawableLeft="@drawable/ic_visited"
+                    android:drawablePadding="6dp"
+                    android:drawableStart="@drawable/ic_visited"
+                    android:gravity="center_vertical" />
+            </FrameLayout>
+
+            <View
+                style="@style/detail_line_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="@dimen/container_padding" >
+
+                <TextView
+                    android:id="@+id/second_detail_publisher"
+                    style="@style/mid_black_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingEnd="@dimen/container_padding"
+                android:paddingLeft="@dimen/container_padding"
+                android:paddingRight="@dimen/container_padding"
+                android:paddingStart="@dimen/container_padding" >
+
+                <TextView
+                    android:id="@+id/second_detail_phone"
+                    style="@style/mid_black_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical" />
+
+                <TextView
+                    android:id="@+id/second_detail_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:drawableLeft="@drawable/ic_detail_location"
+                    android:drawablePadding="@dimen/container_padding_small"
+                    android:drawableStart="@drawable/ic_detail_location"
+                    android:gravity="center_vertical" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/second_detail_address_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/container_padding"
+                android:visibility="gone" >
+
+                <TextView
+                    style="@style/mid_black_textstyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/detail_second_address" />
+
+                <TextView
+                    android:id="@+id/second_detail_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingMultiplier="1.5" />
+            </LinearLayout>
+
+            <View
+                style="@style/detail_line_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <TextView
+                android:id="@+id/second_detail_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.5"
+                android:padding="@dimen/container_padding" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/detail_bottom"
+        android:gravity="end"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/second_detail_report"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@drawable/textview_selector"
+            android:clickable="true"
+            android:drawableLeft="@drawable/ic_detail_report"
+            android:drawablePadding="@dimen/container_padding_small"
+            android:drawableStart="@drawable/ic_send_sms"
+            android:gravity="center_vertical"
+            android:onClick="onClick"
+            android:padding="@dimen/container_padding_small"
+            android:text="@string/detail_second_report" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/second_detail_sms"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/textview_selector"
+            android:clickable="true"
+            android:drawableLeft="@drawable/ic_send_sms"
+            android:drawablePadding="@dimen/container_padding_small"
+            android:drawableStart="@drawable/ic_send_sms"
+            android:gravity="center_vertical"
+            android:onClick="onClick"
+            android:padding="@dimen/container_padding_small"
+            android:text="@string/detail_second_sms" />
+
+        <View
+            style="@style/item_line_style_vertical"
+            android:layout_width="1px"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/second_detail_call"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/textview_selector"
+            android:clickable="true"
+            android:drawableLeft="@drawable/ic_take_phone"
+            android:drawablePadding="@dimen/container_padding_small"
+            android:drawableStart="@drawable/ic_take_phone"
+            android:gravity="center_vertical"
+            android:onClick="onClick"
+            android:padding="@dimen/container_padding_small"
+            android:text="@string/detail_second_call" />
+    </LinearLayout>
+
+</FrameLayout>

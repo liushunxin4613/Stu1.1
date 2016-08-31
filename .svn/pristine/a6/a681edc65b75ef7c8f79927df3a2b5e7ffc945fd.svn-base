@@ -1,0 +1,72 @@
+package com.fengyang.entity;
+
+
+/**
+ * AppSecondClass entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppSecondClass implements java.io.Serializable {
+
+	// Fields
+
+	private Integer classId;
+	private Integer classLevel;
+	private Integer classParent;
+	private String class_;
+
+	// Constructors
+
+	/** default constructor */
+	public AppSecondClass() {
+	}
+
+	/** minimal constructor */
+	public AppSecondClass(Integer classLevel, String class_) {
+		this.classLevel = classLevel;
+		this.class_ = class_;
+	}
+
+	/** full constructor */
+	public AppSecondClass(Integer classId, Integer classLevel,
+			Integer classParent, String class_) {
+		super();
+		this.classId = classId;
+		this.classLevel = classLevel;
+		this.classParent = classParent;
+		this.class_ = class_;
+	}
+	// Property accessors
+
+	public Integer getClassId() {
+		return this.classId;
+	}
+
+	public void setClassId(Integer classId) {
+		this.classId = classId;
+	}
+
+	public Integer getClassLevel() {
+		return this.classLevel;
+	}
+
+	public void setClassLevel(Integer classLevel) {
+		this.classLevel = classLevel;
+	}
+
+	public Integer getClassParent() {
+		return this.classParent;
+	}
+
+	public void setClassParent(Integer classParent) {
+		this.classParent = classParent;
+	}
+
+	public String getClass_() {
+		return this.class_;
+	}
+
+	public void setClass_(String class_) {
+		this.class_ = class_;
+	}
+
+}

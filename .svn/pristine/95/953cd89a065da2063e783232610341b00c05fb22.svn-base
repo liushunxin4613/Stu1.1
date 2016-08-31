@@ -1,0 +1,37 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fengyang.stu.MainActivity" >
+
+    <item
+        android:id="@+id/action_menu_main"
+        android:icon="@drawable/ic_menu"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/menu_more">
+        <menu>
+            <item
+                android:id="@+id/action_publish_secondHand"
+                android:icon="@drawable/ic_second_publish"
+                android:orderInCategory="100"
+                android:title="@string/menu_publish_secondHand"/>
+            <item
+                android:id="@+id/action_publish_part"
+                android:icon="@drawable/ic_part_publish"
+                android:orderInCategory="101"
+                android:title="@string/menu_publish_partTime"/>
+            <item
+                android:id="@+id/action_publish_history"
+                android:icon="@drawable/ic_history"
+                android:orderInCategory="102"
+                android:title="@string/menu_publish_history"/>
+        </menu>
+    </item>
+    
+    <item
+        android:id="@+id/action_publish_setting"
+        android:icon="@drawable/ic_menu_setting"
+        android:orderInCategory="90"
+        android:showAsAction="always"
+        android:title="@string/menu_publish_setting"/>
+
+</menu>

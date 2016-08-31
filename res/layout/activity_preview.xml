@@ -1,0 +1,70 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/preview_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_dark"
+    tools:context="com.fengyang.activity.PreviewActivity" >
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/preview_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        tools:context="com.fengyang.activity.PreviewActivity" >
+<!--
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/preview_pagertab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:textColor="@color/base_blue" />  -->
+    </android.support.v4.view.ViewPager>
+
+    <FrameLayout
+        android:id="@+id/preview_top_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="#12FFFFFF"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="@dimen/container_padding_small"
+        android:visibility="visible" >
+
+        <ImageButton
+            android:id="@+id/preview_backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|top"
+            android:background="@drawable/back_btn"
+            android:contentDescription="@string/image_string" />
+        
+        <TextView 
+            android:id="@+id/preview_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/mid_white_textstyle"
+            android:layout_gravity="center_vertical|end"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/preview_bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#12FFFFFF"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="@dimen/container_padding_small"
+        android:visibility="visible" >
+
+        <ImageButton
+            android:id="@+id/preview_deleteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/delete_button_selector"
+            android:contentDescription="@string/image_string" />
+    </LinearLayout>
+
+</FrameLayout>

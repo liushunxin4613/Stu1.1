@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="second_type_all">
+        <item>手机数码</item>
+        <item>手机号/通讯</item>
+        <item>家电/家具/办公</item>
+        <item>服装</item>
+        <item>文化娱乐</item>
+        <item>其他</item>
+    </string-array>
+    <string-array name="second_type_digital">
+        <item>二手手机</item>
+        <item>笔记本电脑</item>
+        <item>平板电脑</item>
+        <item>数码产品</item>
+        <item>台式机/配件</item>
+    </string-array>
+    <string-array name="second_type_phone">
+        <item>手机号码</item>
+        <item>通讯业务</item>
+    </string-array>
+    <string-array name="second_type_home">
+        <item>二手家电</item>
+        <item>二手家具</item>
+        <item>家具/日用品</item>
+        <item>办公用品/设备</item>
+    </string-array>
+    <string-array name="second_type_clothes">
+        <item>衣服</item>
+        <item>鞋帽</item>
+        <item>箱包</item>
+    </string-array>
+    <string-array name="second_type_entertainment">
+        <item>艺术品/收藏品</item>
+        <item>文体</item>
+        <item>户外</item>
+        <item>乐器</item>
+        <item>图书</item>
+        <item>音像</item>
+        <item>软件</item>
+        <item>网游</item>
+        <item>虚拟物品</item>
+    </string-array>
+    <string-array name="second_type_others">
+        <item>物品交换</item>
+        <item>5元以下物品</item>
+        <item>免费赠送</item>
+        <item>校园二手</item>
+    </string-array>
+
+</resources>

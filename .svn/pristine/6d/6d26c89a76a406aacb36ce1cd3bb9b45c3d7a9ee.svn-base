@@ -1,0 +1,211 @@
+package com.fengyang.entity;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * OubaArea entity. @author MyEclipse Persistence Tools
+ */
+
+public class OubaArea implements java.io.Serializable {
+
+	// Fields
+
+	private Integer areaId;
+	private String areaName;
+	private Integer areaParentId;
+	private Short areaSort;
+	private Short areaDeep;
+	private String areaRegion;
+	private Set appSecondHandsForDisId = new HashSet(0);
+	private Set appColleges = new HashSet(0);
+	private Set appPartTimesForDisId = new HashSet(0);
+	private Set appPartTimesForCityId = new HashSet(0);
+	private Set appPartTimesForProId = new HashSet(0);
+	private Set appStudentBenchs = new HashSet(0);
+	private Set appMerchantBenchsForProId = new HashSet(0);
+	private Set appSecondHandsForProId = new HashSet(0);
+	private Set appMerchantBenchsForDisId = new HashSet(0);
+	private Set appSecondHandsForCityId = new HashSet(0);
+	private Set appMerchantBenchsForCityId = new HashSet(0);
+
+	// Constructors
+
+	/** default constructor */
+	public OubaArea() {
+	}
+
+	/** minimal constructor */
+	public OubaArea(String areaName, Integer areaParentId, Short areaSort,
+			Short areaDeep) {
+		this.areaName = areaName;
+		this.areaParentId = areaParentId;
+		this.areaSort = areaSort;
+		this.areaDeep = areaDeep;
+	}
+
+	/** full constructor */
+	public OubaArea(String areaName, Integer areaParentId, Short areaSort,
+			Short areaDeep, String areaRegion, Set appSecondHandsForDisId,
+			Set appColleges, Set appPartTimesForDisId,
+			Set appPartTimesForCityId, Set appPartTimesForProId,
+			Set appStudentBenchs, Set appMerchantBenchsForProId,
+			Set appSecondHandsForProId, Set appMerchantBenchsForDisId,
+			Set appSecondHandsForCityId, Set appMerchantBenchsForCityId) {
+		this.areaName = areaName;
+		this.areaParentId = areaParentId;
+		this.areaSort = areaSort;
+		this.areaDeep = areaDeep;
+		this.areaRegion = areaRegion;
+		this.appSecondHandsForDisId = appSecondHandsForDisId;
+		this.appColleges = appColleges;
+		this.appPartTimesForDisId = appPartTimesForDisId;
+		this.appPartTimesForCityId = appPartTimesForCityId;
+		this.appPartTimesForProId = appPartTimesForProId;
+		this.appStudentBenchs = appStudentBenchs;
+		this.appMerchantBenchsForProId = appMerchantBenchsForProId;
+		this.appSecondHandsForProId = appSecondHandsForProId;
+		this.appMerchantBenchsForDisId = appMerchantBenchsForDisId;
+		this.appSecondHandsForCityId = appSecondHandsForCityId;
+		this.appMerchantBenchsForCityId = appMerchantBenchsForCityId;
+	}
+
+	// Property accessors
+
+	public Integer getAreaId() {
+		return this.areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
+	}
+
+	public String getAreaName() {
+		return this.areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+
+	public Integer getAreaParentId() {
+		return this.areaParentId;
+	}
+
+	public void setAreaParentId(Integer areaParentId) {
+		this.areaParentId = areaParentId;
+	}
+
+	public Short getAreaSort() {
+		return this.areaSort;
+	}
+
+	public void setAreaSort(Short areaSort) {
+		this.areaSort = areaSort;
+	}
+
+	public Short getAreaDeep() {
+		return this.areaDeep;
+	}
+
+	public void setAreaDeep(Short areaDeep) {
+		this.areaDeep = areaDeep;
+	}
+
+	public String getAreaRegion() {
+		return this.areaRegion;
+	}
+
+	public void setAreaRegion(String areaRegion) {
+		this.areaRegion = areaRegion;
+	}
+
+	public Set getAppSecondHandsForDisId() {
+		return this.appSecondHandsForDisId;
+	}
+
+	public void setAppSecondHandsForDisId(Set appSecondHandsForDisId) {
+		this.appSecondHandsForDisId = appSecondHandsForDisId;
+	}
+
+	public Set getAppColleges() {
+		return this.appColleges;
+	}
+
+	public void setAppColleges(Set appColleges) {
+		this.appColleges = appColleges;
+	}
+
+	public Set getAppPartTimesForDisId() {
+		return this.appPartTimesForDisId;
+	}
+
+	public void setAppPartTimesForDisId(Set appPartTimesForDisId) {
+		this.appPartTimesForDisId = appPartTimesForDisId;
+	}
+
+	public Set getAppPartTimesForCityId() {
+		return this.appPartTimesForCityId;
+	}
+
+	public void setAppPartTimesForCityId(Set appPartTimesForCityId) {
+		this.appPartTimesForCityId = appPartTimesForCityId;
+	}
+
+	public Set getAppPartTimesForProId() {
+		return this.appPartTimesForProId;
+	}
+
+	public void setAppPartTimesForProId(Set appPartTimesForProId) {
+		this.appPartTimesForProId = appPartTimesForProId;
+	}
+
+	public Set getAppStudentBenchs() {
+		return this.appStudentBenchs;
+	}
+
+	public void setAppStudentBenchs(Set appStudentBenchs) {
+		this.appStudentBenchs = appStudentBenchs;
+	}
+
+	public Set getAppMerchantBenchsForProId() {
+		return this.appMerchantBenchsForProId;
+	}
+
+	public void setAppMerchantBenchsForProId(Set appMerchantBenchsForProId) {
+		this.appMerchantBenchsForProId = appMerchantBenchsForProId;
+	}
+
+	public Set getAppSecondHandsForProId() {
+		return this.appSecondHandsForProId;
+	}
+
+	public void setAppSecondHandsForProId(Set appSecondHandsForProId) {
+		this.appSecondHandsForProId = appSecondHandsForProId;
+	}
+
+	public Set getAppMerchantBenchsForDisId() {
+		return this.appMerchantBenchsForDisId;
+	}
+
+	public void setAppMerchantBenchsForDisId(Set appMerchantBenchsForDisId) {
+		this.appMerchantBenchsForDisId = appMerchantBenchsForDisId;
+	}
+
+	public Set getAppSecondHandsForCityId() {
+		return this.appSecondHandsForCityId;
+	}
+
+	public void setAppSecondHandsForCityId(Set appSecondHandsForCityId) {
+		this.appSecondHandsForCityId = appSecondHandsForCityId;
+	}
+
+	public Set getAppMerchantBenchsForCityId() {
+		return this.appMerchantBenchsForCityId;
+	}
+
+	public void setAppMerchantBenchsForCityId(Set appMerchantBenchsForCityId) {
+		this.appMerchantBenchsForCityId = appMerchantBenchsForCityId;
+	}
+
+}

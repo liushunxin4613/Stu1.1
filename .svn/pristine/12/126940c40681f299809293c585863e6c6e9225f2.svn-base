@@ -1,0 +1,71 @@
+package com.fengyang.entity;
+
+/**
+ * AppPartCommentPicture entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppPartCommentPicture implements java.io.Serializable {
+
+	// Fields
+
+	private Long pcpId;
+	private AppPartComment appPartComment;
+	private String commentImage;
+	private Integer commentImageSort;
+
+	// Constructors
+
+	/** default constructor */
+	public AppPartCommentPicture() {
+	}
+
+	/** minimal constructor */
+	public AppPartCommentPicture(AppPartComment appPartComment,
+			String commentImage) {
+		this.appPartComment = appPartComment;
+		this.commentImage = commentImage;
+	}
+
+	/** full constructor */
+	public AppPartCommentPicture(AppPartComment appPartComment,
+			String commentImage, Integer commentImageSort) {
+		this.appPartComment = appPartComment;
+		this.commentImage = commentImage;
+		this.commentImageSort = commentImageSort;
+	}
+
+	// Property accessors
+
+	public Long getPcpId() {
+		return this.pcpId;
+	}
+
+	public void setPcpId(Long pcpId) {
+		this.pcpId = pcpId;
+	}
+
+	public AppPartComment getAppPartComment() {
+		return this.appPartComment;
+	}
+
+	public void setAppPartComment(AppPartComment appPartComment) {
+		this.appPartComment = appPartComment;
+	}
+
+	public String getCommentImage() {
+		return this.commentImage;
+	}
+
+	public void setCommentImage(String commentImage) {
+		this.commentImage = commentImage;
+	}
+
+	public Integer getCommentImageSort() {
+		return this.commentImageSort;
+	}
+
+	public void setCommentImageSort(Integer commentImageSort) {
+		this.commentImageSort = commentImageSort;
+	}
+
+}

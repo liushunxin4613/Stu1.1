@@ -1,0 +1,156 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+
+/**
+ * AppPartTimeReport entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppPartTimeReport implements java.io.Serializable {
+
+	// Fields
+
+	private Integer partReportId;
+	private User oubaMember;
+	private AppPartTime appPartTime;
+	private Boolean parttimeFalseInformation;
+	private Boolean parttimeFlaseContactWay;
+	private Boolean parttimeFlaseCompany;
+	private Boolean parttimeConduitConpany;
+	private Boolean parttimeOtherReason;
+	private String parttimeDetailReportReason;
+	private String memberMobile;
+	private Timestamp parttimeReportTime;
+
+	// Constructors
+
+	/** default constructor */
+	public AppPartTimeReport() {
+	}
+
+	/** minimal constructor */
+	public AppPartTimeReport(User oubaMember, AppPartTime appPartTime,
+			Boolean parttimeFalseInformation, Boolean parttimeFlaseContactWay,
+			Boolean parttimeFlaseCompany, Boolean parttimeConduitConpany,
+			Boolean parttimeOtherReason, String memberMobile,
+			Timestamp parttimeReportTime) {
+		this.oubaMember = oubaMember;
+		this.appPartTime = appPartTime;
+		this.parttimeFalseInformation = parttimeFalseInformation;
+		this.parttimeFlaseContactWay = parttimeFlaseContactWay;
+		this.parttimeFlaseCompany = parttimeFlaseCompany;
+		this.parttimeConduitConpany = parttimeConduitConpany;
+		this.parttimeOtherReason = parttimeOtherReason;
+		this.memberMobile = memberMobile;
+		this.parttimeReportTime = parttimeReportTime;
+	}
+
+	/** full constructor */
+	public AppPartTimeReport(User oubaMember, AppPartTime appPartTime,
+			Boolean parttimeFalseInformation, Boolean parttimeFlaseContactWay,
+			Boolean parttimeFlaseCompany, Boolean parttimeConduitConpany,
+			Boolean parttimeOtherReason, String parttimeDetailReportReason,
+			String memberMobile, Timestamp parttimeReportTime) {
+		this.oubaMember = oubaMember;
+		this.appPartTime = appPartTime;
+		this.parttimeFalseInformation = parttimeFalseInformation;
+		this.parttimeFlaseContactWay = parttimeFlaseContactWay;
+		this.parttimeFlaseCompany = parttimeFlaseCompany;
+		this.parttimeConduitConpany = parttimeConduitConpany;
+		this.parttimeOtherReason = parttimeOtherReason;
+		this.parttimeDetailReportReason = parttimeDetailReportReason;
+		this.memberMobile = memberMobile;
+		this.parttimeReportTime = parttimeReportTime;
+	}
+
+	// Property accessors
+
+	public Integer getPartReportId() {
+		return this.partReportId;
+	}
+
+	public void setPartReportId(Integer partReportId) {
+		this.partReportId = partReportId;
+	}
+
+	public User getOubaMember() {
+		return this.oubaMember;
+	}
+
+	public void setOubaMember(User oubaMember) {
+		this.oubaMember = oubaMember;
+	}
+
+	public AppPartTime getAppPartTime() {
+		return this.appPartTime;
+	}
+
+	public void setAppPartTime(AppPartTime appPartTime) {
+		this.appPartTime = appPartTime;
+	}
+
+	public Boolean getParttimeFalseInformation() {
+		return this.parttimeFalseInformation;
+	}
+
+	public void setParttimeFalseInformation(Boolean parttimeFalseInformation) {
+		this.parttimeFalseInformation = parttimeFalseInformation;
+	}
+
+	public Boolean getParttimeFlaseContactWay() {
+		return this.parttimeFlaseContactWay;
+	}
+
+	public void setParttimeFlaseContactWay(Boolean parttimeFlaseContactWay) {
+		this.parttimeFlaseContactWay = parttimeFlaseContactWay;
+	}
+
+	public Boolean getParttimeFlaseCompany() {
+		return this.parttimeFlaseCompany;
+	}
+
+	public void setParttimeFlaseCompany(Boolean parttimeFlaseCompany) {
+		this.parttimeFlaseCompany = parttimeFlaseCompany;
+	}
+
+	public Boolean getParttimeConduitConpany() {
+		return this.parttimeConduitConpany;
+	}
+
+	public void setParttimeConduitConpany(Boolean parttimeConduitConpany) {
+		this.parttimeConduitConpany = parttimeConduitConpany;
+	}
+
+	public Boolean getParttimeOtherReason() {
+		return this.parttimeOtherReason;
+	}
+
+	public void setParttimeOtherReason(Boolean parttimeOtherReason) {
+		this.parttimeOtherReason = parttimeOtherReason;
+	}
+
+	public String getParttimeDetailReportReason() {
+		return this.parttimeDetailReportReason;
+	}
+
+	public void setParttimeDetailReportReason(String parttimeDetailReportReason) {
+		this.parttimeDetailReportReason = parttimeDetailReportReason;
+	}
+
+	public String getMemberMobile() {
+		return this.memberMobile;
+	}
+
+	public void setMemberMobile(String memberMobile) {
+		this.memberMobile = memberMobile;
+	}
+
+	public Timestamp getParttimeReportTime() {
+		return this.parttimeReportTime;
+	}
+
+	public void setParttimeReportTime(Timestamp parttimeReportTime) {
+		this.parttimeReportTime = parttimeReportTime;
+	}
+
+}

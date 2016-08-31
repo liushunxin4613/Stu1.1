@@ -1,0 +1,314 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context="com.fengyang.stu.PublishSecondActivity$PlaceholderFragment" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/view_margin"
+            android:background="@drawable/input_kuang"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/publish_part_class"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/item_selector"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    style="@style/publish_editText_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/publish_job_class" />
+
+                <TextView
+                    android:id="@+id/publish_part_class_show"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingBottom="@dimen/view_margin_small"
+                    android:paddingTop="@dimen/view_margin_small" />
+
+                <ImageView
+                    style="@style/item_more_image_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/info_more"
+                    android:contentDescription="@string/image_string" />
+            </LinearLayout>
+
+            <View
+                style="@style/item_line_edit_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    style="@style/publish_item_title_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/publish_job_name" />
+
+                <EditText
+                    android:id="@+id/publish_part_input_name"
+                    style="@style/publish_editText_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLength="80"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <View
+                style="@style/item_line_edit_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <EditText
+                android:id="@+id/publish_input_detail"
+                style="@style/publish_editText_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/publish_job_detail"
+                android:maxLength="200"
+                android:minLines="2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/view_margin"
+            android:background="@drawable/input_kuang"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <Spinner
+                    android:id="@+id/publish_part_time_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:background="@drawable/spinner_selector"
+                    android:entries="@array/job_time_type_entries"
+                    android:popupBackground="@drawable/input_bg_focus"
+                    android:prompt="@string/publish_job_time_type"
+                    android:spinnerMode="dropdown" />
+
+                <TextView
+                    android:id="@+id/publish_part_time_type_"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="7"
+                    android:background="@drawable/spinner_selector"
+                    android:clickable="true"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/publish_job_time_area"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <View
+                style="@style/item_line_edit_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <Spinner
+                android:id="@+id/publish_part_pay_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/spinner_selector"
+                android:entries="@array/job_pay_type_entries"
+                android:popupBackground="@drawable/input_bg_focus"
+                android:prompt="@string/publish_job_pay_type"
+                android:spinnerMode="dropdown" />
+
+            <View
+                style="@style/item_line_edit_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    style="@style/publish_item_title_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/publish_job_money" />
+
+                <EditText
+                    android:id="@+id/publish_input_price"
+                    style="@style/publish_editText_style"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLength="8"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/publish_second_rmb" />
+
+                <View
+                    style="@style/item_line_edit_style"
+                    android:layout_width="1px"
+                    android:layout_height="match_parent" />
+
+                <Spinner
+                    android:id="@+id/publish_part_pay_unit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_selector"
+                    android:entries="@array/job_pay_unit"
+                    android:popupBackground="@drawable/input_bg_focus"
+                    android:prompt="@string/publish_job_pay_unit"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+            <View
+                style="@style/item_line_edit_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    style="@style/publish_item_title_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/publish_job_num" />
+
+                <EditText
+                    android:id="@+id/publish_input_num"
+                    style="@style/publish_editText_style"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:maxLength="8"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/publish_job_num_unit" />
+            </LinearLayout>
+
+            <View
+                style="@style/item_line_edit_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    style="@style/publish_item_title_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/publish_job_tel" />
+
+                <EditText
+                    android:id="@+id/publish_input_phone"
+                    style="@style/publish_editText_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/publish_job_tel_eg"
+                    android:inputType="phone"
+                    android:maxLength="13"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <View
+                style="@style/item_line_edit_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <LinearLayout
+                android:id="@+id/publish_part_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/item_selector"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    style="@style/publish_editText_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/publish_job_place" />
+
+                <TextView
+                    android:id="@+id/publish_part_locationTV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp" />
+
+                <ImageView
+                    style="@style/item_more_image_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/image_string" />
+            </LinearLayout>
+
+            <View
+                style="@style/item_line_edit_style"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
+            <EditText
+                android:id="@+id/publish_part_input_place"
+                style="@style/publish_editText_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/publish_job_place_detail"
+                android:maxLength="200"
+                android:minLines="2" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/publish_part_btn"
+            style="@style/mid_white_textstyle"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_margin="@dimen/view_margin"
+            android:background="@drawable/button_blue_selector"
+            android:text="@string/publish_second" />
+    </LinearLayout>
+
+</ScrollView>

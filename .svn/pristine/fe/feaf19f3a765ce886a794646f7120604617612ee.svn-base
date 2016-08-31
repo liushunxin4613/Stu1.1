@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/shave_bg" >
+    
+    <TextView
+        android:id="@+id/my_points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_qq"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="@dimen/radiu_button_height"/>
+
+    <com.fengyang.customLib.GuaGuaKaView
+        android:id="@+id/guaguaka"
+        android:clickable="true"
+        android:layout_width="260dp"
+        android:layout_height="100dp"
+        android:background="#FFFFFF"/>
+    
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/guagua_careful"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:layout_marginLeft="@dimen/container_padding_large"
+        android:layout_marginRight="@dimen/container_padding_large"
+        android:layout_marginTop="@dimen/radiu_button_height"/>
+
+</LinearLayout>

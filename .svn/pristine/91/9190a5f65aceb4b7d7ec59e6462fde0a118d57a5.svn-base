@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
+    
+    <item
+        android:id="@+id/action_me_info_refresh"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:actionViewClass="android.widget.ImageView"
+        android:title="@string/refresh_page"/>
+    
+</menu>

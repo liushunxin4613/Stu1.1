@@ -1,0 +1,6 @@
+package com.fengyang.dialog;
+
+
+public class ProgressDialog extends BaseDialog {
+
+}

@@ -1,0 +1,141 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+
+/**
+ * AppUserAdvice entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppUserAdvice implements java.io.Serializable {
+
+	// Fields
+
+	private Integer adivceId;
+	private User oubaMember;
+	private Integer appVersionCode;
+	private String appVersionName;
+	private String deviceModel;
+	private String androidRelease;
+	private Integer androidSdk;
+	private String adviceContent;
+	private Timestamp publishTime;
+	private Short isSolved;
+
+	// Constructors
+
+	/** default constructor */
+	public AppUserAdvice() {
+	}
+
+	/** minimal constructor */
+	public AppUserAdvice(Integer appVersionCode, String appVersionName,
+			String deviceModel, Integer androidSdk, String adviceContent,
+			Timestamp publishTime, Short isSolved) {
+		this.appVersionCode = appVersionCode;
+		this.appVersionName = appVersionName;
+		this.deviceModel = deviceModel;
+		this.androidSdk = androidSdk;
+		this.adviceContent = adviceContent;
+		this.publishTime = publishTime;
+		this.isSolved = isSolved;
+	}
+
+	/** full constructor */
+	public AppUserAdvice(User oubaMember, Integer appVersionCode,
+			String appVersionName, String deviceModel, String androidRelease,
+			Integer androidSdk, String adviceContent, Timestamp publishTime,
+			Short isSolved) {
+		this.oubaMember = oubaMember;
+		this.appVersionCode = appVersionCode;
+		this.appVersionName = appVersionName;
+		this.deviceModel = deviceModel;
+		this.androidRelease = androidRelease;
+		this.androidSdk = androidSdk;
+		this.adviceContent = adviceContent;
+		this.publishTime = publishTime;
+		this.isSolved = isSolved;
+	}
+
+	// Property accessors
+
+	public Integer getAdivceId() {
+		return this.adivceId;
+	}
+
+	public void setAdivceId(Integer adivceId) {
+		this.adivceId = adivceId;
+	}
+
+	public User getOubaMember() {
+		return this.oubaMember;
+	}
+
+	public void setOubaMember(User oubaMember) {
+		this.oubaMember = oubaMember;
+	}
+
+	public Integer getAppVersionCode() {
+		return this.appVersionCode;
+	}
+
+	public void setAppVersionCode(Integer appVersionCode) {
+		this.appVersionCode = appVersionCode;
+	}
+
+	public String getAppVersionName() {
+		return this.appVersionName;
+	}
+
+	public void setAppVersionName(String appVersionName) {
+		this.appVersionName = appVersionName;
+	}
+
+	public String getDeviceModel() {
+		return this.deviceModel;
+	}
+
+	public void setDeviceModel(String deviceModel) {
+		this.deviceModel = deviceModel;
+	}
+
+	public String getAndroidRelease() {
+		return this.androidRelease;
+	}
+
+	public void setAndroidRelease(String androidRelease) {
+		this.androidRelease = androidRelease;
+	}
+
+	public Integer getAndroidSdk() {
+		return this.androidSdk;
+	}
+
+	public void setAndroidSdk(Integer androidSdk) {
+		this.androidSdk = androidSdk;
+	}
+
+	public String getAdviceContent() {
+		return this.adviceContent;
+	}
+
+	public void setAdviceContent(String adviceContent) {
+		this.adviceContent = adviceContent;
+	}
+
+	public Timestamp getPublishTime() {
+		return this.publishTime;
+	}
+
+	public void setPublishTime(Timestamp publishTime) {
+		this.publishTime = publishTime;
+	}
+
+	public Short getIsSolved() {
+		return this.isSolved;
+	}
+
+	public void setIsSolved(Short isSolved) {
+		this.isSolved = isSolved;
+	}
+
+}

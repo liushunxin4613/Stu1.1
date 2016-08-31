@@ -1,0 +1,218 @@
+package com.fengyang.activity;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import android.annotation.SuppressLint;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.customLib.GuaGuaKaView;
+import com.fengyang.entity.User;
+import com.fengyang.model.Json;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.stu.StuApplication;
+import com.fengyang.tool.Tool;
+import com.fengyang.util.Config;
+import com.fengyang.util.FormatUtils;
+import com.fengyang.util.ui.ImmersionActivity;
+
+/**
+ * @author 蒋红/吕仁刚/邢梦玲 抽奖界面
+ */
+@SuppressLint({ "SimpleDateFormat", "HandlerLeak" }) public class ShaveActivity extends ImmersionActivity {
+
+	// 上一次刮刮乐的时间
+	private static String THE_LAST_TIME_SHAVE = "the_last_shave_time";
+	private int initialsigncore;
+	private RequestQueue mQueue;
+	private User user;
+	private StringRequest updaterequest;
+	private StuApplication application;
+	private GuaGuaKaView kaView;
+	// 刮刮乐扣除积分
+	private int points;
+	private TextView my_points;
+	public static Handler mHandler;
+	public static boolean flag = true;
+	//	private ChooseListDialog choosePicDialog;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_shave);
+		getActionBar().setDisplayShowHomeEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayShowTitleEnabled(true);
+		setStatusColor(getResources().getColor(R.color.immersionColor));
+		kaView = (GuaGuaKaView) findViewById(R.id.guaguaka);
+		mQueue = Volley.newRequestQueue(ShaveActivity.this);
+		application = (StuApplication) getApplication();
+		user = application.getUser();
+		initialsigncore = user.getPoints();
+		my_points = (TextView) findViewById(R.id.my_points);
+		my_points.setText(getResources().getString(R.string.signtv).toString() + initialsigncore);
+
+		if (!flag) {
+			flag = true;
+		}
+		if (!isTodayFirst()) {
+			if (!isShavable()) {
+				flag = false;
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.points_not_enough_detail).toString(), Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		mHandler = new Handler() {
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case 0123:
+					int i = msg.arg1;
+					int count = msg.arg2;
+					//判断是不是 每天第一次刮卡，是就不花积分，不是要花3积分
+					if (i > 0) {
+						if (count == 1) {
+							if (isTodayFirst()) {
+								points = 0;
+							} else {//在每天第二次之后
+								points = 3;
+								flag = isShavable();
+							}
+							if (flag) {
+								initialsigncore = initialsigncore - points
+										+ kaView.getmtext();
+								SimpleDateFormat sdf = new SimpleDateFormat(
+										"yyyy-MM-dd");
+								String date = sdf.format(new java.util.Date());
+								Tool.PutSharePreferences(ShaveActivity.this,
+										THE_LAST_TIME_SHAVE, getStringToDate(date));
+								updatepoint(initialsigncore);
+							}
+						}
+					}
+					if (i >= 75) {
+						my_points.setText(getResources().getString(R.string.signtv).toString() + initialsigncore);
+					}
+					break;
+				}
+				super.handleMessage(msg);
+			}
+		};
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	/*
+	 * 更新积分值
+	 */
+	private void updatepoint(final int initialsigncore) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("points", initialsigncore);
+		Uri.Builder userUrl = Uri.parse(Config.URL_GET_USER_INFORMATION_UPDATE)
+				.buildUpon();
+		int userId = user.getId();
+		userUrl.appendQueryParameter("id", String.valueOf(userId));
+		userUrl.appendQueryParameter("jsonStr", FormatUtils.getJSONString(map));
+		updaterequest = new StringRequest(Method.GET, userUrl.toString(),
+				new Response.Listener<String>() {
+			@Override
+			public void onResponse(String response) {
+
+				Json json = JSON.parseObject(response.toString(),
+						Json.class);
+				if (json.isSuccess()) {
+
+					user.setPoints(initialsigncore);
+
+				} else {
+					MainActivity.showToast(ShaveActivity.this,
+							R.string.publish_job_time_publish_error);
+
+				}
+
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+
+			}
+
+		});
+		mQueue.add(updaterequest);
+		mQueue.start();
+	}
+
+	// 将日期转换成时间戳
+	public long getStringToDate(String time) {
+
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		Date date1 = new Date();
+
+		try {
+			date1 = sdf1.parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return date1.getTime();
+
+	}
+	/**
+	 * 判断是不是第一次刮奖
+	 * 出现bug：上一次时间存在手机缓存中，如果用户删除缓存，则又恢复到第一次刮的状态
+	 */
+	private boolean isTodayFirst(){
+		final long lastday = Tool.GetLONGSharedPreferences(ShaveActivity.this,
+				THE_LAST_TIME_SHAVE, -1);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String date = sdf.format(new java.util.Date());
+		final long nowtime = getStringToDate(date);
+		if (lastday != -1) {
+			if ((nowtime - lastday) != 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * 判断积分是否不小于3，小于3则不能刮
+	 */
+	public boolean isShavable(){
+		if (initialsigncore >= 3) {
+			return true;//可以刮
+		} else {
+			return false;
+		}
+	}
+
+}

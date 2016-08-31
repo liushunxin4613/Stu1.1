@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <ImageButton
+        android:id="@+id/actionBar_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|start"
+        android:background="@null"
+        android:contentDescription="@string/image_string"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/actionBar_titel"
+        style="@style/big_white_textstyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center" />
+
+    <ImageButton
+        android:id="@+id/actionBar_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:background="@null"
+        android:contentDescription="@string/image_string"
+        android:visibility="gone" />
+
+</FrameLayout>

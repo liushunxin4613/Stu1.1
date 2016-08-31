@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fengyang.stu.PublishSecondActivity" >
+
+    <item
+        android:id="@+id/action_publish_second_sumbit"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:enabled="false"
+        android:title="@null"/>
+
+</menu>

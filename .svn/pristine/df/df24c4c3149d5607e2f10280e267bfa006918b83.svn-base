@@ -1,0 +1,28 @@
+package com.fengyang.util;
+
+import java.util.HashMap;
+import java.util.Set;
+
+import com.cloopen.rest.sdk.CCPRestSmsSDK;
+
+public class SDKTestSendTemplateSMS {
+
+	private static String ACCOUNT_SID="aaf98f894b0b8616014b14d7c315056d";
+	private static String AUTH_TOKEN="d1f7bf2a88924c5da3209823bf699e53";
+	private static String APP_ID="aaf98f894b0b8616014b14d88f95056f";
+	private static String SERVERIP="sandboxapp.cloopen.com";
+	private static String SERVERPORT="8883";
+	private static String TEMPLATEID="1";
+	
+	public static String checkPhone(String phone,String time){ 
+		HashMap<String, Object> result = null;
+		String num=(int)(Math.random()*10000)+"";
+		CCPRestSmsSDK restAPI = new CCPRestSmsSDK();
+		restAPI.init(SERVERIP,SERVERPORT);
+		restAPI.setAccount(ACCOUNT_SID,AUTH_TOKEN);
+		restAPI.setAppId(APP_ID);
+		result = restAPI.sendTemplateSMS(phone,TEMPLATEID,new String[]{num,time});
+		return num;
+	}
+
+}

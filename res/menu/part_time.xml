@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fengyang.stu.PartTimeActivity" >
+
+    <item
+        android:id="@+id/action_part_search"
+        android:orderInCategory="100"
+        android:actionViewClass="com.fengyang.customLib.DiySearchView"
+        android:icon="@drawable/ic_search_btn"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_search"/>
+
+</menu>

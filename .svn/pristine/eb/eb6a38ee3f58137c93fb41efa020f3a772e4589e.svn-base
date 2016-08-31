@@ -1,0 +1,439 @@
+package com.fengyang.service;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.json.JSONObject;
+
+import android.app.Service;
+import android.content.ContentUris;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.IBinder;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.adapter.VolleyErrorAdapter;
+import com.fengyang.db.UserDetailProvider;
+import com.fengyang.entity.User;
+import com.fengyang.entity.UserDetail;
+import com.fengyang.model.Json;
+import com.fengyang.stu.R;
+import com.fengyang.stu.StuApplication;
+import com.fengyang.util.Config;
+import com.fengyang.util.FormatUtils;
+import com.fengyang.util.MD5;
+import com.fengyang.util.push.PushUtil;
+import com.fengyang.volleyTool.FixedJsonRequest;
+
+/**
+ * 用户数据初始化的Service，若未当前登录，则使用缓存的用户数据登录；登陆后检查用户详情数据，若本地未储存用户数据，则向服务器请求用户详情数据，
+ * 在用户数据初始化完毕后自动停止服务。
+ * 
+ * @version 1.1
+ * @author HeJie
+ *
+ */
+public class InitUserService extends Service {
+
+	private static final String TAG = "InitUserService";
+	private static final String TAG_REQUEST = "requestLogin";
+	public static final String ACTION_LOGINED = "loginSucceed";
+	public static final String ACTION_GET_USER_DETAIL = "getUserDetail";
+	public static final String ACTION_GET_USER_DETAIL_FAILURE = "getUserDetailFailure";
+	public static final String ACTION_LOGIN_OUT = "loginOut";
+	public static final String ACTION_LOGIN_FAILURE = "loginFailure";
+	public static final String ACTION_LOGIN_ERROR = "loginError";
+	public static final String ACTION_UPDATE_USER = "updateUserData";
+	public static final String ACTION_UPDATE_ERROR = "updateUserDataError";
+
+	/**
+	 * 启动Service的功能请求类型的Key
+	 */
+	public static final String KEY_START_SERVICE_FOR = "StartServiceFor";
+
+	/**
+	 * 任务编号 启动Service以登陆
+	 */
+	public static final int TASK_LOGIN = 0x0001;
+	/**
+	 * 任务编号 启动Service以获取用户详情信息
+	 */
+	public static final int TASK_REQUEST_USER_DETAIL = 0x0002;
+	/**
+	 * 任务编号 启动Service以更新推送绑定userId
+	 */
+	public static final int TASK_PUSH_UID_BIND = 0x0004;
+	/**
+	 * 任务编号 启动任务以更新用户数据
+	 */
+	public static final int TASK_UPDATE_USER = 0x0008;
+
+	/**
+	 * 任务完成进度
+	 */
+	private int finishedTask = 0;
+
+	private RequestQueue mQueue;
+
+	private StuApplication application;
+	/**
+	 * 请求失败重复请求的次数
+	 */
+	private int retryTime;
+
+	@Override
+	public void onCreate() {
+		Log.i(TAG, "onCreate");
+		super.onCreate();
+		mQueue = Volley.newRequestQueue(this);
+		application = (StuApplication) getApplication();
+		finishedTask = 0;
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		if (intent == null) {
+			stopSelf();
+			return super.onStartCommand(intent, flags, startId);
+		}
+		int requestCode = intent.getIntExtra(KEY_START_SERVICE_FOR, 0);
+		if (requestCode == 0) {
+			stopSelf();
+			return super.onStartCommand(intent, flags, startId);
+		}
+		Log.i(TAG, "onStartCommand requestCode = " + requestCode);
+		if ((requestCode & TASK_LOGIN) == TASK_LOGIN) {
+			retryTime = 5;
+			if (!application.isLogin()) {
+				finishedTask |= (TASK_LOGIN | TASK_REQUEST_USER_DETAIL);
+				requestUser();
+			} else {
+				finishedTask |= TASK_REQUEST_USER_DETAIL;
+				sendBroadcast(new Intent(InitUserService.ACTION_LOGINED));
+				if (null == application.getUserDetail()) {
+					setUpUserDetail();
+				}
+			}
+		}
+		if ((requestCode & TASK_REQUEST_USER_DETAIL) == TASK_REQUEST_USER_DETAIL) {
+			finishedTask |= TASK_REQUEST_USER_DETAIL;
+			requestUserDetail();
+		}
+		if ((requestCode & TASK_UPDATE_USER) == TASK_UPDATE_USER) {
+			finishedTask |= TASK_UPDATE_USER;
+			updateUser();
+		}
+		if ((requestCode & TASK_PUSH_UID_BIND) == TASK_PUSH_UID_BIND) {
+			finishedTask |= TASK_PUSH_UID_BIND;
+			updatePushBind();
+		}
+		return super.onStartCommand(intent, flags, startId);
+	}
+
+	/**
+	 * 请求用户数据
+	 */
+	private void requestUser() {
+		SharedPreferences sharePre = getSharedPreferences(
+				Config.SHAREPREFERENCE_USER_INFO, MODE_PRIVATE);
+		String name = sharePre.getString(Config.USER_INFO_NAME, null);
+		String pwd = sharePre.getString(Config.USER_INFO_PASSWORD, null);
+
+		User user = new User();
+		user.setPassword(MD5.GetMD5Code(pwd));
+		Uri.Builder builder = null;
+
+		switch (FormatUtils.praseStringType(name)) {
+		case 1:
+			user.setPhone(name);
+			builder = Uri.parse(Config.URL_VERIFY_BY_PHONE).buildUpon();
+			builder.appendQueryParameter(
+					"jsonStr",
+					FormatUtils.getJSONString(user, new String[] { "phone",
+							"password" }));
+			break;
+		case 2:
+			user.setEmail(name);
+			builder = Uri.parse(Config.URL_VERIFY_BY_EMAIL).buildUpon();
+			builder.appendQueryParameter(
+					"jsonStr",
+					FormatUtils.getJSONString(user, new String[] { "email",
+							"password" }));
+			break;
+		case 0:
+			Toast.makeText(getApplicationContext(), R.string.login_error,
+					Toast.LENGTH_SHORT).show();
+			sendBroadcast(new Intent(ACTION_LOGIN_ERROR));
+			return;
+
+		}
+
+		// builder.appendQueryParameter("pushId", PushUtil.getUserId(this));
+		// 登陆验证
+		FixedJsonRequest request = new FixedJsonRequest(Method.POST,
+				builder.toString(), null, new Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, "response : " + response.toString());
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							User user = JSON.parseObject(json.getObj()
+									.toString(), User.class);
+							application.setUser(user);
+							updatePushBind();
+							setUpUserDetail();
+							sendBroadcast(new Intent(ACTION_LOGINED));
+						} else {
+							Toast.makeText(getApplicationContext(),
+									json.getMessage(), Toast.LENGTH_SHORT)
+									.show();
+							sendBroadcast(new Intent(ACTION_LOGIN_FAILURE));
+							Log.i(TAG, "login failure");
+						}
+						checkStop(TASK_LOGIN);
+					}
+
+				}, new VolleyErrorAdapter(this) {
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						super.onErrorResponse(error);
+						Toast.makeText(getApplicationContext(),
+								R.string.login_error, Toast.LENGTH_SHORT)
+								.show();
+						sendBroadcast(new Intent(ACTION_LOGIN_ERROR));
+						Log.e(TAG, "onErrorResponse");
+						checkStop(TASK_LOGIN);
+					}
+				});
+		request.setTag(TAG_REQUEST);
+		request.setRetryPolicy(new DefaultRetryPolicy(1000,
+				DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		mQueue.add(request);
+		mQueue.start();
+	}
+
+	/**
+	 * 更新用户数据
+	 */
+	private void updateUser() {
+		if (!application.isLogin()) {
+			throw new IllegalStateException("current user not logined");
+		}
+		User user = application.getUser();
+		Uri.Builder builder = Uri.parse(Config.URL_GET_USER_DATA).buildUpon();
+		builder.appendQueryParameter("id", user.getId().toString());
+		builder.appendQueryParameter("key", user.getPassword());
+		FixedJsonRequest request = new FixedJsonRequest(Method.POST,
+				builder.toString(), null, new Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, "response : " + response.toString());
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							User user = JSON.parseObject(json.getObj()
+									.toString(), User.class);
+							application.setUser(user);
+							sendBroadcast(new Intent(ACTION_UPDATE_USER));
+						} else {
+							sendBroadcast(new Intent(ACTION_UPDATE_ERROR));
+							Log.i(TAG, "login failure");
+						}
+						checkStop(TASK_UPDATE_USER);
+					}
+
+				}, new VolleyErrorAdapter(this) {
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						super.onErrorResponse(error);
+						sendBroadcast(new Intent(ACTION_UPDATE_ERROR));
+						Log.e(TAG, "onErrorResponse");
+						checkStop(TASK_UPDATE_USER);
+					}
+				});
+		request.setTag(TAG_REQUEST);
+		request.setRetryPolicy(new DefaultRetryPolicy(1000,
+				DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		mQueue.add(request);
+		mQueue.start();
+	}
+
+	/**
+	 * 检查用户详情数据，若本地数据库不存在，则向服务器请求数据
+	 */
+	private void setUpUserDetail() {
+		Log.i(TAG, "setUpUserDetail");
+		User user = application.getUser();
+		Uri uri = ContentUris.withAppendedId(UserDetailProvider.CONTENT_URI,
+				user.getId());
+		Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+		if (cursor != null && cursor.moveToFirst()) {
+			stopSelf();
+		} else {
+			requestUserDetail();
+		}
+		cursor.close();
+	}
+
+	/**
+	 * 向服务器请求用户详情数据，将请求到的数据存入Application和本地数据库中
+	 */
+	private void requestUserDetail() {
+		Log.i(TAG, "requestUserDetail");
+		Uri.Builder builder = Uri.parse(Config.URL_GET_USER_DETAIL).buildUpon();
+		builder.appendQueryParameter("id",
+				String.valueOf(application.getUser().getId()));
+		FixedJsonRequest request = new FixedJsonRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, "response : " + response.toString());
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							UserDetail userDetail = JSON.parseObject(json
+									.getObj().toString(), UserDetail.class);
+							application.setUserDetail(userDetail);
+							sendBroadcast(new Intent(ACTION_GET_USER_DETAIL));
+							checkStop(TASK_REQUEST_USER_DETAIL);
+						} else {
+							retreyRequestDetail();
+						}
+					}
+
+				}, new VolleyErrorAdapter(this) {
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						retreyRequestDetail();
+					}
+				});
+		request.setTag(TAG_REQUEST);
+		request.setTimeOut(6000);
+		mQueue.add(request);
+		mQueue.start();
+	}
+
+	/**
+	 * 检查已经重复请求的次数，重复请求
+	 */
+	private void retreyRequestDetail() {
+		if (--retryTime > 0) {
+			TimerTask task = new TimerTask() {
+
+				@Override
+				public void run() {
+					requestUserDetail();
+				}
+			};
+			Timer timer = new Timer();
+			timer.schedule(task, 5000);
+		} else {
+			sendBroadcast(new Intent(ACTION_GET_USER_DETAIL_FAILURE));
+			checkStop(TASK_REQUEST_USER_DETAIL);
+		}
+	}
+
+	/**
+	 * 检查用户绑定信息
+	 */
+	private void updatePushBind() {
+		if (!application.isLogin())
+			return;
+		SharedPreferences sharePre = getSharedPreferences(
+				Config.SHAREPREFERENCE_USER_INFO, MODE_PRIVATE);
+		String channelId = sharePre
+				.getString(Config.USER_BIND_CHANNEL_ID, null);
+		final String userId = PushUtil.getChannelId(this);
+		if (channelId == null || !userId.equals(channelId)) { // 如果未上传到服务器，或者userId更新了
+			Uri.Builder builder = Uri.parse(Config.URL_UPDATE_PUSH_CHANNEL_ID)
+					.buildUpon();
+			builder.appendQueryParameter("id",
+					String.valueOf(application.getUser().getId()));
+			FixedJsonRequest request = new FixedJsonRequest(Method.GET,
+					builder.toString(), null, new Listener<JSONObject>() {
+						@Override
+						public void onResponse(JSONObject response) {
+							Log.d(TAG, "response : " + response.toString());
+							Json json = JSON.parseObject(response.toString(),
+									Json.class);
+							if (json.isSuccess()) {
+								SharedPreferences sharePre = getSharedPreferences(
+										Config.SHAREPREFERENCE_USER_INFO,
+										MODE_PRIVATE);
+								Editor editor = sharePre.edit();
+								editor.putString(Config.USER_BIND_CHANNEL_ID,
+										userId);
+								editor.commit();
+							} else {
+
+							}
+							checkStop(TASK_PUSH_UID_BIND);
+						}
+
+					}, new VolleyErrorAdapter(this) {
+
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							checkStop(TASK_PUSH_UID_BIND);
+						}
+					});
+			request.setTag(TAG_REQUEST);
+			request.setTimeOut(6000);
+			mQueue.add(request);
+			mQueue.start();
+		}
+	}
+
+	/**
+	 * 检查是否停止Service
+	 * 
+	 * @param taskCode
+	 *            任务编号
+	 */
+	private void checkStop(int taskCode) {
+		finishedTask &= ~taskCode;
+		if (finishedTask == 0)
+			stopSelf();
+	}
+
+	@Override
+	public void onTaskRemoved(Intent rootIntent) {
+		super.onTaskRemoved(rootIntent);
+		if (mQueue != null)
+			mQueue.cancelAll(TAG_REQUEST);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (mQueue != null) {
+			mQueue.cancelAll(TAG_REQUEST);
+		}
+		mQueue = null;
+		application = null;
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

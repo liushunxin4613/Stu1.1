@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:padding="@dimen/container_padding_large" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/find_psd_phone_tel"
+            style="@style/edit_input_style"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="phone"
+            android:hint="@string/find_pwd_input_phone" />
+
+        <Button
+            android:id="@+id/find_psd_by_message_get_code"
+            style="@style/small_white_textstyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/view_margin_small"
+            android:background="@drawable/button_red_selector"
+            android:padding="@dimen/container_padding_small"
+            android:text="@string/find_pwd_get_auth_code" />
+    </LinearLayout>
+
+    
+    <EditText
+        android:id="@+id/find_psd_phone_checkcode"
+        style="@style/edit_input_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:layout_marginBottom="@dimen/view_margin_less"
+        android:layout_marginTop="@dimen/view_margin_less"
+        android:hint="@string/find_pwd_input_code" />
+
+    <Button
+        android:id="@+id/find_psd_message_submit"
+        style="@style/big_white_textstyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/view_margin_less"
+        android:layout_marginTop="@dimen/view_margin_less"
+        android:background="@drawable/button_blue_selector"
+        android:text="@string/find_pwd_auth_submit" />
+
+</LinearLayout>

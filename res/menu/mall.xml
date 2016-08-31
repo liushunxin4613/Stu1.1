@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fengyang.stu.MallActivity" >
+
+    <item
+        android:id="@+id/action_reload"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_refresh"
+        android:title="@string/refresh_page"/>
+
+</menu>

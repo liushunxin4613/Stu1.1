@@ -1,0 +1,119 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+
+/**
+ * AppWinning entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppWinning implements java.io.Serializable {
+
+	// Fields
+
+	private Long winnerId;
+	private AppPrize appPrize;
+	private User oubaMember;
+	private String winnerName;
+	private Short exchangeIf;
+	private Timestamp exchangeTime;
+	private Timestamp winTime;
+	private Integer prizeSize;
+
+	// Constructors
+
+	/** default constructor */
+	public AppWinning() {
+	}
+
+	/** minimal constructor */
+	public AppWinning(AppPrize appPrize, User oubaMember,
+			String winnerName, Short exchangeIf, Timestamp winTime,
+			Integer prizeSize) {
+		this.appPrize = appPrize;
+		this.oubaMember = oubaMember;
+		this.winnerName = winnerName;
+		this.exchangeIf = exchangeIf;
+		this.winTime = winTime;
+		this.prizeSize = prizeSize;
+	}
+
+	/** full constructor */
+	public AppWinning(AppPrize appPrize, User oubaMember,
+			String winnerName, Short exchangeIf, Timestamp exchangeTime,
+			Timestamp winTime, Integer prizeSize) {
+		this.appPrize = appPrize;
+		this.oubaMember = oubaMember;
+		this.winnerName = winnerName;
+		this.exchangeIf = exchangeIf;
+		this.exchangeTime = exchangeTime;
+		this.winTime = winTime;
+		this.prizeSize = prizeSize;
+	}
+
+	// Property accessors
+
+	public Long getWinnerId() {
+		return this.winnerId;
+	}
+
+	public void setWinnerId(Long winnerId) {
+		this.winnerId = winnerId;
+	}
+
+	public AppPrize getAppPrize() {
+		return this.appPrize;
+	}
+
+	public void setAppPrize(AppPrize appPrize) {
+		this.appPrize = appPrize;
+	}
+
+	public User getOubaMember() {
+		return this.oubaMember;
+	}
+
+	public void setOubaMember(User oubaMember) {
+		this.oubaMember = oubaMember;
+	}
+
+	public String getWinnerName() {
+		return this.winnerName;
+	}
+
+	public void setWinnerName(String winnerName) {
+		this.winnerName = winnerName;
+	}
+
+	public Short getExchangeIf() {
+		return this.exchangeIf;
+	}
+
+	public void setExchangeIf(Short exchangeIf) {
+		this.exchangeIf = exchangeIf;
+	}
+
+	public Timestamp getExchangeTime() {
+		return this.exchangeTime;
+	}
+
+	public void setExchangeTime(Timestamp exchangeTime) {
+		this.exchangeTime = exchangeTime;
+	}
+
+	public Timestamp getWinTime() {
+		return this.winTime;
+	}
+
+	public void setWinTime(Timestamp winTime) {
+		this.winTime = winTime;
+	}
+
+	public Integer getPrizeSize() {
+		return this.prizeSize;
+	}
+
+	public void setPrizeSize(Integer prizeSize) {
+		this.prizeSize = prizeSize;
+	}
+
+}

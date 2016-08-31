@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="immersionColor">#DD338BD7</color>
+    <color name="home_item_bg">#88E5F1F3</color>
+    <color name="home_item_bg_press">#E5F1F3</color>
+    <color name="home_setting_shadow">#1FFF</color>
+    <color name="make">#C4617D</color>
+    <color name="base_blue">#439BE7</color>
+    <color name="base_blue_light">#63AFEB</color>
+    
+    <color name="base_blue_button">#58BDE7</color>
+    <color name="base_blue_button_press">#48ADD7</color>
+    
+    <color name="base_red_button">#E1599B</color>
+    <color name="base_red_button_press">#D1498B</color>
+    <color name="base_button_unclickable">#C0C0C0</color>
+    
+    <color name="radiu_white_button">#FDFDFD</color>
+    <color name="radiu_white_button_press">#F6F6F6</color>
+    <color name="radiu_white_button_stroke">#C0C0C0</color>
+    
+    <color name="radiu_red_button">#E1599B</color>
+    <color name="radiu_red_button_press">#D1498B</color>
+    
+    <color name="dialog_title_bg">#404654</color>
+    <color name="dialog_bottom_bg">#F0F8F8F8</color>
+    
+    <color name="white">#FFFFFF</color>
+    <color name="white_transparent">#D0FFFFFF</color>
+    
+    <color name="text_gray">#909090</color>
+    <color name="text_blue">#58BDE7</color>
+    <color name="text_red_price">#FF0149</color>
+    <color name="search_hint_gray">#DDD</color>
+    
+    <color name="linked_text">#58BDE7</color>
+    <color name="linked_text_pressed">#388DA7</color>
+    
+    <color name="line_gray">#80C0C0C0</color>
+    
+    <color name="find_back">#F3F3F3</color>
+    <color name="purple">#DF7EB6</color>
+      <!--      表示该区域不能修改 -->
+    <color name="unedit_text_history">#E5E5E5</color>
+    
+    
+    
+    <color name="progress_color">#DD237BC7</color>
+    <color name="seconderyProgress_color">#DD338BD7</color>
+
+</resources>

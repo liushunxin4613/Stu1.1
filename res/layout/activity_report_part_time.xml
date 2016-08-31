@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="com.fengyang.stu.PublishSecondActivity" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingBottom="20dp" >
+
+            <TextView
+                android:id="@+id/parttime_reasonTV"
+                style="@style/mid_black_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="@string/parttime_reasonTV" />
+
+            <CheckBox
+                android:id="@+id/parttime_falseimformation_checkbox"
+                style="@style/mid_gray_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/parttime_falseimformation_checkbox" />
+
+            <CheckBox
+                android:id="@+id/Parttime_FalseCompany_checkbox"
+                style="@style/mid_gray_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/Parttime_FalseCompany_checkbox" />
+
+            <CheckBox
+                android:id="@+id/parttime_Conduit_Company_checkbox"
+                style="@style/mid_gray_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/parttime_Conduit_Company_checkbox" />
+
+            <CheckBox
+                android:id="@+id/parttime_falsephone_checkbox"
+                style="@style/mid_gray_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/parttime_falsephone_checkbox" />
+
+            <CheckBox
+                android:id="@+id/parttime_other_checkbox"
+                style="@style/mid_gray_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/parttime_other_checkbox" />
+
+            <TextView
+                android:id="@+id/parttime_detailreasonTV"
+                style="@style/mid_black_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="@string/parttime_detailreasonTV" />
+
+            <EditText
+                android:id="@+id/parttime_detailreasonET"
+                style="@style/edit_input_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:gravity="start"
+                android:minLines="4" />
+
+            <TextView
+                android:id="@+id/parttime_yourphoneTV"
+                style="@style/mid_black_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="@string/parttime_yourphoneTV" />
+
+            <EditText
+                android:id="@+id/parttime_yourphoneET"
+                style="@style/edit_input_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:hint="@string/parttime_yourphoneET_hint"
+                android:inputType="phone"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/parttime_submitBT"
+                style="@style/mid_white_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="20dp"
+                android:onClick="onClick"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_red_selector"
+                android:text="@string/parttime_submitBT" />
+
+            <Button
+                android:id="@+id/parttime_reportphoneBT"
+                style="@style/mid_black_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:onClick="onClick"
+                android:padding="10dp"
+                android:text="@string/parttime_reportphoneBT" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

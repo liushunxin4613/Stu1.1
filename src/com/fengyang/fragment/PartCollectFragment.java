@@ -1,0 +1,162 @@
+package com.fengyang.fragment;
+
+import java.util.List;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.fengyang.activity.PartDetailActivity;
+import com.fengyang.adapter.PartCollectAdapter;
+import com.fengyang.customLib.DynamicListView;
+import com.fengyang.customLib.DynamicListView.LoadMoreListener;
+import com.fengyang.customLib.DynamicListView.RefreshListener;
+import com.fengyang.db.CollectDAO;
+import com.fengyang.model.PartCollection;
+import com.fengyang.service.CollectionService;
+import com.fengyang.service.InitUserService;
+import com.fengyang.stu.R;
+import com.fengyang.stu.StuApplication;
+import com.fengyang.util.Config;
+
+public class PartCollectFragment extends Fragment implements RefreshListener,
+		LoadMoreListener, OnItemClickListener {
+
+	private DynamicListView listView;
+
+	private PartCollectAdapter adapter;
+	private CollectDAO dao;
+
+	private int uId;
+
+	private int page;
+
+	public static final String ACTION_PART_COLLECT_UPDATE = "updatePartData";
+	public static final String ACTION_PART_COLLECT_INSERT = "insertPartData";
+	public static final String ACTION_PART_COLLECT_DELETE = "deletePartData";
+	public static final String KEY_UPDATE_PID = "deletePartData";
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_collect_part,
+				container, false);
+		listView = (DynamicListView) rootView.findViewById(R.id.listView_job);
+
+		listView.setOnItemClickListener(this);
+
+		dao = new CollectDAO(getActivity());
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(ACTION_PART_COLLECT_INSERT);
+		filter.addAction(ACTION_PART_COLLECT_DELETE);
+		filter.addAction(ACTION_PART_COLLECT_UPDATE);
+		filter.addAction(InitUserService.ACTION_LOGINED);
+		filter.addAction(InitUserService.ACTION_LOGIN_OUT);
+		filter.addAction(CollectionService.ACTION_SYNC_PART_COLLECT_FINISH);
+		getActivity().registerReceiver(receiver, filter);
+		StuApplication application = (StuApplication) getActivity()
+				.getApplication();
+		if (application.isLogin()) {
+			loadData();
+			listView.setOnRefreshListener(this);
+			listView.setOnMoreListener(this);
+		}
+		return rootView;
+	}
+
+	private void loadData() {
+		StuApplication application = (StuApplication) getActivity()
+				.getApplication();
+		uId = application.getUser().getId();
+		page = 0;
+		List<PartCollection> data = dao.queryPart(uId, ++page,
+				Config.LIST_PAGE_SIZE);
+		if (data.size() < Config.LIST_PAGE_SIZE)
+			listView.setOnMoreListener(null);
+		adapter = new PartCollectAdapter(data, getActivity());
+		listView.setAdapter(adapter);
+	}
+
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(ACTION_PART_COLLECT_INSERT)) {
+				int pId = intent.getIntExtra(KEY_UPDATE_PID, -1);
+				adapter.insertItem(dao.queryPartById(uId, pId));
+			} else if (intent.getAction().equals(ACTION_PART_COLLECT_DELETE)) {
+				int pId = intent.getIntExtra(KEY_UPDATE_PID, -1);
+				adapter.reomveItemById(pId);
+			} else if (intent.getAction()
+					.equals(InitUserService.ACTION_LOGINED)) {
+				loadData();
+				listView.setOnRefreshListener(PartCollectFragment.this);
+				listView.setOnMoreListener(PartCollectFragment.this);
+			} else if (intent.getAction().equals(
+					InitUserService.ACTION_LOGIN_OUT)) {
+				adapter.clear();
+				listView.setOnRefreshListener(null);
+				listView.setOnMoreListener(null);
+			} else if (intent.getAction().equals(
+					CollectionService.ACTION_SYNC_PART_COLLECT_FINISH)) {
+				loadData();
+				listView.doneRefresh();
+			}
+		}
+	};
+
+	@Override
+	public void onDestroy() {
+		getActivity().unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+
+	@Override
+	public boolean onRefresh(DynamicListView dynamicListView) {
+		Intent service = new Intent(getActivity(), CollectionService.class);
+		service.putExtra(CollectionService.KEY_START_SERVICE_FOR,
+				CollectionService.TASK_SYNC_PART_COLLECT);
+		getActivity().startService(service);
+		return false;
+	}
+
+	@Override
+	public void onCancelRefresh(DynamicListView dynamicListView) {
+		Intent intent = new Intent(CollectionService.ACTION_CANCEL_REQUEST);
+		intent.putExtra(CollectionService.KEY_STOP_SERVICE_FOR,
+				CollectionService.TASK_SYNC_PART_COLLECT);
+		getActivity().sendBroadcast(intent);
+	}
+
+	@Override
+	public boolean onLoadMore(DynamicListView dynamicListView) {
+		List<PartCollection> data = dao.queryPart(uId, ++page,
+				Config.LIST_PAGE_SIZE);
+		if (data.size() < Config.LIST_PAGE_SIZE)
+			listView.setOnMoreListener(null);
+		adapter.addItems(data);
+		return true;
+	}
+
+	@Override
+	public void onCancelLoadMore(DynamicListView dynamicListView) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Intent intent = new Intent(getActivity(), PartDetailActivity.class);
+		intent.putExtra(PartDetailActivity.KEY_PART_ID, (int) id);
+		startActivity(intent);
+	}
+}

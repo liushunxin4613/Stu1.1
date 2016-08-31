@@ -1,0 +1,679 @@
+package com.fengyang.activity;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Rect;
+import android.net.Uri;
+import android.net.Uri.Builder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.adapter.VolleyErrorAdapter;
+import com.fengyang.db.UserDBHelper;
+import com.fengyang.db.UserProvider;
+import com.fengyang.dialog.ChooseListDialog;
+import com.fengyang.dialog.LoadingDialog;
+import com.fengyang.dialog.LoadingDialog.OnBackPressedLisener;
+import com.fengyang.entity.User;
+import com.fengyang.model.Json;
+import com.fengyang.service.InitUserService;
+//import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.stu.StuApplication;
+import com.fengyang.util.Config;
+import com.fengyang.util.FormatUtils;
+import com.fengyang.util.MD5;
+import com.fengyang.util.ui.KitKatUtils;
+import com.fengyang.util.ui.UIUtils;
+import com.fengyang.volleyTool.DiskBitmapCache;
+import com.fengyang.volleyTool.FixedJsonRequest;
+import com.fengyang.volleyTool.UserPhotoImageListener;
+
+public class LoginActivity extends FragmentActivity implements OnClickListener,
+		android.content.DialogInterface.OnClickListener {
+
+	private RelativeLayout userContainer;
+
+	private RelativeLayout userPhoto;
+
+	private EditText userNameET;
+
+	private EditText passWordET;
+
+	private ImageView more_select;
+
+	private StuApplication application;
+
+	private RequestQueue mQueue;
+
+	private ImageLoader imageLoader;
+
+	private DiskBitmapCache diskCache;
+
+	private boolean iskitKat;
+
+	private UserDBHelper dbHelper;
+	private PopupWindow popView;
+	private MyAdapter myAdapter;
+
+	// 登陆加载对话框
+	private LoadingDialog dialog;
+
+	private int millis = 300;
+
+	/**
+	 * 键盘是否打开
+	 */
+	private boolean isOpen = false;
+
+	public static final int REQUEST_REGIST = 1;
+	private static final String TAG_LOGIN_REQUEST = "LoginRequest";
+	private static final String TAG = "loginActivity";
+
+	private static final int MSG_UPDATE_ANIM = 1;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_login);
+
+		dbHelper = new UserDBHelper(this);
+		iskitKat = KitKatUtils.setStatusBar(this, true);
+		mQueue = Volley.newRequestQueue(this);
+		diskCache = new DiskBitmapCache(getCacheDir(), 10);
+		imageLoader = new ImageLoader(mQueue, diskCache);
+
+		userContainer = (RelativeLayout) findViewById(R.id.user_photo_container);
+		userPhoto = (RelativeLayout) findViewById(R.id.user_IV);
+		userNameET = (EditText) findViewById(R.id.editText_user);
+		passWordET = (EditText) findViewById(R.id.editText_pass);
+		more_select = (ImageView) findViewById(R.id.more_select);
+		more_select.setOnClickListener(this);
+
+		userNameET.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				passWordET.setText("");
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				if (s != null && s.toString().length() > 0)
+					loadUserPhoto(s.toString());
+			}
+		});
+
+		userContainer.getViewTreeObserver().addOnGlobalLayoutListener(
+				new OnGlobalLayoutListener() {
+
+					@Override
+					public void onGlobalLayout() {
+						Rect r = new Rect();
+						userContainer.getWindowVisibleDisplayFrame(r);
+						int screenHeight = userContainer.getRootView()
+								.getHeight();
+						// r.bottom is the position above soft keypad or device
+						// button.
+						// if keypad is shown, the r.bottom is smaller than that
+						// before.
+						int keypadHeight = screenHeight - r.bottom;
+						if (keypadHeight > screenHeight * 0.15) {
+							// keyboard is opened
+							if (!isOpen) {
+								isOpen = true;
+								new Thread(reduce).start();
+							}
+						} else {
+							// keyboard is closed
+							if (isOpen) {
+								isOpen = false;
+								new Thread(expand).start();
+							}
+						}
+					}
+				});
+		prepareUI();
+
+	}
+
+	private void prepareUI() {
+		application = (StuApplication) getApplication();
+		// 如果用户已登陆
+		if (application.isLogin()) {
+
+			// ... 设置头像、用户名、密码等信息
+			User user = application.getUser();
+			loadUserPhoto(user.getPhotoPath());
+		}
+		SharedPreferences sharePre = getSharedPreferences(
+				Config.SHAREPREFERENCE_USER_INFO, MODE_PRIVATE);
+		CharSequence name = sharePre.getString(Config.USER_INFO_NAME, null);
+		CharSequence pwd = sharePre.getString(Config.USER_INFO_PASSWORD, null);
+		userNameET.setText(name);
+		passWordET.setText(pwd);
+	}
+
+	private void loadUserPhoto(String userName) {
+		String where = null;
+		switch (FormatUtils.praseStringType(userName)) {
+		case 1:
+			where = "c_phone=?";
+			break;
+		case 2:
+			where = "c_email=?";
+			break;
+		case 0:
+			where = "id=?";
+			break;
+		default:
+			return;
+		}
+		Cursor cursor = getContentResolver().query(UserProvider.CONTENT_URI,
+				new String[] { "c_photoPath" }, where,
+				new String[] { userName }, null);
+		cursor.moveToFirst();
+		if (cursor != null && cursor.getCount() > 0) {
+			String photoPath = cursor.getString(cursor
+					.getColumnIndex("c_photoPath"));
+			if (photoPath != null && photoPath.length() > 0) {
+				String imgUrl = Config.USER_PHOTO_PATH + "/" + photoPath;
+				imageLoader.get(imgUrl, new UserPhotoImageListener(userPhoto,
+						this));
+			}
+		} else {
+			userPhoto.setBackgroundResource(R.drawable.default_user);
+		}
+		cursor.close();
+	}
+
+	/**
+	 * 缩小效果的runnable
+	 */
+	Runnable reduce = new Runnable() {
+
+		@Override
+		public void run() {
+			double times = 100.0;
+			double height = userContainer.getHeight();
+			double bottom = userContainer.getPaddingBottom();
+			double len = userPhoto.getWidth();
+			double k = 0;
+			double a = (bottom - UIUtils.dip2px(LoginActivity.this, 10))
+					/ times;
+			double b = (len - UIUtils.dip2px(LoginActivity.this, 50)) / times;
+			if (iskitKat) {
+				k = (height - UIUtils.dip2px(LoginActivity.this, 90)) / times;
+			} else {
+				k = (height - UIUtils.dip2px(LoginActivity.this, 70)) / times;
+			}
+			Log.i("reduce", "a = " + a);
+			Log.i("reduce", "k = " + k);
+			for (int i = 0; i < times; i++) {
+				height -= k;
+				bottom -= a;
+				len -= b;
+				Message msg = new Message();
+				msg.what = MSG_UPDATE_ANIM;
+				msg.arg1 = (int) height;
+				msg.arg2 = (int) bottom;
+				msg.obj = (int) len;
+				handler.sendMessage(msg);
+				try {
+					Thread.sleep((long) (millis / times));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	};
+
+	/**
+	 * 放大效果的runnable
+	 */
+	Runnable expand = new Runnable() {
+
+		@Override
+		public void run() {
+			double times = 100;
+			double height = userContainer.getHeight();
+			double bottom = userContainer.getPaddingBottom();
+			double len = userPhoto.getWidth();
+			double k = (UIUtils.dip2px(LoginActivity.this, 200) - height)
+					/ times;
+			double a = (UIUtils.dip2px(LoginActivity.this, 30) - bottom)
+					/ times;
+			double b = (UIUtils.dip2px(LoginActivity.this, 80) - len) / times;
+			for (int i = 0; i < times; i++) {
+				height += k;
+				bottom += a;
+				len += b;
+				Message msg = new Message();
+				msg.what = MSG_UPDATE_ANIM;
+				msg.arg1 = (int) height;
+				msg.arg2 = (int) bottom;
+				msg.obj = (int) len;
+				handler.sendMessage(msg);
+				try {
+					Thread.sleep((long) (millis / times));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	};
+
+	MyHandler handler = new MyHandler(this);
+
+	/**
+	 * 动画中改变控件大小的handler
+	 */
+	static class MyHandler extends Handler {
+
+		private WeakReference<LoginActivity> activity;
+
+		public MyHandler(LoginActivity activity) {
+			this.activity = new WeakReference<LoginActivity>(activity);
+		}
+
+		public void handleMessage(android.os.Message msg) {
+			LoginActivity instance = activity.get();
+			switch (msg.what) {
+			case MSG_UPDATE_ANIM:// ui变形动画
+				int height = msg.arg1;
+				int bottom = msg.arg2;
+				int len = (Integer) msg.obj;
+				LayoutParams params = new LayoutParams(
+						LayoutParams.MATCH_PARENT, height);
+				instance.userContainer.setPadding(0, 0, 0, bottom);
+				instance.userContainer.setLayoutParams(params);
+
+				RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(
+						len, len);
+				params1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+				params1.addRule(RelativeLayout.CENTER_HORIZONTAL);
+				instance.userPhoto.setLayoutParams(params1);
+				break;
+			}
+		};
+	}
+
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+			int x = (int) ev.getX();
+			int y = (int) ev.getY();
+			if (!UIUtils.isTouchInView(userNameET, x, y)
+					&& !UIUtils.isTouchInView(passWordET, x, y)) {
+				// 点击位置不在输入框内，隐藏键盘
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+						InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+		}
+		return super.dispatchTouchEvent(ev);
+	}
+
+	/**
+	 * 检查用户输入并验证登陆
+	 * 
+	 * @return
+	 */
+	private void checkUser() {
+		String userName = userNameET.getText().toString();
+		String pwd = passWordET.getText().toString();
+		User user = new User();
+		user.setPassword(MD5.GetMD5Code(pwd));
+		Uri.Builder builder = null;
+
+		switch (FormatUtils.praseStringType(userName)) {
+		case 1:
+			Log.i("praseUserNameType", "Phone");
+			user.setPhone(userName);
+			builder = Uri.parse(Config.URL_VERIFY_BY_PHONE).buildUpon();
+			builder.appendQueryParameter(
+					"jsonStr",
+					FormatUtils.getJSONString(user, new String[] { "phone",
+							"password" }));
+			dbHelper.insertOrUpdate(userName, pwd, 1);
+			loginVerify(builder);
+
+			break;
+		case 2:
+			Log.i("praseUserNameType", "Email");
+			user.setEmail(userName);
+			builder = Uri.parse(Config.URL_VERIFY_BY_EMAIL).buildUpon();
+			builder.appendQueryParameter(
+					"jsonStr",
+					FormatUtils.getJSONString(user, new String[] { "email",
+							"password" }));
+			dbHelper.insertOrUpdate(userName, pwd, 1);
+			loginVerify(builder);
+			break;
+		default:
+			Toast.makeText(getApplicationContext(), R.string.userName_error,
+					Toast.LENGTH_SHORT).show();
+			// userNameET.setText(null);
+			userNameET.setSelected(true);
+
+		}
+
+	}
+
+	/**
+	 * 提交并验证登陆信息
+	 * 
+	 * @param builder
+	 */
+	private void loginVerify(Builder builder) {
+		FixedJsonRequest request = new FixedJsonRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, "response : " + response.toString());
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							User user = JSON.parseObject(json.getObj()
+									.toString(), User.class);
+							saveUserData(user);
+							dialog.dismiss();
+
+							Intent intent = new Intent(getApplicationContext(),
+									InitUserService.class);
+							intent.putExtra(
+									InitUserService.KEY_START_SERVICE_FOR,
+									InitUserService.TASK_LOGIN);
+							startService(intent);
+							setResult(RESULT_OK);
+							finish();
+						} else {
+							dialog.dismiss();
+							Toast.makeText(getApplicationContext(),
+									json.getMessage(), Toast.LENGTH_SHORT)
+									.show();
+						}
+					}
+
+				}, new VolleyErrorAdapter(this) {
+					@Override
+					protected void onOccurError(VolleyError error) {
+						super.onOccurError(error);
+						dialog.dismiss();
+					}
+				});
+		request.setTag(TAG_LOGIN_REQUEST);
+		mQueue.add(request);
+		mQueue.start();
+		dialog = new LoadingDialog(getString(R.string.logining));
+		dialog.setOnBackPressedListener(new OnBackPressedLisener() {
+
+			@Override
+			public void onBackPressed() {
+				dialog.dismiss();
+				mQueue.cancelAll(TAG_LOGIN_REQUEST);
+			}
+		});
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		dialog.show(ft, TAG);
+	}
+
+	private void saveUserData(User user) {
+		application.setUser(user);
+		String id = String.valueOf(user.getId());
+		Cursor cursor = getContentResolver().query(UserProvider.CONTENT_URI,
+				null, "id=?", new String[] { id }, null);
+		if (cursor != null && cursor.getCount() > 0) {
+			getContentResolver().update(UserProvider.CONTENT_URI,
+					UserProvider.parseUser(user), "id=?", new String[] { id });
+		} else
+			getContentResolver().insert(UserProvider.CONTENT_URI,
+					UserProvider.parseUser(user));
+		cursor.close();
+		SharedPreferences sharedPre = getSharedPreferences(
+				Config.SHAREPREFERENCE_USER_INFO, MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPre.edit();
+		// editor.putInt(Config.USER_BIND_USER_ID, user.getId());
+		editor.putString(Config.USER_INFO_NAME, userNameET.getText().toString());
+		editor.putString(Config.USER_INFO_PASSWORD, passWordET.getText()
+				.toString());
+		editor.commit();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			if (requestCode == REQUEST_REGIST) {
+				setResult(RESULT_OK);
+				this.finish();
+			}
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		dbHelper.cleanup();
+		if (mQueue != null)
+			mQueue.stop();
+	}
+
+	/**
+	 * 初始化popupwindow
+	 * 
+	 * @param usernames
+	 */
+	private void initPopView(String[] usernames) {
+		ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+		for (int i = 0; i < usernames.length; i++) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("name", usernames[i]);
+			map.put("drawable", R.drawable.mini_promotion_close_pressed);
+			list.add(map);
+		}
+
+		myAdapter = new MyAdapter(this, list);
+		ListView listView = new ListView(this);
+		listView.setAdapter(myAdapter);
+		popView = new PopupWindow(listView, userNameET.getWidth(),
+				ViewGroup.LayoutParams.WRAP_CONTENT, true);
+		popView.setFocusable(true);
+		popView.setOutsideTouchable(true);
+		popView.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.backgroond_white));
+		popView.setHeight(userNameET.getHeight() * usernames.length);
+	}
+
+	@Override
+	public void onClick(View v) {
+		int id = v.getId();
+		switch (id) {
+		case R.id.loginBtn:
+			checkUser();
+			break;
+		case R.id.textView_regist:
+			Intent intent = new Intent(this, RegistActivity.class);
+			startActivityForResult(intent, REQUEST_REGIST);
+			break;
+		case R.id.textView_forgetPass:
+			ChooseListDialog chooseDialog = new ChooseListDialog(
+					getApplicationContext());
+			chooseDialog.addButton(getString(R.string.dialog_phone_verify));
+			chooseDialog.addButton(getString(R.string.dialog_email_verify));
+			chooseDialog.setOnclickListener(LoginActivity.this);
+			FragmentTransaction ft = getSupportFragmentManager()
+					.beginTransaction();
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			chooseDialog.show(ft, TAG);
+			break;
+		case R.id.more_select:
+			if (popView != null) {
+				if (!popView.isShowing()) {
+					initPopView(dbHelper.queryAllUserName());
+					popView.showAsDropDown(userNameET);
+				} else {
+					popView.dismiss();
+				}
+			} else {
+				if (dbHelper.queryAllUserName().length > 0) {
+					initPopView(dbHelper.queryAllUserName());
+					if (!popView.isShowing()) {
+						popView.showAsDropDown(userNameET);
+					} else {
+						popView.dismiss();
+					}
+				} else {
+					Toast.makeText(this, "无记录", Toast.LENGTH_SHORT).show();
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+		Intent intent = new Intent(this, FindPassWordActivity.class);
+		switch (which) {
+		case 0:
+			intent.putExtra(FindPassWordActivity.FIND_TYPE,
+					FindPassWordActivity.FIND_BY_PHONE);
+			break;
+		case 1:
+			intent.putExtra(FindPassWordActivity.FIND_TYPE,
+					FindPassWordActivity.FIND_BY_EMAIL);
+			break;
+		}
+		startActivity(intent);
+	}
+
+	public class MyAdapter extends BaseAdapter {
+		ArrayList<HashMap<String, Object>> data;
+		Context context;
+
+		public MyAdapter(Context context,
+				ArrayList<HashMap<String, Object>> data) {
+			this.context = context;
+			this.data = data;
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return data.size();
+		}
+
+		@Override
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return data.get(arg0);
+		}
+
+		@Override
+		public long getItemId(int arg0) {
+			// TODO Auto-generated method stub
+			return arg0;
+		}
+
+		@Override
+		public View getView(final int position, View view, ViewGroup arg2) {
+			ViewHolder holder;
+			if (view == null) {
+				holder = new ViewHolder();
+				view = LayoutInflater.from(context).inflate(
+						R.layout.item_popview, null);
+				holder.mimageview = (ImageView) view
+						.findViewById(R.id.deleteimg);
+				holder.mtextview = (TextView) view.findViewById(R.id.textname);
+				view.setTag(holder);
+			} else {
+				holder = (ViewHolder) view.getTag();
+			}
+			holder.mtextview.setText(data.get(position).get("name").toString());
+			holder.mtextview.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					String[] usernames = dbHelper.queryAllUserName();
+					userNameET.setText(usernames[position]);
+					passWordET.setText(dbHelper
+							.queryPasswordByName(usernames[position]));
+					popView.dismiss();
+				}
+			});
+			holder.mimageview.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					Log.d(TAG, "mimageview");
+					String[] usernames = dbHelper.queryAllUserName();
+					if (usernames.length > 0) {
+						dbHelper.delete(usernames[position]);
+						popView.dismiss();
+					}
+					String[] newusername = dbHelper.queryAllUserName();
+					if (newusername.length > 0) {
+						initPopView(newusername);
+						popView.showAsDropDown(userNameET);
+
+					} else {
+						popView.dismiss();
+						popView = null;
+					}
+				}
+			});
+			return view;
+		}
+	}
+
+	class ViewHolder {
+		private TextView mtextview;
+		private ImageView mimageview;
+	}
+
+}

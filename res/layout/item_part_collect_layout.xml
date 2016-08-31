@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="90dp"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/item_part_collect_price"
+            style="@style/big_gray_textstyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/purple" />
+
+        <TextView
+            android:id="@+id/item_part_collect_method"
+            style="@style/small_black_textstyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="1px"
+        android:layout_height="match_parent"
+        android:layout_margin="2dp"
+        android:background="@color/line_gray" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/view_margin_small"
+        android:layout_marginStart="@dimen/view_margin_small"
+        android:layout_weight="1"
+        android:gravity="start|center_vertical"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/item_part_collect_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/item_part_collect_publish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_gray" />
+
+        <TextView
+            android:id="@+id/item_part_collect_info"
+            style="@style/small_gray_textstyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/item_part_collect_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/view_margin"
+        android:background="@drawable/button_collect_checked"
+        android:contentDescription="@string/image_string"
+        android:focusable="false" />
+
+</LinearLayout>

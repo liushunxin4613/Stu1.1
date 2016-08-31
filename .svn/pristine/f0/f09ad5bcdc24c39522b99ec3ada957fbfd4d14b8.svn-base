@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="job_pay_type_entries">
+        <item>日结</item>
+        <item>周结</item>
+        <item>月结</item>
+        <item>季结</item>
+        <item>完工结算</item>
+        <item>半年结</item>
+        <item>年结</item>
+    </string-array>
+    <string-array name="job_time_type_entries">
+        <item>长期</item>
+        <item>短期</item>
+    </string-array>
+    <string-array name="job_time_week">
+        <item>星期一</item>
+        <item>星期二</item>
+        <item>星期三</item>
+        <item>星期四</item>
+        <item>星期五</item>
+        <item>星期六</item>
+        <item>星期日</item>
+    </string-array>
+    <string-array name="job_pay_unit">
+        <item>/小时</item>
+        <item>/天</item>
+        <item>/周</item>
+        <item>/月</item>
+        <item>/季度</item>
+        <item>/半年</item>
+        <item>/年</item>
+    </string-array>
+    <string-array name="sort_week_array">
+        <item>一</item>
+        <item>二</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
+        <item>日</item>
+    </string-array>
+    <string-array name="publisher_type">
+        <item>学生发布</item>
+        <item>商家发布</item>
+        <item>官方发布</item>
+    </string-array>
+    <string-array name="sex_choice_array">
+        <item>女</item>
+        <item>男</item>
+    </string-array>
+
+</resources>

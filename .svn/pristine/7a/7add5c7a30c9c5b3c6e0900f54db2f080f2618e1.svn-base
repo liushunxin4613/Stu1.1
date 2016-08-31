@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:scrollbars="none" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <com.fengyang.customLib.SlideView
+            android:id="@+id/slideViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <com.fengyang.customLib.FixViewPager
+                android:id="@+id/image_slide_pager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:id="@+id/view_dot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/dot_bg"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:paddingBottom="4dp"
+                android:paddingEnd="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingStart="10dp"
+                android:paddingTop="4dp" >
+            </LinearLayout>
+        </com.fengyang.customLib.SlideView>
+
+        <com.fengyang.customLib.ExpandGridView
+            android:id="@+id/home_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:numColumns="2" >
+        </com.fengyang.customLib.ExpandGridView>
+    </LinearLayout>
+
+</ScrollView>

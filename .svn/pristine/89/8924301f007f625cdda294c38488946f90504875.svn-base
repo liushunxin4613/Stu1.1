@@ -1,0 +1,7 @@
+package com.fengyang.activity;
+
+import com.fengyang.util.ui.ImmersionActivity;
+
+public class ModifyUserPhotoActivity extends ImmersionActivity {
+
+}

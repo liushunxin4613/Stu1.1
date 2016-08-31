@@ -1,0 +1,560 @@
+package com.fengyang.activity;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.adapter.VolleyErrorAdapter;
+import com.fengyang.db.AreaDAO;
+import com.fengyang.dialog.ConfirmDialog;
+import com.fengyang.dialog.DatePickerDialog;
+import com.fengyang.dialog.LoadingDialog;
+import com.fengyang.dialog.LoadingDialog.OnBackPressedLisener;
+import com.fengyang.dialog.MultiChoiceDialog;
+import com.fengyang.entity.AppPartTime;
+import com.fengyang.entity.OubaArea;
+import com.fengyang.model.Json;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.util.Config;
+import com.fengyang.util.FormatUtils;
+import com.fengyang.util.ui.ImmersionActivity;
+
+public class PartTimeDetailEditActivity extends ImmersionActivity implements
+		OnClickListener {
+	private static String TAG = "ParttimeDetailEditActivity";
+	private static final String TAG_GET_PART = "getPartDetail";
+	private AppPartTime partTime;
+	private LoadingDialog dialog;
+	private TextView partClassTV;
+	private TextView titleET;
+	private EditText detailET;
+	private TextView paywayTV;
+	private TextView timeTypeSpinner;
+	private Spinner payTypeSpinner;// 结算方式
+	private EditText payET;// 工资金额
+	private Spinner payUnitSpinner;// 工资计资方式
+	private EditText numET;// 数量
+	private EditText phoneET;// 电话
+	private EditText placeET;// 详细地址
+	private TextView locationTV;// 工作地点
+	private OubaArea province;
+	private OubaArea city;
+	private OubaArea distrct;
+	private static int PART_REQUEST = 1;
+	/**
+	 * 标记工作时间是否设置完成
+	 */
+	private boolean isTimeSetUp = true;
+	/**
+	 * 标记是否重新选择地点
+	 */
+	private boolean isReSelectArea = false;
+
+	private String[] workTimeType;
+	private RequestQueue mQueue;
+	private OnDateSetListener dateSetListener;
+	private Calendar calendar = Calendar.getInstance();
+
+	private boolean timeSelect[] = new boolean[7];
+	public static final String PARTTIME_DETAIL_EDITACTION = "PartTimeEdit";
+	public static final String PARTTIME_DETAIL_EDITA_PARTTIMEID = "PartTimeID";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_part_time_detail_edit);
+		setStatusColor(getResources().getColor(R.color.immersionColor));
+		mQueue = Volley.newRequestQueue(getApplicationContext());
+		partTime = new AppPartTime();
+		setActionBar();
+		setStatusColor(getResources().getColor(R.color.immersionColor));
+		repareUI();
+		getData();
+		dateSetListener = new OnDateSetListener() {
+
+			@Override
+			public void onDateSet(DatePicker view, int year, int monthOfYear,
+					int dayOfMonth) {
+				String separete = getResources().getString(
+						R.string.publish_job_time_separate);
+				String text = year
+						+ separete
+						+ (monthOfYear + 1)
+						+ separete
+						+ dayOfMonth
+						+ getResources().getString(
+								R.string.publish_job_time_end_text);
+				timeTypeSpinner.setText(text);
+				calendar.set(year, monthOfYear, dayOfMonth);
+				isTimeSetUp = true;
+			}
+		};
+	}
+
+	private void setActionBar() {
+		getActionBar().setDisplayShowHomeEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+		LayoutInflater inflator = (LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		// 如果parent为null 那么xml文件的FrameLayout布局参数会失效
+		View v = inflator.inflate(R.layout.actionbar_center_title_layout,
+				new LinearLayout(getApplicationContext()), false);
+		TextView titleView = (TextView) v.findViewById(R.id.actionBar_titel);
+		titleView.setText(R.string.title_activity_parttime_detail_edit);
+
+		getActionBar().setDisplayShowCustomEnabled(true);
+		getActionBar().setCustomView(v);
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case android.R.id.home:
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_null, menu);
+		return true;
+	}
+
+	public void repareUI() {
+		partClassTV = (TextView) findViewById(R.id.edit_part_class_show);
+		titleET = (TextView) findViewById(R.id.editpart_partname);
+		detailET = (EditText) findViewById(R.id.edit_input_detail);
+		paywayTV = (TextView) findViewById(R.id.editpart_part_time_type);
+		timeTypeSpinner = (TextView) findViewById(R.id.edit_part_time_type_);
+		payTypeSpinner = (Spinner) findViewById(R.id.publish_part_pay_type);
+		payET = (EditText) findViewById(R.id.edit_input_price);
+		payUnitSpinner = (Spinner) findViewById(R.id.publish_part_pay_unit);
+		numET = (EditText) findViewById(R.id.edit_input_num);
+		phoneET = (EditText) findViewById(R.id.edit_input_phone);
+		locationTV = (TextView) findViewById(R.id.edit_part_locationTV);
+		placeET = (EditText) findViewById(R.id.edit_part_input_place);
+
+		workTimeType = getResources().getStringArray(
+				R.array.job_time_type_entries);
+		// partClass = new AppPartClass();
+	}
+
+	private void getData() {
+		int pId = getIntent().getIntExtra("pId", -1);
+		Log.d(TAG, " pId = " + String.valueOf(pId));
+		Uri.Builder builder = Uri.parse(Config.URL_GET_PART_DETAIL).buildUpon();
+		builder.appendQueryParameter("id", String.valueOf(pId));
+		Log.d(TAG, " builder = " + builder.toString());
+		JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						dialog.dismiss();
+						if (json.isSuccess()) {
+							partTime = JSON.parseObject(json.getObj()
+									.toString(), AppPartTime.class);
+							fillDate(partTime);
+							if (partTime.getTimeType() == 0) {
+								setTimeSelect(partTime);
+							}
+						} else {
+							MainActivity.showToast(getApplicationContext(),
+									R.string.error_get_data);
+						}
+					}
+				}, new VolleyErrorAdapter(getApplicationContext()) {
+					@Override
+					protected void onOccurError(VolleyError error) {
+						super.onOccurError(error);
+						dialog.dismiss();
+					}
+				});
+		request.setTag(TAG_GET_PART);
+		mQueue.add(request);
+		mQueue.start();
+
+		dialog = new LoadingDialog(getString(R.string.dialog_loading));
+		dialog.setOnBackPressedListener(new OnBackPressedLisener() {
+
+			@Override
+			public void onBackPressed() {
+				dialog.dismiss();
+				mQueue.cancelAll(TAG_GET_PART);
+			}
+		});
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		dialog.show(ft, TAG);
+	}
+
+	private void fillDate(AppPartTime partTime) {
+		partClassTV.setText(partTime.getAppPartClass().getClass_());
+		titleET.setText(partTime.getPartTimeName());
+		detailET.setText(partTime.getJobDescription());
+		paywayTV.setText(workTimeType[partTime.getTimeType()]);
+		numET.setText(String.valueOf(partTime.getPartNum()));
+		phoneET.setText(partTime.getPhone());
+		placeET.setText(partTime.getAddress());
+		StringBuffer area = new StringBuffer();
+		area.append(partTime.getOubaAreaByProId().getAreaName() + " ");
+		area.append(partTime.getOubaAreaByCityId().getAreaName() + " ");
+		area.append(partTime.getOubaAreaByDisId().getAreaName());
+		locationTV.setText(area.toString());
+		payET.setText(String.valueOf(partTime.getPay()));
+		payUnitSpinner.setSelection(partTime.getPayUnit());
+		payTypeSpinner.setSelection(partTime.getPayWay());
+		if (partTime.getTimeType() == 0) {
+			StringBuffer sb = new StringBuffer();
+			String[] week = getResources().getStringArray(
+					R.array.sort_week_array);
+			String[] work = partTime.getTimeDescription().split(
+					Config.WORK_TIME_SPLIT);
+			for (int i = 0; i < work.length; i++) {
+				int index = Integer.parseInt(work[i]);
+				sb.append(week[index] + getString(R.string.punctuation_pause));
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			timeTypeSpinner.setText(sb.toString());
+		} else if (partTime.getTimeType() == 1) {
+			timeTypeSpinner.setText(FormatUtils.dateFormat(partTime
+					.getEndTime()));
+		}
+	}
+
+	/**
+	 * 显示选择周的对话框
+	 */
+	private void showWeekSelect() {
+		MultiChoiceDialog dialog = new MultiChoiceDialog(this,
+				R.array.job_time_week, timeSelect);
+		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					String[] week = getResources().getStringArray(
+							R.array.sort_week_array);
+					String pauseMark = getResources().getString(
+							R.string.punctuation_pause);
+					boolean[] choice = ((MultiChoiceDialog) dialog)
+							.getChoiceItem();
+					StringBuffer sb = new StringBuffer();
+					for (int i = 0; i < choice.length; i++) {
+						timeSelect[i] = choice[i];
+						if (choice[i])
+							sb.append(week[i] + pauseMark);
+					}
+					sb.deleteCharAt(sb.length() - 1);
+					timeTypeSpinner.setText(sb.toString());
+					timeTypeSpinner.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+					isTimeSetUp = true;
+					break;
+				case DialogInterface.BUTTON_NEGATIVE:
+					break;
+				}
+			}
+		};
+
+		dialog.setTitle(getString(R.string.publish_job_time_area));
+		dialog.setOnclickListener(listener);
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		dialog.show(ft, TAG);
+	}
+
+	private void endTimeSelect() {
+		calendar.setTime(new Date());
+		// calendar.set(Calendar.DAY_OF_MONTH,
+		// calendar.get(Calendar.DAY_OF_MONTH) + 1);
+		// 默认为三天后
+		DatePickerDialog dialog = new DatePickerDialog(dateSetListener,
+				calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+				calendar.get(Calendar.DAY_OF_MONTH) + 3);
+		dialog.setTitle(getString(R.string.publish_job_end_time));
+		// 最小截止时间为明天
+		dialog.setMinDate(calendar.getTimeInMillis() + 24 * 3600000);
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		dialog.show(ft, TAG);
+	}
+
+	/**
+	 * 选择地区
+	 */
+	private void chooseArea() {
+		Intent intent = new Intent(PartTimeDetailEditActivity.this,
+				ChooseListActivity.class);
+		intent.putExtra(ChooseListActivity.KEY_DAO_CLASS, AreaDAO.class);
+		startActivityForResult(intent, PART_REQUEST);
+	}
+
+	public void onClick(View v) {
+		int id = v.getId();
+		switch (id) {
+
+		case R.id.publish_part_location:
+
+			chooseArea();
+			break;
+
+		case R.id.edit_part_time_type_:
+			int item = partTime.getTimeType();
+			if (item == 0) {
+				showWeekSelect();
+			} else if (item == 1) {
+				endTimeSelect();
+			}
+			break;
+		case R.id.publish_part_btn:
+			savadata();
+
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == Activity.RESULT_OK && requestCode == PART_REQUEST) {
+			ArrayList<Integer> choosedId = null;
+			choosedId = data
+					.getIntegerArrayListExtra(ChooseListActivity.KEY_CHOOSED_LIST);
+			StringBuffer sb = new StringBuffer();
+			AreaDAO areaDAO = new AreaDAO(this);
+			for (int i = 0; i < choosedId.size(); i++) {
+				if (i == 0) {
+					province = areaDAO.queryById(choosedId.get(i));
+				} else if (i == 1) {
+					city = areaDAO.queryById(choosedId.get(i));
+				} else if (i == 2) {
+					distrct = areaDAO.queryById(choosedId.get(i));
+				}
+				sb.append(areaDAO.queryById(choosedId.get(i)).getAreaName()
+						+ " ");
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			locationTV.setText(sb.toString());
+			isReSelectArea = true;
+		}
+
+	}
+
+	/*
+	 * 检查地域是否选择
+	 */
+
+	private void checkArea() {
+		if (isReSelectArea == false) {
+
+			province = partTime.getOubaAreaByProId();
+			city = partTime.getOubaAreaByCityId();
+			distrct = partTime.getOubaAreaByDisId();
+		}
+
+	}
+
+	/**
+	 * 检查用户输入合法性
+	 * 
+	 * @return
+	 */
+	private boolean checkData() {
+		checkArea();
+		if (detailET.getText().length() == 0) {
+			MainActivity.showToast(this, R.string.publish_job_time_tip_detail);
+			detailET.requestFocus();
+			detailET.requestFocusFromTouch();
+			return false;
+		}
+		if (partTime.getTimeType() == 0 && !isTimeSetUp) {
+			MainActivity.showToast(this,
+					R.string.publish_job_time_tip_work_time);
+			return false;
+		}
+		if (partTime.getTimeType() == 1 && !isTimeSetUp) {
+			MainActivity
+					.showToast(this, R.string.publish_job_time_tip_end_time);
+			return false;
+		}
+		if (payET.getText().length() == 0) {
+			MainActivity.showToast(this, R.string.publish_job_time_tip_pay);
+			payET.requestFocus();
+			payET.requestFocusFromTouch();
+			return false;
+		}
+		if (numET.getText().length() == 0) {
+			MainActivity.showToast(this, R.string.publish_job_time_tip_num);
+			numET.requestFocus();
+			numET.requestFocusFromTouch();
+			return false;
+		}
+		if (phoneET.getText().length() == 0) {
+			MainActivity.showToast(this,
+					R.string.publish_job_time_tip_phone_require);
+			phoneET.requestFocus();
+			phoneET.requestFocusFromTouch();
+			return false;
+		}
+		if (FormatUtils.praseStringType(phoneET.getText().toString()) != 1
+				&& FormatUtils.praseStringType(phoneET.getText().toString()) != 3) {
+			MainActivity.showToast(this,
+					R.string.publish_job_time_tip_phone_error);
+			phoneET.requestFocus();
+			phoneET.requestFocusFromTouch();
+			return false;
+		}
+		if (province == null) {
+			MainActivity
+					.showToast(this, R.string.publish_job_time_tip_location);
+			return false;
+		}
+		if (placeET.getText().length() == 0) {
+			MainActivity.showToast(this, R.string.publish_job_time_tip_place);
+			placeET.requestFocus();
+			placeET.requestFocusFromTouch();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 提交数据到服务器
+	 */
+	private void submitData() {
+		if (checkData()) {
+			partTime.setPartTimeId(partTime.getPartTimeId());
+			partTime.setJobDescription(detailET.getText().toString());
+			if (partTime.getTimeType() == 0) {
+				StringBuffer timeDescription = new StringBuffer();
+				for (int i = 0; i < timeSelect.length; i++) {
+					if (timeSelect[i]) {
+						timeDescription.append(i + Config.WORK_TIME_SPLIT);
+					}
+				}
+				timeDescription.deleteCharAt(timeDescription.length() - 1);
+				Log.d("timeDescription", timeDescription.toString());
+				partTime.setTimeDescription(timeDescription.toString());
+			} else if (partTime.getTimeType() == 1) {
+				Log.d("partTim", partTime.getTimeType() + "/////");
+				partTime.setEndTime(calendar.getTime());
+				Log.d("partTim", calendar.getTime().toString());
+			}
+			partTime.setPayWay(payTypeSpinner.getSelectedItemPosition());
+			partTime.setPayUnit(payUnitSpinner.getSelectedItemPosition());
+			partTime.setPay(Double.valueOf(payET.getText().toString()));
+			partTime.setPartNum(Integer.valueOf(numET.getText().toString()));
+			partTime.setPhone(phoneET.getText().toString());
+			partTime.setOubaAreaByProId(province);
+			partTime.setOubaAreaByCityId(city);
+			partTime.setOubaAreaByDisId(distrct);
+			partTime.setAddress(placeET.getText().toString());
+			Uri.Builder builder = Uri.parse(
+					Config.URL_GET_PARTTIME_INFORMATION_UPDATE).buildUpon();
+			builder.appendQueryParameter("jsonStr",
+					FormatUtils.getJSONString(partTime));
+			StringRequest updaterequest = new StringRequest(Method.GET,
+					builder.toString(), new Response.Listener<String>() {
+						@Override
+						public void onResponse(String response) {
+
+							Json json = JSON.parseObject(response.toString(),
+									Json.class);
+							if (json.isSuccess()) {
+								Intent intent = new Intent();
+								intent.setAction(PARTTIME_DETAIL_EDITACTION);
+								intent.putExtra(
+										PARTTIME_DETAIL_EDITA_PARTTIMEID,
+										partTime.getPartTimeId());
+								PartTimeDetailEditActivity.this
+										.sendBroadcast(intent);
+								finish();
+								MainActivity.showToast(
+										PartTimeDetailEditActivity.this,
+										R.string.publish_job_time_edit_success);
+							} else {
+								MainActivity.showToast(
+										PartTimeDetailEditActivity.this,
+										R.string.publish_job_time_edit_error);
+
+							}
+
+							// Log.d(SIGN_LAG, response);
+
+						}
+					}, new VolleyErrorAdapter(this) {
+					});
+			mQueue.add(updaterequest);
+			mQueue.start();
+
+		}
+
+	}
+
+	private void setTimeSelect(AppPartTime appPartTime) {
+		String[] time = appPartTime.getTimeDescription().split(
+				Config.WORK_TIME_SPLIT);
+		for (String string : time) {
+
+			timeSelect[Integer.parseInt(string)] = true;
+		}
+	}
+
+	private void savadata() {
+		ConfirmDialog dialog = new ConfirmDialog(
+				ConfirmDialog.CONFIRM_STYLE_BOTTOM,
+				getString(R.string.dialog_title_save),
+				getString(R.string.dialog_save),
+				getString(R.string.dialog_sure),
+				getString(R.string.dialog_cancel));
+		dialog.setOnclickListener(new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					submitData();
+					break;
+				case DialogInterface.BUTTON_NEGATIVE:
+					break;
+				}
+			}
+		});
+		dialog.show(getSupportFragmentManager().beginTransaction(), TAG);
+	}
+}

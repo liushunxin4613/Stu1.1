@@ -1,0 +1,159 @@
+package com.fengyang.fragment;
+
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.Listener;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.activity.ReSetActivity;
+import com.fengyang.adapter.VolleyErrorAdapter;
+import com.fengyang.model.Json;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.util.Config;
+import com.fengyang.util.FormatUtils;
+
+public class FindByEmailFragment extends Fragment implements OnClickListener {
+
+	protected static final String TAG = "FindByEmailFragment";
+
+	private static final String TAG_GET_CODE = "getVerifyCode";
+
+	private static final Object TAG_VERIFY_CODE = "verifyCode";
+
+	private EditText emailET;
+
+	private EditText codeET;
+
+	private Button getCodeBtn;
+
+	private Button verifyBtn;
+
+	private RequestQueue mQueue;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mQueue = Volley.newRequestQueue(getActivity());
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_find_by_email,
+				container, false);
+
+		emailET = (EditText) rootView.findViewById(R.id.find_psd_email);
+		codeET = (EditText) rootView
+				.findViewById(R.id.find_psd_checkcode);
+		getCodeBtn = (Button) rootView
+				.findViewById(R.id.find_psd_by_email_get_code);
+		verifyBtn = (Button) rootView.findViewById(R.id.find_psd_email_submit);
+		perpareUI();
+		return rootView;
+	}
+
+	private void perpareUI() {
+		getCodeBtn.setOnClickListener(this);
+		verifyBtn.setOnClickListener(this);
+	}
+
+	@Override
+	public void onClick(View v) {
+		int id = v.getId();
+		switch (id) {
+		case R.id.find_psd_by_email_get_code:
+			requestVerifyCode();
+			break;
+		case R.id.find_psd_email_submit:
+			verifyCode();
+			break;
+		}
+	}
+
+	/**
+	 * 发送请求获取验证码
+	 */
+	private void requestVerifyCode() {
+		// TODO Auto-generated method stub
+		if (emailET.getText().length() == 0) {
+			MainActivity.showToast(getActivity(), R.string.authentication_email_require);
+			return;
+		}
+		if (FormatUtils.praseStringType(emailET.getText().toString()) != 2) {
+			MainActivity.showToast(getActivity(), R.string.authentication_email_error);
+			return;
+		}
+		Uri.Builder builder = Uri.parse(Config.URL_GET_SECOND_DETAIL)
+				.buildUpon();
+		builder.appendQueryParameter("email", "");
+		JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+						} else {
+							MainActivity.showToast(getActivity(),
+									R.string.error_get_data);
+						}
+					}
+				}, new VolleyErrorAdapter(getActivity()) {
+				});
+		request.setTag(TAG_GET_CODE);
+		mQueue.add(request);
+		mQueue.start();
+	}
+
+	/**
+	 * 验证验证码是否正确
+	 */
+	private void verifyCode() {
+		if (codeET.getText().length() == 0) {
+			MainActivity.showToast(getActivity(), R.string.authentication_number);
+			return;
+		}
+		Uri.Builder builder = Uri.parse(Config.URL_GET_SECOND_DETAIL)
+				.buildUpon();
+		builder.appendQueryParameter("email", "");
+		builder.appendQueryParameter("code", "");
+		JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+						} else {
+							MainActivity.showToast(getActivity(),
+									R.string.error_get_data);
+						}
+					}
+				}, new VolleyErrorAdapter(getActivity()) {
+				});
+		request.setTag(TAG_VERIFY_CODE);
+		mQueue.add(request);
+		mQueue.start();
+	}
+}

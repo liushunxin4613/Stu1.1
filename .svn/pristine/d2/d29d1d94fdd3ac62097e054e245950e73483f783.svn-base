@@ -1,0 +1,132 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * AppSecondComment entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppSecondComment implements java.io.Serializable {
+
+	// Fields
+
+	private Long commentId;
+	private User oubaMember;
+	private AppSecondHand appSecondHand;
+	private String commentUserName;
+	private String commentContent;
+	private Short commentRank;
+	private Timestamp commentTime;
+	private Short commentIf;
+	private Set appSecondCommentPictures = new HashSet(0);
+
+	// Constructors
+
+	/** default constructor */
+	public AppSecondComment() {
+	}
+
+	/** minimal constructor */
+	public AppSecondComment(User oubaMember, AppSecondHand appSecondHand,
+			String commentUserName, String commentContent, Short commentRank,
+			Timestamp commentTime, Short commentIf) {
+		this.oubaMember = oubaMember;
+		this.appSecondHand = appSecondHand;
+		this.commentUserName = commentUserName;
+		this.commentContent = commentContent;
+		this.commentRank = commentRank;
+		this.commentTime = commentTime;
+		this.commentIf = commentIf;
+	}
+
+	/** full constructor */
+	public AppSecondComment(User oubaMember, AppSecondHand appSecondHand,
+			String commentUserName, String commentContent, Short commentRank,
+			Timestamp commentTime, Short commentIf, Set appSecondCommentPictures) {
+		this.oubaMember = oubaMember;
+		this.appSecondHand = appSecondHand;
+		this.commentUserName = commentUserName;
+		this.commentContent = commentContent;
+		this.commentRank = commentRank;
+		this.commentTime = commentTime;
+		this.commentIf = commentIf;
+		this.appSecondCommentPictures = appSecondCommentPictures;
+	}
+
+	// Property accessors
+
+	public Long getCommentId() {
+		return this.commentId;
+	}
+
+	public void setCommentId(Long commentId) {
+		this.commentId = commentId;
+	}
+
+	public User getOubaMember() {
+		return this.oubaMember;
+	}
+
+	public void setOubaMember(User oubaMember) {
+		this.oubaMember = oubaMember;
+	}
+
+	public AppSecondHand getAppSecondHand() {
+		return this.appSecondHand;
+	}
+
+	public void setAppSecondHand(AppSecondHand appSecondHand) {
+		this.appSecondHand = appSecondHand;
+	}
+
+	public String getCommentUserName() {
+		return this.commentUserName;
+	}
+
+	public void setCommentUserName(String commentUserName) {
+		this.commentUserName = commentUserName;
+	}
+
+	public String getCommentContent() {
+		return this.commentContent;
+	}
+
+	public void setCommentContent(String commentContent) {
+		this.commentContent = commentContent;
+	}
+
+	public Short getCommentRank() {
+		return this.commentRank;
+	}
+
+	public void setCommentRank(Short commentRank) {
+		this.commentRank = commentRank;
+	}
+
+	public Timestamp getCommentTime() {
+		return this.commentTime;
+	}
+
+	public void setCommentTime(Timestamp commentTime) {
+		this.commentTime = commentTime;
+	}
+
+	public Short getCommentIf() {
+		return this.commentIf;
+	}
+
+	public void setCommentIf(Short commentIf) {
+		this.commentIf = commentIf;
+	}
+
+	public Set getAppSecondCommentPictures() {
+		return this.appSecondCommentPictures;
+	}
+
+	public void setAppSecondCommentPictures(Set appSecondCommentPictures) {
+		this.appSecondCommentPictures = appSecondCommentPictures;
+	}
+
+}

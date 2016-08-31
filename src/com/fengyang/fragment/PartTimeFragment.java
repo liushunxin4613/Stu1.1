@@ -1,0 +1,290 @@
+package com.fengyang.fragment;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONObject;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.activity.PartDetailActivity;
+import com.fengyang.adapter.PartTimeAdapter;
+import com.fengyang.adapter.VolleyErrorAdapter;
+import com.fengyang.customLib.DynamicListView;
+import com.fengyang.customLib.DynamicListView.LoadMoreListener;
+import com.fengyang.customLib.DynamicListView.RefreshListener;
+import com.fengyang.dialog.LoadingDialog;
+import com.fengyang.dialog.LoadingDialog.OnBackPressedLisener;
+import com.fengyang.entity.AppPartTime;
+import com.fengyang.model.Json;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.util.Config;
+
+public class PartTimeFragment extends Fragment implements RefreshListener,
+		LoadMoreListener, OnItemClickListener {
+
+	private DynamicListView listView;
+
+	private PartTimeAdapter adapter;
+
+	private int page;
+
+	private String key;
+
+	private RequestQueue mQueue;
+
+	private LoadingDialog dialog;
+
+	private static PartTimeFragment instance;
+
+	private static final String TAG = "PartTimeFragment";
+	private static final String TAG_GET_LIST_NEW = "GetPartListNew";
+	private static final String TAG_GET_LIST_MORE = "GetPartListMore";
+
+	public static PartTimeFragment getInstance() {
+		if (instance == null)
+			instance = new PartTimeFragment();
+		return instance;
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_second_hand_layout,
+				container, false);
+
+		listView = (DynamicListView) rootView
+				.findViewById(R.id.second_listView);
+		mQueue = Volley.newRequestQueue(getActivity());
+
+		listView.setOnMoreListener(this);
+		listView.setOnRefreshListener(this);
+
+		listView.setOnItemClickListener(this);
+
+		key = null;
+		page = 1;
+		getData();
+		return rootView;
+	}
+
+	public void searchData(String key) {
+		if (key != null && key.length() == 0)
+			key = null;
+		this.key = key;
+		getData();
+	}
+
+	private List<AppPartTime> parseData(Object obj) {
+		List<AppPartTime> data = new ArrayList<AppPartTime>();
+		@SuppressWarnings("unchecked")
+		List<com.alibaba.fastjson.JSONObject> list = JSON.parseObject(
+				obj.toString(), List.class);
+		for (com.alibaba.fastjson.JSONObject jsonObject : list) {
+			data.add(JSON.parseObject(jsonObject.toJSONString(),
+					AppPartTime.class));
+		}
+
+		return data;
+	}
+
+	private void getData() {
+		Uri.Builder builder = Uri.parse(Config.URL_GET_PART_LIST).buildUpon();
+		builder.appendQueryParameter("sort", "publishTime");
+		builder.appendQueryParameter("order", "DESC");
+		builder.appendQueryParameter("page", String.valueOf(page));
+		builder.appendQueryParameter("pageSize",
+				String.valueOf(Config.LIST_PAGE_SIZE));
+		if (key != null)
+			builder.appendQueryParameter("key", key);
+		builder.appendQueryParameter("isEnable", "true");
+		JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (dialog != null)
+							dialog.dismiss();
+						if (json.isSuccess()) {
+							List<AppPartTime> list = parseData(json.getObj());
+							adapter = new PartTimeAdapter(list, getActivity());
+							if (list.size() < Config.LIST_PAGE_SIZE) {
+								listView.setOnMoreListener(null);
+							}
+							listView.setAdapter(adapter);
+						} else {
+							MainActivity.showToast(getActivity(),
+									R.string.error_get_data);
+						}
+					}
+				}, new VolleyErrorAdapter(getActivity()) {
+					@Override
+					protected void onOccurError(VolleyError error) {
+						super.onOccurError(error);
+						if (dialog != null)
+							dialog.dismiss();
+					}
+				});
+		request.setTag(TAG_GET_LIST_NEW);
+		mQueue.add(request);
+		mQueue.start();
+
+		dialog = new LoadingDialog(getString(R.string.dialog_loading));
+		dialog.setOnBackPressedListener(new OnBackPressedLisener() {
+
+			@Override
+			public void onBackPressed() {
+				if (dialog != null)
+					dialog.dismiss();
+				mQueue.cancelAll(TAG_GET_LIST_NEW);
+			}
+		});
+		FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+		dialog.show(ft, TAG);
+
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (dialog != null)
+			dialog.dismiss();
+	}
+
+	@Override
+	public boolean onRefresh(DynamicListView dynamicListView) {
+		Uri.Builder builder = Uri.parse(Config.URL_GET_PART_LIST).buildUpon();
+		builder.appendQueryParameter("sort", "publishTime");
+		builder.appendQueryParameter("order", "DESC");
+		builder.appendQueryParameter("page", "1");
+		builder.appendQueryParameter("pageSize",
+				String.valueOf(Config.LIST_PAGE_SIZE));
+		if (key != null)
+			builder.appendQueryParameter("key", key);
+		builder.appendQueryParameter("isEnable", "true");
+		JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							List<AppPartTime> list = parseData(json.getObj());
+							adapter.addItemsToHead(list);
+						} else {
+							MainActivity.showToast(getActivity(),
+									R.string.error_get_data);
+						}
+						listView.doneRefresh();
+					}
+				}, new VolleyErrorAdapter(getActivity()) {
+					@Override
+					protected void onOccurError(VolleyError error) {
+						super.onOccurError(error);
+						listView.doneRefresh();
+					}
+				});
+		request.setTag(TAG_GET_LIST_NEW);
+		mQueue.add(request);
+		mQueue.start();
+		return false;
+	}
+
+	@Override
+	public boolean onLoadMore(DynamicListView dynamicListView) {
+		Uri.Builder builder = Uri.parse(Config.URL_GET_PART_LIST).buildUpon();
+		builder.appendQueryParameter("sort", "publishTime");
+		builder.appendQueryParameter("order", "DESC");
+		builder.appendQueryParameter("page", String.valueOf(++page));
+		builder.appendQueryParameter("pageSize",
+				String.valueOf(Config.LIST_PAGE_SIZE));
+		if (key != null)
+			builder.appendQueryParameter("key", key);
+		builder.appendQueryParameter("isEnable", "true");
+		JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							List<AppPartTime> list = parseData(json.getObj());
+							if (list.size() < Config.LIST_PAGE_SIZE) {
+								listView.setOnMoreListener(null);
+							}
+							adapter.addItems(list);
+						} else {
+							MainActivity.showToast(getActivity(),
+									R.string.error_get_data);
+						}
+						listView.doneMore();
+					}
+				}, new VolleyErrorAdapter(getActivity()) {
+					@Override
+					protected void onOccurError(VolleyError error) {
+						listView.doneMore();
+						super.onOccurError(error);
+					}
+				});
+		request.setTag(TAG_GET_LIST_MORE);
+		mQueue.add(request);
+		mQueue.start();
+		return false;
+	}
+
+	@Override
+	public void onDestroy() {
+		if (mQueue != null) {
+			mQueue.cancelAll(TAG_GET_LIST_NEW);
+			mQueue.cancelAll(TAG_GET_LIST_MORE);
+		}
+		super.onDestroy();
+	}
+
+	@Override
+	public void onCancelRefresh(DynamicListView dynamicListView) {
+		if (mQueue != null) {
+			mQueue.cancelAll(TAG_GET_LIST_NEW);
+		}
+	}
+
+	@Override
+	public void onCancelLoadMore(DynamicListView dynamicListView) {
+		if (mQueue != null) {
+			mQueue.cancelAll(TAG_GET_LIST_MORE);
+		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Intent intent = new Intent(getActivity(), PartDetailActivity.class);
+		intent.putExtra(PartDetailActivity.KEY_PART_ID, (int) id);
+		startActivity(intent);
+	}
+}

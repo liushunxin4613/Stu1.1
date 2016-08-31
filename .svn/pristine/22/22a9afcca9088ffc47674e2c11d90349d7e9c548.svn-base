@@ -1,0 +1,71 @@
+package com.fengyang.entity;
+
+/**
+ * AppSecondCommentPicture entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppSecondCommentPicture implements java.io.Serializable {
+
+	// Fields
+
+	private Long scpId;
+	private AppSecondComment appSecondComment;
+	private String commentImage;
+	private Integer commentImageSort;
+
+	// Constructors
+
+	/** default constructor */
+	public AppSecondCommentPicture() {
+	}
+
+	/** minimal constructor */
+	public AppSecondCommentPicture(AppSecondComment appSecondComment,
+			String commentImage) {
+		this.appSecondComment = appSecondComment;
+		this.commentImage = commentImage;
+	}
+
+	/** full constructor */
+	public AppSecondCommentPicture(AppSecondComment appSecondComment,
+			String commentImage, Integer commentImageSort) {
+		this.appSecondComment = appSecondComment;
+		this.commentImage = commentImage;
+		this.commentImageSort = commentImageSort;
+	}
+
+	// Property accessors
+
+	public Long getScpId() {
+		return this.scpId;
+	}
+
+	public void setScpId(Long scpId) {
+		this.scpId = scpId;
+	}
+
+	public AppSecondComment getAppSecondComment() {
+		return this.appSecondComment;
+	}
+
+	public void setAppSecondComment(AppSecondComment appSecondComment) {
+		this.appSecondComment = appSecondComment;
+	}
+
+	public String getCommentImage() {
+		return this.commentImage;
+	}
+
+	public void setCommentImage(String commentImage) {
+		this.commentImage = commentImage;
+	}
+
+	public Integer getCommentImageSort() {
+		return this.commentImageSort;
+	}
+
+	public void setCommentImageSort(Integer commentImageSort) {
+		this.commentImageSort = commentImageSort;
+	}
+
+}

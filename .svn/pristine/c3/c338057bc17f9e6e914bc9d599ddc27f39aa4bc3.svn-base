@@ -1,0 +1,629 @@
+package com.fengyang.fragment;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.activity.ChooseListActivity;
+import com.fengyang.activity.PreviewActivity;
+import com.fengyang.activity.SecondDetailHistoryActivity;
+import com.fengyang.adapter.PhotoAdapter;
+import com.fengyang.adapter.VolleyErrorAdapter;
+import com.fengyang.customLib.ExpandGridView;
+import com.fengyang.db.AreaDAO;
+import com.fengyang.db.PublishHistoryDAO;
+import com.fengyang.db.SecondClassDAO;
+import com.fengyang.dialog.ChooseListDialog;
+import com.fengyang.dialog.LoadingDialog;
+import com.fengyang.dialog.LoadingDialog.OnBackPressedLisener;
+import com.fengyang.entity.AppSecondClass;
+import com.fengyang.entity.AppSecondHand;
+import com.fengyang.entity.OubaArea;
+import com.fengyang.entity.User;
+import com.fengyang.entity.UserDetail;
+import com.fengyang.model.FileInfo;
+import com.fengyang.model.Json;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.stu.StuApplication;
+import com.fengyang.util.Config;
+import com.fengyang.util.FormatUtils;
+import com.fengyang.util.UriPrase;
+import com.fengyang.volleyTool.MultipartRequest;
+import com.fengyang.volleyTool.MultipartRequestParams;
+
+public class PublishSecondFragment extends Fragment implements OnClickListener,
+		android.content.DialogInterface.OnClickListener {
+
+	private static Fragment fragment;
+
+	private ExpandGridView gridView;
+
+	private PhotoAdapter adapter;
+
+	/**
+	 * 最多可以添加的图片数量
+	 */
+	private final int maxImageCount = 9;
+
+	private AppSecondClass firstClass;
+	private AppSecondClass secondClass;
+	private LinearLayout classView;
+	private TextView classTV;
+	private EditText nameView;
+	private EditText detailView;
+	private EditText priceView;
+	private EditText numView;
+	private EditText phoneView;
+	private LinearLayout locationView;
+	private TextView locationTV;
+	private EditText detailAddressView;
+	// private TCollege college;
+	private Button submitBtn;
+
+	private OubaArea province;
+	private OubaArea city;
+	private OubaArea distrct;
+
+	private ChooseListDialog choosePicDialog;
+
+	/**
+	 * 拍照暂存的uri
+	 */
+	private Uri tempUri;
+	/**
+	 * 拍照暂存的file
+	 */
+	private File tempFile;
+	/**
+	 * 截图后保存图片的Uri
+	 */
+	private Uri cropUri;
+
+	private LoadingDialog dialog;
+
+	private RequestQueue mQueue;
+	/**
+	 * 上传图片的数量
+	 */
+	private Integer count = 0;
+
+	private AppSecondHand secondHand;
+
+	private int[] sexRId = { R.string.detail_truename_famale,
+			R.string.detail_truename_male };
+
+	public static final int REQUEST_CHOOSE_IMAGE = 0;
+	public static final int REQUEST_TAKE_PHOTO = 1;
+	public static final int REQUEST_PREVIEW_IMAGE = 2;
+	public static final int REQUEST_CROP_IMAGE = 3;
+	private static final int REQUEST_CHOOSE_CLASS = 4;
+	private static final int REQUEST_CHOOSE_LOCATION = 5;
+	public static final String TAG = "publishSecondFragment";
+	public static final String KEY_URI_DATA = "uriData";
+
+	protected static final String TAG_PUBLISH = "publishSecond";
+
+	public static Fragment getInstance() {
+		if (fragment == null)
+			fragment = new PublishSecondFragment();
+		return fragment;
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+		View rootView = inflater.inflate(R.layout.fragment_publish_second,
+				container, false);
+		gridView = (ExpandGridView) rootView
+				.findViewById(R.id.publish_second_gridView);
+
+		classView = (LinearLayout) rootView
+				.findViewById(R.id.publish_second_class);
+		classTV = (TextView) rootView
+				.findViewById(R.id.publish_second_class_show);
+		nameView = (EditText) rootView.findViewById(R.id.publish_input_name);
+		detailView = (EditText) rootView
+				.findViewById(R.id.publish_input_detail);
+		priceView = (EditText) rootView.findViewById(R.id.publish_input_price);
+		numView = (EditText) rootView.findViewById(R.id.publish_input_num);
+		phoneView = (EditText) rootView.findViewById(R.id.publish_input_phone);
+		locationView = (LinearLayout) rootView
+				.findViewById(R.id.publish_second_location);
+		locationTV = (TextView) rootView
+				.findViewById(R.id.publish_second_location_show);
+		detailAddressView = (EditText) rootView
+				.findViewById(R.id.publish_input_place);
+		submitBtn = (Button) rootView.findViewById(R.id.publish_second_btn);
+
+		ArrayList<Uri> data = null;
+		if (savedInstanceState != null) {
+			data = savedInstanceState.getParcelableArrayList(KEY_URI_DATA);
+		}
+		adapter = new PhotoAdapter(gridView, data);
+		gridView.setAdapter(adapter);
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				int itemCount = parent.getChildCount();
+				if (position == itemCount - 1) { // 添加图片
+					if (itemCount > maxImageCount) {
+						Toast.makeText(
+								getActivity(),
+								getResources()
+										.getString(
+												R.string.publish_second_addimage_enough,
+												maxImageCount),
+								Toast.LENGTH_SHORT).show();
+						return;
+					}
+					choosePicDialog = new ChooseListDialog(getActivity());
+					choosePicDialog
+							.addButton(getString(R.string.dialog_take_photo));
+					choosePicDialog
+							.addButton(getString(R.string.dialog_choose_photo));
+					choosePicDialog
+							.setOnclickListener(PublishSecondFragment.this);
+					FragmentTransaction ft = getChildFragmentManager()
+							.beginTransaction();
+					ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+					choosePicDialog.show(ft, TAG);
+				} else {// 预览图片
+					Intent intent = new Intent(getActivity(),
+							PreviewActivity.class);
+					intent.putExtra(PreviewActivity.KEY_CURRENT_IMAGE, position);
+					intent.putParcelableArrayListExtra(
+							PreviewActivity.KEY_IMAGE_DATA, adapter.getData());
+					startActivityForResult(intent, REQUEST_PREVIEW_IMAGE);
+				}
+			}
+		});
+
+		classView.setOnClickListener(this);
+		locationView.setOnClickListener(this);
+		submitBtn.setOnClickListener(this);
+
+		return rootView;
+	}
+
+	private boolean checkSoftStage() {
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) { // 判断是否存在SD卡
+			return true;
+		} else {
+			Toast.makeText(getActivity(), R.string.sdCard_error,
+					Toast.LENGTH_SHORT).show();
+			return false;
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelableArrayList(KEY_URI_DATA, adapter.getData());
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == Activity.RESULT_OK) {
+			switch (requestCode) {
+			case REQUEST_CHOOSE_IMAGE:
+				Uri uri = data.getData();
+				cropImage(uri);
+				Log.d(TAG, "uri = " + uri.toString());
+				break;
+			case REQUEST_TAKE_PHOTO:
+				Log.i(TAG, "tempUri = " + tempUri);
+				cropImage(tempUri);
+				break;
+			case REQUEST_PREVIEW_IMAGE:
+				ArrayList<Uri> deleteUri = data
+						.getParcelableArrayListExtra(PreviewActivity.KEY_DELETE_DATA);
+				if (deleteUri != null)
+					adapter.deleteItem(deleteUri);
+				break;
+			case REQUEST_CROP_IMAGE:
+				Log.i(TAG, cropUri.toString());
+				adapter.addItem(cropUri);
+				// 删除拍照残余照片
+				if (tempFile != null && tempFile.exists())
+					tempFile.delete();
+				break;
+			case REQUEST_CHOOSE_CLASS:
+				ArrayList<Integer> classId = data
+						.getIntegerArrayListExtra(ChooseListActivity.KEY_CHOOSED_LIST);
+				if (classId.size() == 2) {
+					SecondClassDAO dao = new SecondClassDAO(getActivity());
+					firstClass = dao.queryById(classId.get(0));
+					secondClass = dao.queryById(classId.get(1));
+					classTV.setText(firstClass.getClass_() + " "
+							+ secondClass.getClass_());
+				}
+				break;
+			case REQUEST_CHOOSE_LOCATION:
+				ArrayList<Integer> choosedId = data
+						.getIntegerArrayListExtra(ChooseListActivity.KEY_CHOOSED_LIST);
+				StringBuffer sb = new StringBuffer();
+				AreaDAO areaDAO = new AreaDAO(getActivity());
+				for (int i = 0; i < choosedId.size(); i++) {
+					if (i == 0) {
+						province = areaDAO.queryById(choosedId.get(i));
+					} else if (i == 1) {
+						city = areaDAO.queryById(choosedId.get(i));
+					} else if (i == 2) {
+						distrct = areaDAO.queryById(choosedId.get(i));
+					}
+					sb.append(areaDAO.queryById(choosedId.get(i)).getAreaName()
+							+ " ");
+				}
+				sb.deleteCharAt(sb.length() - 1);
+				locationTV.setText(sb.toString());
+				// int cId = data.getIntExtra(
+				// ChooseCollegeActivity.SELECTED_COLLEGE_ID, -1);
+				// CollegeDAO dao = new CollegeDAO(getActivity());
+				// college = dao.QueryCollegeById(cId);
+				// locationTV.setText(college.getCUniversityName());
+				break;
+			}
+		}
+	}
+
+	/**
+	 * 裁剪图片
+	 * 
+	 * @param uri
+	 */
+	public void cropImage(Uri uri) {
+		if (null == uri)
+			return;
+
+		File dir = getActivity()
+				.getExternalFilesDir(Environment.DIRECTORY_DCIM);
+		String fileName = System.currentTimeMillis() + ".jpg";
+		File saveFile = new File(dir, fileName);
+		cropUri = Uri.fromFile(saveFile);
+
+		Intent intent = new Intent();
+
+		intent.setAction("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");// mUri是已经选择的图片Uri
+		intent.putExtra("crop", "true");
+		intent.putExtra("aspectX", 4);// 裁剪框比例
+		intent.putExtra("aspectY", 3);
+		intent.putExtra("outputX", Config.UPLOAD_IMAGE_WIDTH);// 输出图片大小
+		intent.putExtra("outputY", Config.UPLOAD_IMAGE_HEIGHT);
+		intent.putExtra("scale", true);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);// 输出图片的Uri
+		intent.putExtra("return-data", false);
+		intent.putExtra("noFaceDetection", true);
+		intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+		startActivityForResult(intent, REQUEST_CROP_IMAGE);
+	}
+
+	@Override
+	public void onClick(View v) {
+		int id = v.getId();
+		switch (id) {
+		case R.id.publish_second_location:
+			chooseLocation();
+			break;
+		case R.id.publish_second_class:
+			chooseClass();
+			break;
+		case R.id.publish_second_btn:
+			submitData();
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	private void chooseClass() {
+		Intent intent = new Intent(getActivity(), ChooseListActivity.class);
+		intent.putExtra(ChooseListActivity.KEY_DAO_CLASS, SecondClassDAO.class);
+		startActivityForResult(intent, REQUEST_CHOOSE_CLASS);
+	}
+
+	private void chooseLocation() {
+		// Intent intent = new Intent(getActivity(),
+		// ChooseCollegeActivity.class);
+		// startActivityForResult(intent, REQUEST_CHOOSE_LOCATION);
+		Intent intent = new Intent(getActivity(), ChooseListActivity.class);
+		intent.putExtra(ChooseListActivity.KEY_DAO_CLASS, AreaDAO.class);
+		startActivityForResult(intent, REQUEST_CHOOSE_LOCATION);
+	}
+
+	/**
+	 * 提交数据
+	 */
+	private void submitData() {
+		if (checkData()) {
+			secondHand = new AppSecondHand();
+			StuApplication application = (StuApplication) getActivity()
+					.getApplication();
+			User user = application.getUser();
+			UserDetail userDetail = application.getUserDetail();
+			secondHand.setOubaMember(user);
+			// secondHand.setSecondPublisher("dfdfdf");
+			secondHand.setSecondPublisher(getString(
+					sexRId[userDetail.getSex()], userDetail.getTrueName()
+							.substring(0, 1)));
+			secondHand.setPublisherType(user.getUserType());
+			secondHand.setSecondHandName(nameView.getText().toString());
+			secondHand.setAppSecondClassByFirstType(firstClass);
+			secondHand.setAppSecondClassBySecondType(secondClass);
+			secondHand.setSecondDescription(detailView.getText().toString());
+			secondHand.setSecondHandPrice(Double.valueOf(priceView.getText()
+					.toString()));
+			secondHand.setSecondCount(Integer.valueOf(numView.getText()
+					.toString()));
+			secondHand.setSecondPhone(phoneView.getText().toString());
+			secondHand.setSecondCollected(0);
+			secondHand.setOubaAreaByProId(province);
+			secondHand.setOubaAreaByCityId(city);
+			secondHand.setOubaAreaByDisId(distrct);
+			secondHand.setAddress(detailAddressView.getText().toString());
+			secondHand.setPublishTime(new Timestamp(new Date().getTime()));
+			secondHand.setIsPrccessed(true);
+			secondHand.setSecondVisited(0);
+
+			Uri.Builder builder = Uri.parse(Config.URL_PUBLISH_SECOND)
+					.buildUpon();
+			builder.appendQueryParameter("jsonStr",
+					FormatUtils.getJSONString(secondHand));
+			Log.d(TAG, "URL = " + builder.toString());
+			JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+					builder.toString(), null, new Listener<JSONObject>() {
+
+						@Override
+						public void onResponse(JSONObject response) {
+							Log.d(TAG, "response = " + response);
+							Json json = JSON.parseObject(response.toString(),
+									Json.class);
+							if (json.isSuccess()) {
+								String id = json.getObj().toString();
+								secondHand.setSecondHandId(Integer.valueOf(id));
+								uploadPics(id);
+							} else {
+								dialog.dismiss();
+								MainActivity.showToast(getActivity(),
+										R.string.publish_second_publish_error);
+							}
+						}
+
+					}, new VolleyErrorAdapter(getActivity()) {
+						@Override
+						protected void onOccurError(VolleyError error) {
+							super.onOccurError(error);
+							dialog.dismiss();
+						}
+					});
+			request.setTag(TAG_PUBLISH);
+			mQueue = Volley.newRequestQueue(getActivity());
+			mQueue.add(request);
+			mQueue.start();
+			dialog = new LoadingDialog(
+					getString(R.string.publish_second_publishing));
+			dialog.setOnBackPressedListener(new OnBackPressedLisener() {
+
+				@Override
+				public void onBackPressed() {
+					dialog.dismiss();
+					mQueue.cancelAll(TAG_PUBLISH);
+				}
+			});
+			FragmentTransaction ft = getChildFragmentManager()
+					.beginTransaction();
+			dialog.show(ft, TAG);
+
+		}
+	}
+
+	/**
+	 * 上传图片
+	 * 
+	 * @param id
+	 *            二手物品id
+	 */
+	private void uploadPics(String id) {
+		Uri.Builder builder = Uri.parse(Config.URL_SECOND_UPLOADPIC)
+				.buildUpon();
+		Log.d(TAG, "URL = " + builder.toString());
+		final List<Uri> data = adapter.getData();
+		for (Uri uri : data) {
+			MultipartRequestParams params = new MultipartRequestParams();
+			String path = UriPrase.getPath(getActivity(), uri);
+			File file = new File(path);
+			params.put("id", id);
+			params.put("uploadFileFileName", file.getName());
+			try {
+				params.put("uploadFile", new FileInputStream(file),
+						file.getName(), "application/octet-stream");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			MultipartRequest picRequest = new MultipartRequest(Method.POST,
+					params, builder.toString(), new Listener<JSONObject>() {
+
+						@Override
+						public void onResponse(JSONObject response) {
+							// TODO Auto-generated method stub
+							Log.d(TAG, "response = " + response);
+							Json json = JSON.parseObject(response.toString(),
+									Json.class);
+							if (json.isSuccess()) {
+								onUploadPicSucceed(json.getObj());
+							} else {
+								MainActivity.showToast(getActivity(),
+										R.string.publish_second_publish_error);
+							}
+						}
+					}, new VolleyErrorAdapter(getActivity()) {
+						@Override
+						protected void onOccurError(VolleyError error) {
+							super.onOccurError(error);
+							dialog.dismiss();
+						}
+					});
+			picRequest.setTag(TAG_PUBLISH);
+			mQueue.add(picRequest);
+		}
+		mQueue.start();
+	}
+
+	/**
+	 * 当上传一张图片成功时调用
+	 * 
+	 * @param obj
+	 */
+	private synchronized void onUploadPicSucceed(Object obj) {
+		count++;
+		if (count == 1) {
+			@SuppressWarnings("unchecked")
+			ArrayList<com.alibaba.fastjson.JSONObject> list = JSON.parseObject(
+					obj.toString(), ArrayList.class);
+			FileInfo info = JSON.parseObject(list.get(0).toJSONString(),
+					FileInfo.class);
+			secondHand.setImagePath(info.getFileName());
+		}
+		if (count >= adapter.getData().size()) {
+			PublishHistoryDAO dao = new PublishHistoryDAO(getActivity());
+			StuApplication application = (StuApplication) getActivity()
+					.getApplication();
+			User user = application.getUser();
+			dao.insertSecond(user.getId(), secondHand);
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_published);
+			getActivity().finish();
+			// 记录发布历史，进入发布历史界面
+			Intent intent = new Intent(getActivity(),
+					SecondDetailHistoryActivity.class);
+			intent.putExtra(SecondDetailHistoryActivity.KEY_SECOND_HAND_ID,
+					(long) secondHand.getSecondHandId());
+			startActivity(intent);
+		}
+	}
+
+	private boolean checkData() {
+		List<Uri> data = adapter.getData();
+		if (data == null || data.size() == 0) {
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_tips_photo);
+			return false;
+		}
+		if (firstClass == null) {
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_tips_class);
+			return false;
+		}
+		if (nameView.getText().length() == 0) {
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_tips_name);
+			return false;
+		}
+		if (detailView.getText().length() == 0) {
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_tips_detail);
+			return false;
+		}
+		if (priceView.getText().length() == 0) {
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_tips_price);
+			return false;
+		}
+		if (numView.getText().length() == 0) {
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_tips_num);
+			return false;
+		}
+		if (phoneView.getText().length() == 0
+				|| (FormatUtils.praseStringType(phoneView.getText().toString()) != 1 && FormatUtils
+						.praseStringType(phoneView.getText().toString()) != 3)) {
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_tips_phone);
+			return false;
+		}
+		if (city == null) {
+			MainActivity.showToast(getActivity(),
+					R.string.publish_second_tips_location);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void onDestroy() {
+		if (mQueue != null) {
+			mQueue.cancelAll(TAG_PUBLISH);
+		}
+		super.onDestroy();
+	}
+
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+		if (dialog.equals(choosePicDialog) && checkSoftStage()) {
+			switch (which) {
+			case 0:
+				File dir = getActivity().getExternalFilesDir(
+						Environment.DIRECTORY_DCIM);
+				Log.d(TAG, "dir path = " + dir.getAbsolutePath());
+				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				String fileName = System.currentTimeMillis() + ".jpg";
+				tempFile = new File(dir, fileName);
+				tempUri = Uri.fromFile(tempFile);
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
+				startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+				break;
+			case 1:
+				// 调用系统图库，选择头像图片
+				Intent intent1 = new Intent(Intent.ACTION_GET_CONTENT);
+				intent1.addCategory(Intent.CATEGORY_OPENABLE);
+				intent1.setType("image/*");
+				startActivityForResult(intent1, REQUEST_CHOOSE_IMAGE);
+				break;
+			}
+		}
+	}
+}

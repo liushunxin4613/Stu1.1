@@ -1,0 +1,330 @@
+package com.fengyang.fragment;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+
+import com.fengyang.activity.LoginActivity;
+import com.fengyang.dialog.ConfirmDialog;
+import com.fengyang.dialog.FreshDialog;
+import com.fengyang.dialog.LoadingDialog;
+import com.fengyang.stu.R;
+import com.fengyang.util.Config;
+import com.fengyang.util.ParseXmlService;
+import com.fengyang.util.VersionUtils;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class VersionInfoFragment extends Fragment implements View.OnClickListener{
+	/* 保存解析的XML信息 */
+	HashMap<String, String> mHashMap;
+	/* 下载保存路径 */
+	private String mSavePath;
+	/* 是否取消更新 */
+	private boolean cancelUpdate = false;
+	private TextView versionTv;
+	private TextView infoTv;
+	private RelativeLayout updateRe;
+	private boolean isUpdate;
+	public static final int XML_HASHMAP = 3;
+	private static int versionCode;
+	private URL url;
+	private ProgressBar mProgress;
+	/* 记录进度条数量 */
+	private int progress;
+	private Dialog mDownloadDialog;
+	private LoadingDialog dialog;
+	/* 下载中 */
+	private static final int DOWNLOAD = 1;
+	/* 下载结束 */
+	private static final int DOWNLOAD_FINISH = 2;
+
+	public static final String TAG = "VersionInfoFragment";
+	private static VersionInfoFragment fragment;
+	public static Fragment getInstance() {
+		if (fragment == null)
+			fragment = new VersionInfoFragment();
+		return fragment;
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+	}
+	@Override
+	public View onCreateView(LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_version_info,
+				container, false);
+
+		updateThread();
+		ListenThis(rootView);
+		init();
+		
+		return rootView;
+	}
+	
+	private void ListenThis(View rootView) {
+		versionTv = (TextView)rootView.findViewById(R.id.version_code);
+		infoTv = (TextView) rootView.findViewById(R.id.version_info);
+		updateRe = (RelativeLayout) rootView.findViewById(R.id.update);
+		versionCode = VersionUtils.getVersionCode(getActivity());
+
+		versionTv.setText(getString(R.string.soft_update_version,
+				VersionUtils.getVersionName(getActivity())));
+
+		updateRe.setOnClickListener(this);
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.update:
+			// 检查软件更新
+			checkUpdate(isUpdate);
+			break;
+		}
+		
+	}
+
+	private void init(){
+		dialog=new LoadingDialog(getString(R.string.tv_version_info_publishing));
+		FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+		dialog.show(ft, TAG);
+	}
+	private Handler mHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			// 正在下载
+			case DOWNLOAD:
+				// 设置进度条位置
+				mProgress.setProgress(progress);
+				break;
+			case DOWNLOAD_FINISH:
+				// 安装文件
+				installApk();
+				break;
+			case XML_HASHMAP:
+				HashMap<String,String> map = (HashMap<String, String>) msg.obj;
+				mHashMap = map;
+				int serviceCode = Integer.valueOf(map.get("version"));
+				// 版本判断
+				if (serviceCode > versionCode) {
+					infoTv.setText(getResources()
+							.getString(R.string.soft_have_update));
+					isUpdate = true;
+				}else {
+					infoTv.setText(getResources().getString(R.string.soft_update_no));
+				}
+				dialog.dismiss();
+				break;
+			}
+		};
+	};
+
+	private void updateThread(){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					url = new URL(Config.APK_FILE_VERSION_PATH);
+					HttpURLConnection Connection= (HttpURLConnection) url.openConnection(); 
+					Connection.connect();
+					InputStream is = Connection.getInputStream();
+					HashMap<String,String> map=ParseXmlService.parseXml(is);
+					if (null != map) {
+						Message msg = new Message();
+						msg.obj = map;
+						msg.what = VersionInfoFragment.XML_HASHMAP;
+						mHandler.sendMessage(msg);
+					}
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+			}
+		}).start();
+	}
+	
+	public void showNoticeDialog() {
+		ConfirmDialog dialog = new ConfirmDialog(
+				ConfirmDialog.CONFIRM_STYLE_CENTER,
+				getString(R.string.soft_update_title),
+				getString(R.string.soft_update_info),
+				getString(R.string.soft_update_updatebtn),
+				getString(R.string.soft_update_later));
+		dialog.setOnclickListener(new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					showDownloadDialog();
+					break;
+				case DialogInterface.BUTTON_NEGATIVE:
+					break;
+				}
+			}
+		});
+		dialog.show(getActivity().getSupportFragmentManager().beginTransaction(),
+				TAG);
+	}
+
+	/**
+	 * 检测软件更新
+	 */
+	private void checkUpdate(boolean isUpdate) {
+		if (isUpdate) {
+			// 显示提示对话框
+			showNoticeDialog();
+		} else {
+			Toast.makeText(getActivity(), R.string.soft_update_no, Toast.LENGTH_LONG)
+			.show();
+		}
+	}
+
+	/**
+	 * 显示软件下载对话框
+	 */
+	private void showDownloadDialog() {
+		// 构造软件下载对话框
+		AlertDialog.Builder builder = new Builder(getActivity());
+		builder.setTitle(R.string.soft_updating);
+		// 给下载对话框增加进度条
+		final LayoutInflater inflater = LayoutInflater.from(getActivity());
+		View v = inflater.inflate(R.layout.update_progress, null);
+		mProgress = (ProgressBar) v.findViewById(R.id.update_progress);
+		builder.setView(v);
+		// 取消更新
+		builder.setNegativeButton(R.string.soft_update_cancel,
+				new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				// 设置取消状态
+				cancelUpdate = true;
+			}
+		});
+		mDownloadDialog = builder.create();
+		mDownloadDialog.show();
+		// 现在文件
+		downloadApk();
+		
+	}
+	
+	/**
+	 * 安装APK文件
+	 */
+	private void installApk() {
+		File apkfile = new File(mSavePath, mHashMap.get("name"));
+		if (!apkfile.exists()) {
+			return;
+		}
+		// 通过Intent安装APK文件
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.parse("file://" + apkfile.toString()),
+				"application/vnd.android.package-archive");
+		startActivity(intent);
+	}
+	
+	/**
+	 * 下载apk文件
+	 */
+	private void downloadApk() {
+		// 启动新线程下载软件
+		new downloadApkThread().start();
+	}
+
+	/**
+	 * 下载文件线程
+	 */
+	private class downloadApkThread extends Thread {
+		@Override
+		public void run() {
+			try {
+				// 判断SD卡是否存在，并且是否具有读写权限
+				if (Environment.getExternalStorageState().equals(
+						Environment.MEDIA_MOUNTED)) {
+					// 获得存储卡的路径
+					String sdpath = Environment.getExternalStorageDirectory()
+							+ "/";
+					mSavePath = sdpath + "download";
+					URL url = new URL(mHashMap.get("url"));
+					// 创建连接
+					HttpURLConnection conn = (HttpURLConnection) url
+							.openConnection();
+					conn.connect();
+					// 获取文件大小
+					int length = conn.getContentLength();
+					// 创建输入流
+					InputStream is = conn.getInputStream();
+
+					File file = new File(mSavePath);
+					// 判断文件目录是否存在
+					if (!file.exists()) {
+						file.mkdir();
+					}
+					File apkFile = new File(mSavePath, mHashMap.get("name"));
+					FileOutputStream fos = new FileOutputStream(apkFile);
+					int count = 0;
+					// 缓存
+					byte buf[] = new byte[1024];
+					// 写入到文件中
+					do {
+						int numread = is.read(buf);
+						count += numread;
+						// 计算进度条位置
+						progress = (int) (((float) count / length) * 100);
+						// 更新进度
+						mHandler.sendEmptyMessage(DOWNLOAD);
+						if (numread <= 0) {
+							// 下载完成
+							mHandler.sendEmptyMessage(DOWNLOAD_FINISH);
+							break;
+						}
+						// 写入文件
+						fos.write(buf, 0, numread);
+					} while (!cancelUpdate);// 点击取消就停止下载.
+					fos.close();
+					is.close();
+				}
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// 取消下载对话框显示
+			mDownloadDialog.dismiss();
+		}
+	}
+}

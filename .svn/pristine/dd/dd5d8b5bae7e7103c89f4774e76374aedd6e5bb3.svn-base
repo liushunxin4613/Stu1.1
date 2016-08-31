@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">靠谱兼职</string>
+    <string name="app_versionName">1.3.1</string>
+    <string name="app_download_site">http://121.40.196.160:8090/AppServer2/app/downloadLastApk.action</string>
+    <string name="version_unknown">未知版本</string>
+    <string name="action_located">定位</string>
+    <string name="setting_about_us">关于我们</string>
+    <string name="setting_send_advice">意见反馈</string>
+    <string name="setting_version_info">版本信息</string>
+    <string name="setting_version_update">软件升级</string>
+    <string name="exit_remind">再按一次退出</string>
+    <string name="image_string">images</string>
+    <string name="sdCard_error">未检测到内存卡设备</string>
+    <string name="punctuation_pause">、</string>
+    <string name="Login_first_tip">请您先登录</string>
+    <string name="error_get_data">获取数据失败</string>
+    <string name="refresh_page">刷新</string>
+    <string name="publisher_male">%1$s先生</string>
+    <string name="publisher_famale">%1$s女士</string>
+    <string name="publisher_feng_yang">风扬官方</string>
+    <string name="pleace_wait_for_wonderful">更多精彩，敬请期待！</string>
+    <string name="welcome_enter">开启靠谱之旅</string>
+
+    <!-- 刮刮卡 -->
+    <string name="guagua_careful">活动规则\n&#160;&#160;&#160;&#160;1.每天首次刮奖免费，第二次及以后每刮一次扣除3个积分\n&#160;&#160;&#160;&#160;2.当积分不够时，不能刮奖</string>
+    <string name="points_not_enough">提示：积分不足！</string>
+    <string name="points_not_enough_detail">您的积分不够刮奖啦~~请赚够再来吧~~</string>
+
+    <!-- 错误提示 -->
+    <string name="error_netWork_error">网络错误</string>
+    <string name="error_time_out">网络超时</string>
+    <string name="error_server_error">服务器错误</string>
+    <string name="error_clinet_error">客户端错误</string>
+    <string name="error_parse_error">解析出错</string>
+    <string name="error_authentication_error">验证出错</string>
+    <string name="error_no_connnetion_error">无网络连接</string>
+    <string name="error_undefined">未知错误</string>
+    <string name="error_get_data_error">数据获取失败</string>
+    <string name="developing_function">该功能正在开发中，敬请期待</string>
+    <string name="main_no_net">未连接网络，显示上次定位</string>
+    <string name="dialog_verify_title">验证</string>
+    <string name="dialog_verify_content">您尚未验证，是否验证？</string>
+    <string name="dialog_verify_go_verify">验证</string>
+    <string name="unable_call">座机收不到短信哦~</string>
+
+    <!-- 菜单选项 -->
+    <string name="menu_more">更多</string>
+    <string name="menu_publish_setting">设置</string>
+    <string name="menu_publish_secondHand">发布二手</string>
+    <string name="menu_publish_partTime">发布兼职</string>
+    <string name="menu_publish_history">历史发布</string>
+    <string name="dialog_take_photo">拍照</string>
+    <string name="dialog_choose_photo">从相册中选择</string>
+    <string name="dialog_title_call">打电话</string>
+    <string name="dialog_take_call">是否拨打电话给 %1$s ？</string>
+    <string name="dialog_title_sms">发短信</string>
+    <string name="dialog_send_msg">是否发送短信给 %1$s ？</string>
+    <string name="dialog_title_edit">编辑</string>
+    <string name="dialog_title_delete">删除</string>
+    <string name="dialog_parttime_edit">是否修改此兼职信息？</string>
+    <string name="dialog_parttime_delete">是否删除此兼职信息？</string>
+    <string name="dialog_second_edit">是否修改此二手物品信息？</string>
+    <string name="dialog_second_delete">是否删除此二手物品信息？</string>
+    <string name="dialog_title_report">举报</string>
+    <string name="dialog_report_second">是否举报此二手物品信息 ？</string>
+    <string name="dialog_report_part">是否举报此兼职信息 ？</string>
+    <string name="dialog_sure">确定</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_loading">加载中</string>
+    <string name="dialog_phone_verify">手机验证找回</string>
+    <string name="dialog_email_verify">邮箱验证找回</string>
+    <string name="toast_delete_success">删除成功</string>
+    <string name="toast_delete_fail">删除失败</string>
+    <string name="progress_dialog_title">正在保存中&#8230;</string>
+    <string name="app_company">风扬公司官方</string>
+    <string name="dialog_location">定位</string>
+    <string name="dialog_location_au">请选择定位方式</string>
+    <string name="dialog_location_sure">手动定位</string>
+    <string name="dialog_location_cancle">自动定位</string>
+    <string name="dialog_choose_sex">选择性别</string>
+
+    <!-- DynameListView -->
+    <string name="Refresh_normal">下拉刷新</string>
+    <string name="Refresh_normal_up">上拉刷新</string>
+    <string name="Refresh_willrefresh">松开刷新</string>
+    <string name="Refresh_refreshing">正在刷新&#8230;</string>
+    <string name="Refresh_refreshing_up">正在加载&#8230;</string>
+    <string name="Refresh_stop_refresh">停止刷新</string>
+
+    <!-- 登陆 -->
+    <string name="default_user">用户登陆默认图片</string>
+    <string name="userName">邮箱/手机号</string>
+    <string name="passWord">密码</string>
+    <string name="login">登陆</string>
+    <string name="login_title">是否登陆</string>
+    <string name="login_content">您当前还未登陆，是否登陆？</string>
+    <string name="logining">正在登陆</string>
+    <string name="login_error">登陆出错，请重新登陆</string>
+    <string name="loginImage">登陆按钮图片</string>
+    <string name="forgetPass">忘记密码</string>
+    <string name="regist">注册</string>
+    <string name="userName_error">用户名格式不正确</string>
+    <string name="find_psd_by_phone">短信验证</string>
+    <string name="find_psd_by_mail">邮箱找回</string>
+    <string name="login_exit">退出登录</string>
+    <string name="member_exchange">切换账号</string>
+    <string name="account_manager">账号管理</string>
+    <string name="account_exit">退出登录</string>
+
+    <!-- 修改密码 -->
+    <string name="find_pwd_input_phone">输入您的手机号</string>
+    <string name="find_pwd_input_phone_require">请输入您的手机号</string>
+    <string name="find_pwd_input_phone_error">请输入正确的手机号</string>
+    <string name="find_pwd_input_email">输入您的邮箱</string>
+    <string name="find_pwd_input_email_require">请输入您的邮箱</string>
+    <string name="find_pwd_input_email_error">输入正确的邮箱</string>
+    <string name="find_pwd_get_auth_code">获取验证码</string>
+    <string name="find_pwd_get_auth_code_count">%1$s秒后重新获取</string>
+    <string name="find_pwd_get_code_again">重新获取</string>
+    <string name="find_pwd_input_code">输入验证码</string>
+    <string name="find_pwd_input_code_require">请输入验证码</string>
+    <string name="find_pwd_auth_submit">验证</string>
+    <string name="find_pwd_auth_sending_code">正在发送验证码</string>
+    <string name="find_pwd_auth_send_success">验证发送成功</string>
+    <string name="find_pwd_auth_send_email_success">验证码已发送到您的邮箱</string>
+    <string name="find_pwd_auth_send_failure">验证发送失败</string>
+    <string name="find_pwd_auth_verify">正在验证</string>
+    <string name="find_pwd_auth_success">验证成功</string>
+    <string name="find_pwd_auth_failure">验证失败</string>
+
+    <!-- 发现 -->
+    <string name="find">发现</string>
+    <string name="collect">收藏</string>
+    <string name="me">我</string>
+    <string name="home">首页</string>
+    <string name="day">每日签到</string>
+    <string name="near">附近打折</string>
+    <string name="shave">刮一刮抽奖</string>
+    <string name="share">软件分享有礼</string>
+    <string name="sharecontent">说些什么</string>
+    <string name="sharebutton">分享</string>
+    <string name="share_tv_before">&#160;&#160;&#160;&#160;我是大学生，我一直都用“靠谱兼职”，兼职信息真实可靠，二手交易变废为宝，掌上商城优惠绝对，从这儿  </string>
+    <string name="share_tv_after"> 下载就好！
+        &#160;&#160;&#160;&#160; </string>
+    <string name="day_toast">今天已经签到了，明天再来吧！</string>
+    <string name="signtv">我的积分：</string>
+    <string name="signbt">签到</string>
+    <string name="today_signcore">恭喜您今天获得签到积分&#160;&#160;&#160;&#160;</string>
+    <string name="today_sign_fail_txt">签到失败！！</string>
+
+    <!-- 商城 -->
+    <string name="mall">商城宝贝</string>
+    <string name="mall_title">欧巴商城</string>
+
+    <!-- 二手 -->
+    <string name="second_hand">二手物品</string>
+    <string name="second_hand_imageView">二手默认图片</string>
+    <string name="type">类型</string>
+    <string name="price">价格</string>
+    <string name="place">类型</string>
+    <string name="heart_collect">收藏心变化</string>
+    <string name="second_publish_time">%1$s 发布</string>
+    <string name="second_pay">￥%1$s</string>
+
+    <!-- 二手详情 -->
+    <string name="detail_second_title">物品详情</string>
+    <string name="detail_second_price">￥ %1$s</string>
+    <string name="detail_second_num">%1$s 件</string>
+    <string name="detail_second_publish_date">%1$s 发布</string>
+    <string name="detail_second_visited">已有%1$s人浏览</string>
+    <string name="detail_second_share">分享二手物品</string>
+    <string name="detail_second_share_msg">Hi~，小伙伴们，我正在使用%1$s搜罗二手物品，感觉“%2$s”挺不错的，分享给大家！%3$s  </string>
+    <string name="detail_second_collect">收藏二手物品</string>
+    <string name="detail_second_collect_succeed">收藏成功！</string>
+    <string name="detail_second_collect_failure">收藏失败！</string>
+    <string name="detail_second_uncollect_succeed">取消收藏</string>
+    <string name="detail_second_uncollect_failure">取消收藏失败！</string>
+    <string name="detail_second_publisher">发布人：%1$s</string>
+    <string name="detail_second_phone">联系方式：%1$s</string>
+    <string name="detail_second_address">地址：</string>
+    <string name="detail_second_call">打电话</string>
+    <string name="detail_second_sms">发短信</string>
+    <string name="detail_second_report">举报</string>
+    <string name="detail_second_out_title">二手物品已下架</string>
+    <string name="detail_second_out_content">抱歉，该二手物品已下架！</string>
+
+    <!-- 兼职 -->
+    <string name="part_time">兼职</string>
+    <string name="part_publish_time">%1$s 发布</string>
+    <string name="part_pay">￥%1$s</string>
+
+    <!-- 兼职详情 -->
+    <string name="detail_part_title">兼职详情</string>
+    <string name="detail_part_share">分享兼职</string>
+    <string name="detail_part_collect">收藏兼职</string>
+    <string name="detail_part_collect_succeed">收藏成功！</string>
+    <string name="detail_part_uncollect_succeed">取消收藏</string>
+    <string name="detail_part_collect_failure">收藏失败！</string>
+    <string name="detail_part_uncollect_failure">取消收藏失败！</string>
+    <string name="detail_part_publisher">发布人：</string>
+    <string name="detail_part_pay_t">工资：</string>
+    <string name="detail_part_pay">￥%1$s  %2$s</string>
+    <string name="detail_part_pay_way">结算方式：</string>
+    <string name="detail_part_publish_date">%1$s 发布</string>
+    <string name="detail_part_visited">已有%1$s人浏览</string>
+    <string name="detail_part_timeType">兼职类型：</string>
+    <string name="detail_part_workTime">工作时间：</string>
+    <string name="detail_part_endTime">截止日期：</string>
+    <string name="detail_part_num">招聘人数：</string>
+    <string name="detail_part_numUnit">%1$s人</string>
+    <string name="detail_part_phone">联系方式：</string>
+    <string name="detail_part_area">工作地点：</string>
+    <string name="detail_part_address">详细地点：</string>
+    <string name="detail_part_share_msg">Hi~，小伙伴们，我正在使用%1$s寻找兼职，感觉“%2$s”挺不错的，分享给大家！%3$s^_^</string>
+    <string name="detail_part_out_title">兼职已下架</string>
+    <string name="detail_part_out_content">抱歉，该兼职已下架！</string>
+
+    <!-- 二手举报 -->
+    <string name="report_course">举报原因:</string>
+    <string name="false_information">虚假信息</string>
+    <string name="false_tel">虚假联系方式</string>
+    <string name="othres">其他</string>
+    <string name="detail">详情描述:</string>
+    <string name="detail_hint">吐槽一下</string>
+    <string name="your_tel">您的电话:</string>
+    <string name="tel_hint">我们会第一时间告知您处理结果！</string>
+    <string name="submit">提交</string>
+    <string name="report_tel">举报电话：8024654</string>
+
+    <!-- 发布兼职 -->
+    <string name="publish_job">发布</string>
+    <string name="publish_job_title">发布兼职</string>
+    <string name="publish_job_name">兼职名称：</string>
+    <string name="publish_job_delete">删除</string>
+    <string name="publish_job_class">工作类型：</string>
+    <string name="publish_job_num">招聘人数：</string>
+    <string name="publish_job_num_unit">人</string>
+    <string name="publish_job_place">工作地点：</string>
+    <string name="publish_job_place_detail">详细地址：对工作地点进行更详细的描述</string>
+    <string name="publish_job_time">工作时间：</string>
+    <string name="publish_job_money">工资金额：</string>
+    <string name="publish_job_pay_unit">结算方式</string>
+    <string name="publish_job_tel">联系电话：</string>
+    <string name="publish_job_tel_eg">座机/手机号</string>
+    <string name="publish_job_detail">兼职详情：</string>
+    <string name="publish_job_pay_type">结算方式</string>
+    <string name="publish_job_time_type">兼职时间</string>
+    <string name="publish_job_time_area">工作时间</string>
+    <string name="publish_job_end_time">截止时间：</string>
+    <string name="publish_job_time_separate">–</string>
+    <string name="publish_job_time_end_text"> 截止</string>
+    <string name="publish_job_time_tip_class">请选择类别</string>
+    <string name="publish_job_time_tip_name">请输入兼职名称</string>
+    <string name="publish_job_time_tip_detail">请输入兼职详情描述</string>
+    <string name="publish_job_time_tip_work_time">请选择工作时间</string>
+    <string name="publish_job_time_tip_end_time">请选择截止时间</string>
+    <string name="publish_job_time_tip_pay">请输入工资金额</string>
+    <string name="publish_job_time_tip_num">请输入招聘人数</string>
+    <string name="publish_job_time_tip_phone_require">请输入联系电话</string>
+    <string name="publish_job_time_tip_phone_error">请输入正确的联系电话</string>
+    <string name="publish_job_time_tip_location">请选择工作地区</string>
+    <string name="publish_job_time_tip_place">请输入详细地址</string>
+    <string name="publish_job_time_publishing">正在发布&#8230;</string>
+    <string name="publish_job_time_published">"发布成功！"</string>
+    <string name="publish_job_time_publish_error">"发布失败"</string>
+    <string name="publish_job_time_edit_error">"保存失败"</string>
+    <string name="publish_job_time_edit_success">"保存成功"</string>
+    <string name="publish_job_time_exit_title">"提示"</string>
+    <string name="publish_job_time_exit_msg">"是否放弃编辑，确认退出？"</string>
+    <string name="publish_job_time_exit_yes">"退出"</string>
+    <string name="dialog_title_save">编辑保存</string>
+    <string name="dialog_save">是否保存编辑？</string>
+    <string name="title_activity_second_detail">二手详情</string>
+    <string name="title_activity_parttime_detail">兼职详情</string>
+
+    <!-- 发布二手 -->
+    <string name="publish_second">发布</string>
+    <string name="publish_second_save">保存</string>
+    <string name="publish_second_title">发布二手</string>
+    <string name="publish_second_name">宝贝标题：</string>
+    <string name="publish_second_class">宝贝分类：</string>
+    <string name="publish_second_place_t">销售地点：</string>
+    <string name="publish_second_money">割爱价：</string>
+    <string name="publish_second_rmb">元</string>
+    <string name="publish_second_num">数&#160;&#160;&#160;&#160;量：</string>
+    <string name="publish_second_num_unit">件</string>
+    <string name="publish_second_tel">联系电话：</string>
+    <string name="publish_second_tel_eg">座机/手机号</string>
+    <string name="publish_second_place">详细地址：对您的地点进行更详细的描述（可选）</string>
+    <string name="publish_second_detail">宝贝描述：请对您的物品进行简要的描述</string>
+    <string name="publish_second_camera">相机</string>
+    <string name="publish_second_addimage">新加的图片</string>
+    <string name="publish_second_addimage_error">图片已存在</string>
+    <string name="publish_second_addimage_enough">最多添加%1$s张照片</string>
+    <string name="publish_second_exit_title">"提示"</string>
+    <string name="publish_second_exit_msg">"是否放弃编辑，确认退出？"</string>
+    <string name="publish_second_exit_yes">"退出"</string>
+    <string name="publish_second_tips_photo">"最少选择一张照片"</string>
+    <string name="publish_second_tips_class">"请选择分类"</string>
+    <string name="publish_second_tips_name">"请输入宝贝名称"</string>
+    <string name="publish_second_tips_detail">"请输入宝贝描述"</string>
+    <string name="publish_second_tips_price">"请输入宝贝价格"</string>
+    <string name="publish_second_tips_num">"请输入宝贝数量"</string>
+    <string name="publish_second_tips_phone">"联系电话错误或未填"</string>
+    <string name="publish_second_tips_location">"请选择销售位置"</string>
+    <string name="publish_second_publishing">正在发布&#8230;</string>
+    <string name="publish_second_published">"发布成功"</string>
+    <string name="publish_second_publish_error">"发布失败"</string>
+
+    <!-- 认证发布 -->
+    <string name="publish_auth_publishing">正在提交&#8230;</string>
+    <string name="publish_auth_published">"提交成功！"</string>
+    <string name="publish_auth_publish_error">"提交失败"</string>
+
+    <!-- 二手发布历史详情 -->
+    <string name="history_second_edit">编辑</string>
+    <string name="history_second_delete">删除</string>
+
+    <!-- 举报二手/兼职 -->
+    <string name="reprot_second_resource">请选择举报原因</string>
+    <string name="reprot_second_detail">请输入详细描述</string>
+    <string name="reprot_second_phone">请输入联系电话</string>
+    <string name="reprot_error_phone">联系电话有误</string>
+    <string name="report_second_error">举报失败</string>
+    <string name="report_second_success">举报成功</string>
+    <string name="report_second_reporting">正在举报&#8230;</string>
+
+    <!-- 兼职发布历史详情 -->
+    <string name="history_part_edit">编辑</string>
+    <string name="history_part_delete">删除</string>
+
+    <!-- 发布成功 -->
+    <string name="publish_success_iamgeView">发布成功的图片</string>
+    <string name="publish_success">\t\t你好,您所发布的消息已经上传至服务器,我们将在5分钟之内完成审核并发布。如果您是第一次发布,我们将会验审您提供的证件,可能需要半小时。谢谢您的支持！</string>
+    <string name="parttime_reasonTV">举报原因:</string>
+    <string name="parttime_falseimformation_checkbox">虚假信息</string>
+    <string name="Parttime_FalseCompany_checkbox">公司冒用</string>
+    <string name="parttime_Conduit_Company_checkbox">中介公司</string>
+    <string name="parttime_other_checkbox">其他</string>
+    <string name="parttime_detailreasonTV">详细描述：</string>
+    <string name="parttime_falsephone_checkbox">虚假联系方式</string>
+    <string name="parttime_yourphoneTV">您的电话：</string>
+    <string name="parttime_yourphoneET_hint">我们会在第一时间告知您处理结果！</string>
+    <string name="parttime_submitBT">提交</string>
+    <string name="parttime_reportphoneBT">举报电话：8024654</string>
+    <string name="parttime_title">兼职举报</string>
+    <string name="parttime_detail_title">兼职详情</string>
+    <string name="title_activity_part_time_detail">PartTimeDetailActivity</string>
+    <string name="parttime_detail_callBT">打电话</string>
+    <string name="parttime_detail_messageBT">发短信</string>
+    <string name="parttime_detail_collectionBT">举报</string>
+    <string name="parttime_detail_publictype1">发布性质：</string>
+    <string name="parttime_detail_ispassed1">审核情况:</string>
+    <string name="parttime_detail_jobdetail1">工作描叙:</string>
+    <string name="parttime_detail_pay1">工资情况:</string>
+    <string name="parttime_detail_payway1">结算方式:</string>
+    <string name="parttime_detail_district1">详细地址:</string>
+    <string name="parttime_detail_time1">工作时间:</string>
+    <string name="parttime_detaildescrption_time1">详细描述:</string>
+    <string name="parttime_detail_iscollectedCB">收藏</string>
+    <string name="title_activity_register">注册</string>
+
+    <!-- 注册 -->
+    <string name="register_name_et">昵称:</string>
+    <string name="register_account_et">账号:手机号/邮箱</string>
+    <string name="register_password_et">密码:6到16位的数字和字符</string>
+    <string name="register_repassword_et">确认密码:</string>
+    <string name="register_name_require">请输入手机号或邮箱</string>
+    <string name="register_pwd_require">请输入密码</string>
+    <string name="register_repwd_require">请确认密码</string>
+    <string name="register_pwd_not_equal">两次密码输入不一样</string>
+    <string name="register_name_error">请输入正确的手机号或邮箱</string>
+    <string name="register_pwd_error">密码必须由6到16位的数字和字符组成</string>
+    <string name="register_checkbox">我已阅读并同意</string>
+    <string name="register_pravcy">《服务条款和隐私政策》</string>
+    <string name="title_activity_register_succeed">注册成功</string>
+    <string name="register_is_registing">正在注册</string>
+    <string name="register_Succeed">恭喜您，注册成功！</string>
+    <string name="register_failure">注册失败，您的手机号或邮箱可能已经被注册</string>
+    <string name="registerSucced_tv2">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;推荐您进行认证手机，认证手机后，可以更便捷的享受服务。如果您想发布消息，那就请您
+        一定要认证，个人使用身份证,学生证，一卡通。商家使用营业执照，认证过的用户，消息会排在前面。谢谢您的理解！祝您使用愉快。</string>
+
+    <!--
+    <string name="title_activity_business_certification">商家认证</string>
+    <string name="business_certification_name_TV">姓名</string>
+    <string name="business_certification_ID_card_TV">身份证号码</string>
+    <string name="business_Business_license_card_TV">营业执照编码</string>
+    <string name="registerSucced_button">进入服务</string>
+    <string name="business_certification_image1">照片上传（身份证正反面和营业执照）</string>
+    <string name="business_company_address_TV">公司地址</string>
+    <string name="business_company_address_detail_ET">详细地址</string>
+    <string name="business_certification_TV">手机认证</string>
+    <string name="business_certification_getMessage_BT">获取验证码</string>
+    <string name="business_certification_BT">验证</string>
+    <string name="business_certification_submit_BT">提交</string>
+    <string name="business_certification_getMessage_ET">输入手机号码</string>
+    
+    <string name="business_certification_EnterMessage_ET">输入验证码</string>
+    -->
+
+
+    <!-- 首页 -->
+    <string name="title_activity_home_page">首页</string>
+    <string name="homepage_home_TV">首页</string>
+    <string name="homepage_collection_TV">收藏</string>
+    <string name="homepage_find_TV">发现</string>
+    <string name="homepage_me_TV">我</string>
+    <string name="homepage_oubamall_BT">掌上商城</string>
+    <string name="homepage_parttime_TV">兼职工作</string>
+    <string name="homepage_second_hand_TV">二手市场</string>
+    <string name="homepage_add_TV">更多精彩</string>
+    <string name="setting">设置</string>
+    <string name="title_find_psd_by_phone">短信找回</string>
+    <string name="title_find_psd_by_mail">邮箱找回</string>
+    <string name="title_find_reset_psd">重置密码</string>
+    <string name="business_certification_getEmail_ET">输入邮箱账号</string>
+    <string name="user_is_not">该用户不存在</string>
+
+    <!-- 我 -->
+    <string name="fragment_me_default_name">童鞋</string>
+    <string name="fragment_me_welcome_TV">请登陆〉</string>
+    <string name="fragment_me_info_TV">编辑资料〉</string>
+    <string name="fragment_me_Edit_BT">编辑资料</string>
+    <string name="fragment_me_Personal_information_BT">个人信息</string>
+    <string name="fragment_me_my_grade_BT">我的积分</string>
+    <string name="fragment_me_my_Coupon_BT">我的优惠劵</string>
+    <string name="fragment_me_exist">退出登录</string>
+    <string name="dialog_exist_title">退出</string>
+    <string name="dialog_exist_content">确定退出登录吗？</string>
+    <string name="dialog_me_is_auth_title">已验证</string>
+    <string name="dialog_me_is_auth_content">您已通过验证，无需再验证</string>
+    <string name="dialog_me_is_commit_title">审核中</string>
+    <string name="dialog_me_is_commit_content">您已提交验证信息，正在审核中</string>
+    <string name="fragment_me_publisher_authentication_BT">发布者认证</string>
+    <string name="fragment_me_auth_content">请选择认证类型</string>
+    <string name="fragment_me_auth_stu">学生认证</string>
+    <string name="fragment_me_auth_merchant">商家认证</string>
+    <string name="fragment_collection_parttime">兼职</string>
+    <string name="fragment_collection_second_hand">二手物品</string>
+    <string name="fragment_collection_shop">商城</string>
+
+    <!-- 二手市场列表 -->
+    <string name="title_activity_second_hand">二手市场</string>
+    <string name="action_search">搜索</string>
+    <string name="hint_search">输入关键字</string>
+    <string name="title_activity_history">发布历史</string>
+
+    <!-- 找回密码 -->
+    <string name="find_pwd_title">找回密码</string>
+
+    <!-- 举报 -->
+    <string name="report_parttime">兼职举报</string>
+    <string name="report_secondhand">二手举报</string>
+    <string name="title_activity_sign">每日签到</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- 验证手机号 -->
+    <string name="title_activity_check_phone">短信验证</string>
+
+    <!-- 软件更新 -->
+    <string name="soft_update_current_version">当前版本</string>
+    <string name="soft_update_version">v %1$s</string>
+    <string name="soft_update_no">已是最新版本</string>
+    <string name="soft_update_title">版本更新</string>
+    <string name="soft_update_info">检测到新版本，立即更新吗</string>
+    <string name="soft_have_update">有新版本</string>
+    <string name="soft_update_updatebtn">更新</string>
+    <string name="soft_update_later">稍后更新</string>
+    <string name="soft_updating">正在更新</string>
+    <string name="soft_no_net">当前无可用网络</string>
+    <string name="soft_update_cancel">取消</string>
+    <string name="soft_update_nowifi">当前处于非Wifi环境，更新需要耗费流量哦!</string>
+    <string name="version_time">Copyright © 2015&#8211;2016 Fengyang.</string>
+    <string name="version_law">All Right Reserved.</string>
+
+    <!-- 关于我们 -->
+    <string name="us">关于我们</string>
+    <string name="about_us">&#160; &#160; &#160; &#160; 风扬网络科技有限公司(简称“风扬网科”),是由一批具有国内著名网络公司服务背景的网络精英所组成,年轻、富有活力,注定一开始就是一家成熟的网络科技公司,是一家专业从事网站建设、推广,移动终端开发和网络营销的新兴高科企业。风扬科技一直秉承“帮助学生适应社会,解决商家兼职难题”的服务思想,一直不断的完善服务。公司于2015年一月份,获得第一轮600万的风投!我们相信,我们会为大家更好的服务!</string>
+    <string name="about_weibo">新浪微博：13972478340@139.com</string>
+    <string name="about_qq">官方QQ：307405193</string>
+    <string name="about_weixin">官方微信：jianyeweish</string>
+    <string name="about_clipboard">已复制到剪贴板</string>
+    <string name="about_tel">服务热线：0719&#8211;8024654</string>
+
+    <!-- 隐私文件 -->
+    <string name="privacy">隐私条款</string>
+
+    <!-- 意见反馈 -->
+    <string name="feedback">意见反馈</string>
+    <string name="feedback_null">亲，我们期待您的宝贵意见哦！</string>
+    <string name="feedback_hint">感谢您对十堰风扬网络科技有限公司旗下产品的支持，我们真诚期待您宝贵的意见，请点击输入&#8230;</string>
+    <string name="feedback_send">发送</string>
+    <string name="feedback_success">诚挚感谢您的宝贵意见！</string>
+    <string name="feedback_fail">提交失败！</string>
+
+    <!-- 个人信息 -->
+    <string name="title_activity_me_info">个人信息</string>
+    <string name="fragment_me_info_account">账号信息</string>
+    <string name="fragment_me_info_nickname">昵称</string>
+    <string name="fragment_me_info_mail">邮箱</string>
+    <string name="fragment_me_info_phone">手机</string>
+    <string name="fragment_me_info_idcard">身份证号</string>
+
+    <!-- 我的积分 -->
+    <string name="title_activity_me_idealmoney">我的积分</string>
+    <string name="fragment_item_me_idealmoney_sign">签到积分:</string>
+    <string name="fragment_item_me_idealmoney_share">分享积分:</string>
+    <string name="fragment_item_me_idealmoney_mall">商城积分:</string>
+    <string name="fragment_item_me_idealmoney_total">积分总额：</string>
+    <string name="fragment_item_me_idealmoney_make">快去消费积分吧！</string>
+    <string name="fragment_item_me_idealmoney_jifengz">积分规则</string>
+    <string name="fragment_item_me_idealmoney_qiandao1">每日签到得1分</string>
+    <string name="fragment_item_me_idealmoney_qiandao2">累计七日签到另奖励5分</string>
+    <string name="fragment_item_me_idealmoney_qiandao3">累计十五日日签到另奖励10分</string>
+    <string name="fragment_item_me_idealmoney_qiandao4">累计一个月签到另奖励20分</string>
+
+    <!-- 学生认证 -->
+    <string name="personal_auth_name">姓名:</string>
+    <string name="personal_auth_sex">性别:</string>
+    <string name="personal_auth_IDCard">身份证号码:</string>
+    <string name="personal_auth_StuID">学生证号码:</string>
+    <string name="personal_auth_pictuer">照片上传:</string>
+    <string name="personal_auth_address">学校地址:</string>
+    <string name="personal_auth_school">学校名称</string>
+    <string name="personal_auth_province">省</string>
+    <string name="personal_auth_city">市</string>
+    <string name="personal_auth_phone">手机认证:</string>
+    <string name="personal_auth_code">获取验证码</string>
+    <string name="personal_auth_submit">提交</string>
+    <string name="personal_auth_ver">验证</string>
+    <string name="personal_auth_putphone">请输入手机号码</string>
+    <string name="personal_auth_putcode">验证码</string>
+    <string name="personal_more">身份证正面照片或学生证照片,要求清晰可辨</string>
+    <string name="Et_item_authentication_man_studentcard">学生证号码：</string>
+    <string name="Tv_item_authentication_man_photoupcard">身份证正面照：</string>
+    <string name="Tv_item_authentication_man_photoup">学生证正面照：</string>
+
+    <!-- 商家认证 -->
+    <string name="title_activity_publish_authentication">发布者认证</string>
+    <string name="fragment_item_authentication_sell">使用积分</string>
+    <string name="Et_item_authentication_sell_name">法人姓名：</string>
+    <string name="Et_item_authentication_sell_sex">法人性别：</string>
+    <string name="Et_item_authentication_sell_tname">商家名称：</string>
+    <string name="Et_item_authentication_idcard">身份证号码：</string>
+    <string name="Et_item_authentication_sell_card">营业执照号码：</string>
+    <string name="Tv_item_authentication_sell_photoup">照片上传</string>
+    <string name="Tv_item_authentication_sell_photo">营业执照正面照：</string>
+    <string name="Tv_item_authentication_sell_schooladdress">学校地址：</string>
+    <string name="Tv_item_authentication_sell_selleraddress">商家地址：</string>
+    <string name="Tv_item_authentication_sell_selleraddress_detail">详细地址：请输入更改详细的地址</string>
+    <string name="Et_item_authentication_sell_place">详细地址</string>
+    <string name="Tv_item_authentication_sell_phoneauthentication">手机验证</string>
+    <string name="Bt_item_authentication_submit">提交</string>
+    <string name="Tv_authentication_sell_sheng">省</string>
+    <string name="Tv_authentication_sell_shi">市</string>
+    <string name="Tv_authentication_sell_qu">区|乡</string>
+    <string name="Tv_authentication_sell_school">学校</string>
+    <string name="Bt_authentication_comit">获取验证码</string>
+    <string name="Et_item_authentication_sell_businesscard">营业执照编号</string>
+    <string name="actionbar_return">返回</string>
+    <string name="authentication_phone">输入手机号码</string>
+    <string name="authentication_email_require">输入邮箱地址</string>
+    <string name="authentication_email_error">输入正确的邮箱地址</string>
+    <string name="authentication_number">请输入验证码</string>
+    <string name="find_psd_set_psd_text">重置密码</string>
+    <string name="find_psd_reset_psd_text">重复密码</string>
+    <string name="find_psd_reset_psd_code">填写验证码</string>
+    <string name="title_activity_mall">欧巴商城</string>
+    <string name="title_activity_second_detail_edit">二手信息编辑</string>
+    <string name="title_activity_parttime_detail_edit">兼职编辑</string>
+    <string name="publish_stu_tips_name">"请提供您的姓名"</string>
+    <string name="publish_seller_tips_name">"请提供您的法人姓名"</string>
+    <string name="publish_stu_tips_sex">"请选择您的性别"</string>
+    <string name="publish_seller_tips_sex">"请选择您的法人性别"</string>
+    <string name="publish_seller_tips_tname">"请提供您的商家名称"</string>
+    <string name="publish_stu_tips_card_id_require">"请输入身份证号码"</string>
+    <string name="publish_seller_tips_card_id_require">"请输入身份证号码"</string>
+    <string name="publish_stu_tips_card_id_error">"请输入正确的身份证号码"</string>
+    <string name="publish_seller_tips_card_id_error">"请输入正确的身份证号码"</string>
+    <string name="publish_stu_tips_student_id">"请输入学生证号码"</string>
+    <string name="publish_seller_tips_license_require">"请输入营业执照号码"</string>
+    <string name="publish_seller_tips_license_error">"请输入正确的营业执照号码"</string>
+    <string name="publish_stu_tips_card_photo">"请提供身份证正面照"</string>
+    <string name="publish_seller_tips_card_photo">"请提供身份证正面照"</string>
+    <string name="publish_stu_tips_student_photo">"请提供学生证正面照"</string>
+    <string name="publish_seller_tips_sell_photo">"请提供营业执照正面照"</string>
+    <string name="publish_stu_tips_school_address">"请选择学校地址"</string>
+    <string name="publish_seller_tips_sell_address">"请选择商家地址"</string>
+    <string name="publish_seller_tips_seller_address">"请选择商家详细地址"</string>
+    <string name="publish_stu_tips_phone_require">"请输入手机号码"</string>
+    <string name="publish_stu_tips_phone_error">"请输入正确的手机号码"</string>
+    <string name="publish_stu_tips_phone_comit">"请输入您获取到的验证码"</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="title_activity_re_set">重置密码</string>
+    <string name="reset_password_succeed">密码修改成功</string>
+    <string name="reset_password_failure">密码修改失败</string>
+    <string name="publish_authentication_tips_phone_comit_check">"请提供您获取到的正确验证码"</string>
+    <string name="publish_authentication_tips_phone_send_k">"验证码已发送"</string>
+    <string name="publish_authentication_tips_phone_send_error">验证码发送失败</string>
+    <string name="publish_authentication_tips_phone_commit_success">"验证成功"</string>
+    <string name="publish_authentication_tips_phone_commit_error">验证码错误</string>
+    <string name="resetactivity_new_psd">新密码:6到16位字符</string>
+    <string name="resetactivity_renew_psd">再一次输入密码</string>
+    <string name="xx_second_reget">秒后重新获取</string>
+
+    <!-- 编辑资料 -->
+    <string name="title_publish_user">编辑资料</string>
+    <string name="Et_publish_user_nickname">昵称：</string>
+    <string name="Et_publish_user_sex">性别：</string>
+    <string name="Et_publish_user_birthday">生日：</string>
+    <string name="Et_publish_user_birthdays">出生日期</string>
+    <string name="Et_publish_user_phone">电话：</string>
+    <string name="Et_publish_user_truename">真实姓名：</string>
+    <string name="Et_publish_user_email">邮箱：</string>
+    <string name="Et_publish_user_qq">QQ：</string>
+    <string name="Et_publish_user_place">所在地：</string>
+    <string name="Et_publish_user_brif">个人简介</string>
+    <string name="Bt_publish_user_submit">保存</string>
+    <string name="Bt_publish_user_submitting">正在保存</string>
+    <string name="Bt_publish_user_submit_success">保存成功</string>
+    <string name="Bt_publish_user_submit_failure">保存失败</string>
+    <string name="publish_user_sex_man">男</string>
+    <string name="publish_user_sex_woman">女</string>
+    <string name="title_activity_send_message">SendMessageActivity</string>
+    <string name="title_activity_location">LocationActivity</string>
+    <string name="title_activity_web_view">网页</string>
+
+    <!-- 查看头像 -->
+    <string name="title_modify_user">查看头像</string>
+    <string name="tv_modify_back">保存</string>
+    <string name="tv_modify_back_new_nofind">您还未选择新头像!</string>
+    <string name="tv_modify_back_publishing">正在提交&#8230;</string>
+    <string name="tv_modify_back_success">提交成功</string>
+    <string name="tv_modify_back_error">提交失败</string>
+
+    <!-- 软件更新 -->
+    <string name="tv_version_info_publishing">正在获取软件信息&#8230;</string>
+     <string name="publish_version_info_published">"获取版本信息成功！"</string>
+    <string name="publish_version_info_publish_error">"获取版本信息失败"</string>
+    <string name="title_activity_bclocation">BCLocationActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

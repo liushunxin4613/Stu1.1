@@ -1,0 +1,94 @@
+<!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="true"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="com.fengyang.stu.MainActivity" >
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" >
+            </FrameLayout>
+
+            <RadioGroup
+                android:id="@+id/BottomGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@drawable/table_bg"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="3dp" >
+
+                <RadioButton
+                    android:id="@+id/radio_home"
+                    style="@style/small_gray_textstyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:drawableTop="@drawable/table_home_seleter"
+                    android:gravity="center"
+                    android:text="@string/home" />
+
+                <RadioButton
+                    android:id="@+id/radio_collection"
+                    style="@style/small_gray_textstyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:drawableTop="@drawable/table_collection_seleter"
+                    android:gravity="center"
+                    android:text="@string/collect" />
+
+                <RadioButton
+                    android:id="@+id/radio_find"
+                    style="@style/small_gray_textstyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:drawableTop="@drawable/table_find_seleter"
+                    android:gravity="center"
+                    android:text="@string/find" />
+
+                <RadioButton
+                    android:id="@+id/radio_me"
+                    style="@style/small_gray_textstyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:drawableTop="@drawable/table_me_seleter"
+                    android:gravity="center"
+                    android:text="@string/me" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <fragment
+            android:id="@+id/navigation_drawer"
+            android:name="com.fengyang.stu.NavigationDrawerFragment"
+            android:layout_width="@dimen/navigation_drawer_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            tools:layout="@layout/fragment_navigation_drawer" />
+    </android.support.v4.widget.DrawerLayout>
+
+</LinearLayout>

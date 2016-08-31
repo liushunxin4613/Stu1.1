@@ -1,0 +1,123 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+
+/**
+ * AppHomePush entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppHomePush implements java.io.Serializable {
+
+	// Fields
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1569931338221107979L;
+	private Long pushId;
+	private Short pushJumpType;
+	private String pushJumpTo;
+	private Integer pushClicks;
+	private Short pushuNumber;
+	private Timestamp pushTime;
+	private Short pushIf;
+	private String pushImage;
+
+	// Constructors
+
+	/** default constructor */
+	public AppHomePush() {
+	}
+
+	/** minimal constructor */
+	public AppHomePush(Short pushJumpType, Integer pushClicks,
+			Short pushuNumber, Timestamp pushTime, Short pushIf,
+			String pushImage) {
+		this.pushJumpType = pushJumpType;
+		this.pushClicks = pushClicks;
+		this.pushuNumber = pushuNumber;
+		this.pushTime = pushTime;
+		this.pushIf = pushIf;
+		this.pushImage = pushImage;
+	}
+
+	/** full constructor */
+	public AppHomePush(Short pushJumpType, String pushJumpTo,
+			Integer pushClicks, Short pushuNumber, Timestamp pushTime,
+			Short pushIf, String pushImage) {
+		this.pushJumpType = pushJumpType;
+		this.pushJumpTo = pushJumpTo;
+		this.pushClicks = pushClicks;
+		this.pushuNumber = pushuNumber;
+		this.pushTime = pushTime;
+		this.pushIf = pushIf;
+		this.pushImage = pushImage;
+	}
+
+	// Property accessors
+
+	public Long getPushId() {
+		return this.pushId;
+	}
+
+	public void setPushId(Long pushId) {
+		this.pushId = pushId;
+	}
+
+	public Short getPushJumpType() {
+		return this.pushJumpType;
+	}
+
+	public void setPushJumpType(Short pushJumpType) {
+		this.pushJumpType = pushJumpType;
+	}
+
+	public String getPushJumpTo() {
+		return this.pushJumpTo;
+	}
+
+	public void setPushJumpTo(String pushJumpTo) {
+		this.pushJumpTo = pushJumpTo;
+	}
+
+	public Integer getPushClicks() {
+		return this.pushClicks;
+	}
+
+	public void setPushClicks(Integer pushClicks) {
+		this.pushClicks = pushClicks;
+	}
+
+	public Short getPushuNumber() {
+		return this.pushuNumber;
+	}
+
+	public void setPushuNumber(Short pushuNumber) {
+		this.pushuNumber = pushuNumber;
+	}
+
+	public Timestamp getPushTime() {
+		return this.pushTime;
+	}
+
+	public void setPushTime(Timestamp pushTime) {
+		this.pushTime = pushTime;
+	}
+
+	public Short getPushIf() {
+		return this.pushIf;
+	}
+
+	public void setPushIf(Short pushIf) {
+		this.pushIf = pushIf;
+	}
+
+	public String getPushImage() {
+		return this.pushImage;
+	}
+
+	public void setPushImage(String pushImage) {
+		this.pushImage = pushImage;
+	}
+
+}

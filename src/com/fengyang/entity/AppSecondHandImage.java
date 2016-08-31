@@ -1,0 +1,73 @@
+package com.fengyang.entity;
+
+/**
+ * AppSecondHandImage entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppSecondHandImage implements java.io.Serializable {
+
+	// Fields
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4157792951156532595L;
+	private Integer secondImageId;
+	private AppSecondHand appSecondHand;
+	private String imagePath;
+	private Integer imageSort;
+
+	// Constructors
+
+	/** default constructor */
+	public AppSecondHandImage() {
+	}
+
+	/** minimal constructor */
+	public AppSecondHandImage(AppSecondHand appSecondHand) {
+		this.appSecondHand = appSecondHand;
+	}
+
+	/** full constructor */
+	public AppSecondHandImage(AppSecondHand appSecondHand, String imagePath,
+			Integer imageSort) {
+		this.appSecondHand = appSecondHand;
+		this.imagePath = imagePath;
+		this.imageSort = imageSort;
+	}
+
+	// Property accessors
+
+	public Integer getSecondImageId() {
+		return this.secondImageId;
+	}
+
+	public void setSecondImageId(Integer secondImageId) {
+		this.secondImageId = secondImageId;
+	}
+
+	public AppSecondHand getAppSecondHand() {
+		return this.appSecondHand;
+	}
+
+	public void setAppSecondHand(AppSecondHand appSecondHand) {
+		this.appSecondHand = appSecondHand;
+	}
+
+	public String getImagePath() {
+		return this.imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public Integer getImageSort() {
+		return this.imageSort;
+	}
+
+	public void setImageSort(Integer imageSort) {
+		this.imageSort = imageSort;
+	}
+
+}

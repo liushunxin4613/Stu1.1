@@ -1,0 +1,268 @@
+package com.fengyang.fragment;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.adapter.UserInfoAdapter;
+import com.fengyang.dialog.LoadingDialog;
+import com.fengyang.dialog.LoadingDialog.OnBackPressedLisener;
+import com.fengyang.entity.User;
+import com.fengyang.entity.UserDetail;
+import com.fengyang.model.UserInfo;
+import com.fengyang.service.InitUserService;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.stu.StuApplication;
+import com.fengyang.util.Config;
+import com.fengyang.volleyTool.DiskBitmapCache;
+import com.fengyang.volleyTool.UserPhotoImageListener;
+
+public class MeInfoFragment extends Fragment {
+
+	private static final String TAG = "MeInfoFragment";
+
+	private ScrollView viewContainer;
+	
+	private String[] sexStr;
+	
+	private ListView mlListView;
+
+	private StuApplication application;
+
+	private RequestQueue mQueue;
+
+	private ImageLoader imageLoader;
+
+	private DiskBitmapCache diskCache;
+
+	private RelativeLayout item;
+
+	private UserInfoAdapter mAdapter;
+
+	private static MeInfoFragment fragment = null;
+
+	private ArrayList<UserInfo> mlList;
+
+	private SimpleDateFormat ss = new SimpleDateFormat("yyyy-MM-dd",
+			Locale.CHINA);
+	
+	private View refreshView;
+	
+	private LoadingDialog dialog;
+
+	private IntentFilter intentFilter;
+
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (refreshView != null)
+				refreshView.clearAnimation();
+			dialog.dismiss();
+			if (InitUserService.ACTION_GET_USER_DETAIL.equals(action)) {
+				setUserDate(application.getUser(), application.getUserDetail());
+			} else if (InitUserService.ACTION_GET_USER_DETAIL_FAILURE
+					.equals(action)) {
+				MainActivity.showToast(getActivity(),
+						R.string.error_get_data_error);
+			}
+		}
+	};
+
+	public static Fragment getInstance() {
+		if (fragment == null)
+			fragment = new MeInfoFragment();
+		return fragment;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		application = (StuApplication) getActivity().getApplication();
+		mQueue = Volley.newRequestQueue(getActivity());
+		diskCache = new DiskBitmapCache(getActivity().getCacheDir(), 10);
+		imageLoader = new ImageLoader(mQueue, diskCache);
+		sexStr=getResources().getStringArray(R.array.sex_choice_array);
+
+		intentFilter = new IntentFilter();
+		intentFilter.addAction(InitUserService.ACTION_GET_USER_DETAIL);
+		intentFilter.addAction(InitUserService.ACTION_GET_USER_DETAIL_FAILURE);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_me_info, container,
+				false);
+		viewContainer = (ScrollView) rootView
+				.findViewById(R.id.me_info_container);
+		item = (RelativeLayout) rootView.findViewById(R.id.Re_me_info_imge);
+		mlListView = (ListView) rootView.findViewById(R.id.Lv_me_info);
+		if (application.isLogin()) {
+			User user = application.getUser();
+			UserDetail userDetail = application.getUserDetail();
+//			Log.i("userDetail", userDetail.toString());
+			requestUserPhoto(user.getPhotoPath());
+			setUserDate(user, userDetail);
+		}
+		return rootView;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		getActivity().registerReceiver(receiver, intentFilter);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		getActivity().unregisterReceiver(receiver);
+	}
+
+	/**
+	 * 刷新用户信息操作，并存入数据库
+	 */
+	public void refreash(View actionView) {
+		// 启动service请求获取用户详情数据
+		refreshView = actionView;
+		Intent intent = new Intent(getActivity(), InitUserService.class);
+		intent.putExtra(InitUserService.KEY_START_SERVICE_FOR,
+				InitUserService.TASK_REQUEST_USER_DETAIL);
+		getActivity().startService(intent);
+		Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate_refresh);
+		actionView.startAnimation(anim);
+		dialog = new LoadingDialog(getString(R.string.dialog_loading));
+		dialog.setOnBackPressedListener(new OnBackPressedLisener() {
+			@Override
+			public void onBackPressed() {
+				dialog.dismiss();
+				mQueue.cancelAll(TAG);
+			}
+		});
+		FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+		dialog.show(ft, TAG);
+	}
+
+	private void requestUserPhoto(String photoPath) {
+		if (photoPath != null && photoPath.length() > 0) {
+			String imgUrl = Config.USER_PHOTO_PATH + "/" + photoPath;
+			imageLoader.get(imgUrl, new UserPhotoImageListener(item,
+					getActivity()));
+		}
+	}
+
+	private void setUserDate(User user, UserDetail userDetail) {
+		mlList = new ArrayList<UserInfo>();
+		if (null != user.getName()) {
+			if (!"".equals(user.getName())) {
+				UserInfo mInfo = new UserInfo("昵称", user.getName());
+				mlList.add(mInfo);
+			}
+		}
+		if (null != user.getPoints()) {
+			UserInfo mInfo = new UserInfo("积分", user.getPoints() + "");
+			mlList.add(mInfo);
+		}
+//		Log.i("userDetail", userDetail.toString());
+		if (null != user.getIsVerify()) {
+			String[] verify = getResources().getStringArray(R.array.verify_choice_array);
+			UserInfo mInfo = new UserInfo("认证情况", verify[user.getIsVerify()]);
+			mlList.add(mInfo);
+		}
+		sexStr=getResources().getStringArray(R.array.sex_choice_array);
+		if (null != userDetail.getSex()) {
+			UserInfo mInfo = new UserInfo("性别", sexStr[userDetail.getSex()]);
+			mlList.add(mInfo);
+		}
+		if (null != userDetail.getBirthday()) {
+			UserInfo mInfo = new UserInfo("出生日期",
+					dateToTime(userDetail.getBirthday()));
+			mlList.add(mInfo);
+		}
+		if (null != user.getPhone()) {
+			if (!"".equals(user.getPhone())) {
+				UserInfo mInfo = new UserInfo("电话号码", user.getPhone());
+				mlList.add(mInfo);
+			}
+		}
+		if (null != userDetail.getTrueName()) {
+			if (!"".equals(userDetail.getTrueName())) {
+				UserInfo mInfo = new UserInfo("真实姓名", userDetail.getTrueName());
+				mlList.add(mInfo);
+			}
+		}
+		if (null != user.getEmail()) {
+			if (!"".equals(user.getEmail())) {
+				UserInfo mInfo = new UserInfo("邮箱", user.getEmail());
+				mlList.add(mInfo);
+			}
+		}
+		if (null != userDetail.getQqNO()) {
+			if (!"".equals(userDetail.getQqNO())) {
+				UserInfo mInfo = new UserInfo("QQ", userDetail.getQqNO());
+				mlList.add(mInfo);
+			}
+		}
+		if (null != userDetail.getBrifIntrodction()) {
+			if (!"".equals(userDetail.getBrifIntrodction())) {
+				UserInfo mInfo = new UserInfo("个人简介", userDetail.getBrifIntrodction());
+				mlList.add(mInfo);
+			}
+		}
+
+		mAdapter = new UserInfoAdapter(mlList, getActivity());
+		mlListView.setEnabled(false);
+		mlListView.setAdapter(mAdapter);
+		viewContainer.scrollTo(0, 0);
+		// setListViewHeight(mlListView, mAdapter);
+	}
+
+	private String dateToTime(Date date) {
+		String time = "";
+		time = ss.format(date);
+		return time;
+	}
+
+	// public void setListViewHeight(ListView listView,UserInfoAdapter
+	// listAdapter) {
+	// if (listAdapter == null) {
+	// return;
+	// }
+	// int totalHeight = 0;
+	// for (int i = 0, len = listAdapter.getCount(); i < len; i++) { //
+	// listAdapter.getCount()返回数据项的数目
+	// View listItem = listAdapter.getView(i, null, listView);
+	// listItem.measure(0, 0); // 计算子项View 的宽高
+	// totalHeight += listItem.getMeasuredHeight(); // 统计所有子项的总高度
+	// }
+	// ViewGroup.LayoutParams params = listView.getLayoutParams();
+	// params.height = totalHeight + (listView.getDividerHeight() *
+	// (listAdapter.getCount() - 1));
+	// listView.setLayoutParams(params);
+	// }
+}

@@ -1,0 +1,445 @@
+package com.fengyang.util;
+
+/**
+ * 参数常量类
+ * 
+ * @author HeJie
+ *
+ */
+public class Config {
+
+	/**
+	 * 服务器ip地址
+	 */
+	 public static final String SERVER_IP = "121.40.196.160";
+//	public static final String SERVER_IP = "192.168.56.1";
+
+	/**
+	 * 服务器端口号
+	 */
+	public static final String SERVER_PORT = "8090";
+	// public static final String SERVER_PORT = "8080";
+
+	public static String APPKEY = "5887b8134af8";// 463db7238681 27fe7909f8e8
+	// 填写从短信SDK应用后台注册得到的APPSECRET
+	public static String APPSECRET = "9cd46d6cf9908a297fbafeb75b7b19d3";//
+
+	/*
+	 * /** 短信验证服务器url地址
+	 */
+	public static final String MESSAGE_CHECK_URL = "http://42.121.122.61:18002/send.do?ua=oubamall&pw=411473";
+
+	/**
+	 * 应用版本码
+	 */
+	public static final Integer APP_VERSION_CODE = 1;
+
+	/**
+	 * 服务器命名空间
+	 */
+	public static final String SERVER_NAMESPACE = "AppServer2";
+	/**
+	 * 服务器请求地址
+	 */
+	public static final String SERVER_URL = "http://" + SERVER_IP + ":"
+			+ SERVER_PORT + "/" + SERVER_NAMESPACE + "/";
+	/**
+	 * 商城地址
+	 */
+	public static final String SERVER_WAP_MALL = "http://wap.oubamall.com/";
+	/**
+	 * 下载地址前缀
+	 */
+	public static final String DOWNLAND_ADDRESS = "http://www.oubamall.com/data/upload/";
+	/**
+	 * 用户信息命名空间
+	 */
+	public static final String NAMESPACE_USER = "User/";
+	/**
+	 * 签到命名空间
+	 */
+	public static final String NAMESPACE_CHECK = "check/";
+	/**
+	 * 用户详情的命名空间
+	 */
+	public static final String NAMESPACE_USER_DETAIL = "UserDetail/";
+	/**
+	 * 兼职信息的命名空间
+	 */
+	public static final String NAMESPACE_PART = "part/";
+	/**
+	 * 兼职收藏的命名空间
+	 */
+	public static final String NAMESPACE_PART_COLLECTION = "partCollection/";
+	/**
+	 * 二手物品的命名空间
+	 */
+	public static final String NAMESPACE_SECOND = "second/";
+	/**
+	 * 学生的命名空间
+	 */
+	public static final String NAMESPACE_STUDENT = "stu/";
+	/**
+	 * 商家的命名空间
+	 */
+	public static final String NAMESPACE_SELL = "merchant/";
+	/**
+	 * 二手物品收藏的命名空间
+	 */
+	public static final String NAMESPACE_SECOND_COLLECTION = "secondCollection/";
+	/**
+	 * 反馈意见接口命名空间
+	 */
+	public static final String NAMESPACE_USER_ADVICE = "userAdvice/";
+	/**
+	 * 二手举报命名空间
+	 */
+	public static final String NAMESPACE_SECOND_HAND_REPORT = "secondReport/";
+	/**
+	 * 兼职举报命名空间
+	 */
+	public static final String NAMESPACE_PART_TIME_REPORT = "partReport/";
+	/**
+	 * 推送绑定命名空间
+	 */
+	public static final String NAMESPACE_CLOUD_PUSH = "cloudPush/";
+	/**
+	 * 静态页面地址
+	 */
+	public static final String SERVER_STATIC_PAGE = SERVER_URL + "staticPage/";
+	/**
+	 * 略缩图相对路径
+	 */
+	public static final String THUM_PIC_PATH = "/thum";
+	/**
+	 * 略缩图文件名前缀
+	 */
+	public static final String THUM_PERFIX = "Thum_";
+
+	/**
+	 * URL 通过手机号验证用户登陆
+	 */
+	public static final String URL_VERIFY_BY_PHONE = SERVER_URL
+			+ NAMESPACE_USER + "verifyByPhone.action";
+	/**
+	 * URL 通过邮箱验证用户登录
+	 */
+	public static final String URL_VERIFY_BY_EMAIL = SERVER_URL
+			+ NAMESPACE_USER + "verifyByEmail.action";
+	/**
+	 * URL 获取用户信息
+	 */
+	public static final String URL_GET_USER_DATA = SERVER_URL
+			+ NAMESPACE_USER + "getUserData.action";
+	/**
+	 * URL 获取用户详细信息
+	 */
+	public static final String URL_GET_USER_DETAIL = SERVER_URL
+			+ NAMESPACE_USER_DETAIL + "getUserDetail.action";
+	/**
+	 * URL 用户注册
+	 */
+	public static final String URL_GET_USER_REGIST = SERVER_URL
+			+ NAMESPACE_USER + "registUser.action";
+	/**
+	 * URL 通过用户手机号获取用户信息
+	 */
+	public static final String URL_GET_USER_BY_PHONE = SERVER_URL
+			+ NAMESPACE_USER + "getUserByPhone.action";
+	/**
+	 * URL 更新用户部分信息
+	 */
+	public static final String URL_GET_USER_INFORMATION_UPDATE = SERVER_URL
+			+ NAMESPACE_USER + "updatePart.action";
+	public static final String URL_GET_USER_UPDATE = SERVER_URL
+			+ NAMESPACE_USER + "update.action";
+	public static final String URL_GET_USER_UPDATE_DETAIL = SERVER_URL
+			+ NAMESPACE_USER_DETAIL + "update.action";
+	public static final String URL_GET_USER_SAVEORUPDATE = SERVER_URL
+			+ NAMESPACE_USER + "saveOrUpdate.action";
+	/**
+	 * URL 更新兼职部分信息
+	 */
+	public static final String URL_GET_PARTTIME_INFORMATION_UPDATE = SERVER_URL
+			+ NAMESPACE_PART + "update.action";
+	/**
+	 * URL 更新二手信息
+	 */
+	public static final String URL_GET_SECOND_HAND_INFORMATION_UPDATE = SERVER_URL
+			+ NAMESPACE_SECOND + "update.action";
+	/**
+	 * URL 更新二手部分信息
+	 */
+	public static final String URL_GET_SECOND_HAND_INFORMATION_PART_UPDATE = SERVER_URL
+			+ NAMESPACE_SECOND + "updatePart.action";
+
+	/**
+	 * URL 发布兼职
+	 */
+	public static final String URL_PUBLISH_PART = SERVER_URL + NAMESPACE_PART
+			+ "save.action";
+	/**
+	 * 获取兼职列表
+	 */
+	public static final String URL_GET_PART_LIST = SERVER_URL + NAMESPACE_PART
+			+ "getByPage.action";
+	/**
+	 * 二手举报接口
+	 */
+	public static final String URL_REPORT_SECOND_HAND = SERVER_URL
+			+ NAMESPACE_SECOND_HAND_REPORT + "save.action";
+	/**
+	 * 兼职举报接口
+	 */
+	public static final String URL_REPORT_PART_TIME = SERVER_URL
+			+ NAMESPACE_PART_TIME_REPORT + "save.action";
+	/**
+	 * URL 获取用户发布的兼职总数
+	 */
+	public static final String URL_GET_PART_COUNT_BY_USER = SERVER_URL
+			+ NAMESPACE_PART + "getPublishedCount.action";
+	/**
+	 * URL 获取用户发布的兼职列表
+	 */
+	public static final String URL_GET_PART_LIST_BY_USER = SERVER_URL
+			+ NAMESPACE_PART + "getPublishPart.action";
+	/**
+	 * URL 删除兼职接口
+	 */
+	public static final String URL_DELETE_PARTTIME = SERVER_URL
+			+ NAMESPACE_PART + "updatePart.action";
+	/**
+	 * 获取兼职详情
+	 */
+	public static final String URL_GET_PART_DETAIL = SERVER_URL
+			+ NAMESPACE_PART + "getPartTime.action";
+	/**
+	 * 获取用户兼职收藏的总数
+	 */
+	public static final String URL_GET_PART_COLLECT_COUNT = SERVER_URL
+			+ NAMESPACE_PART_COLLECTION + "getPartCount.action";
+	/**
+	 * 获取用户兼职收藏的列表
+	 */
+	public static final String URL_GET_PART_COLLECT_LIST = SERVER_URL
+			+ NAMESPACE_PART_COLLECTION + "getByPage.action";
+	/**
+	 * URL 兼职收藏接口
+	 */
+	public static final String URL_PART_COLLECT = SERVER_URL
+			+ NAMESPACE_PART_COLLECTION + "save.action";
+	/**
+	 * URL 取消兼职收藏接口
+	 */
+	public static final String URL_PART_UNCOLLECT = SERVER_URL
+			+ NAMESPACE_PART_COLLECTION + "deleteCollect.action";
+
+	/**
+	 * URL 发布二手物品
+	 */
+	public static final String URL_PUBLISH_SECOND = SERVER_URL
+			+ NAMESPACE_SECOND + "save.action";
+	/***
+	 * URL 个人认证 URL 商家认证
+	 */
+	public static final String URL_PUBLISH_SELL_GETSELL = SERVER_URL
+			+ NAMESPACE_SELL + "getMerchant.action";
+	public static final String URL_PUBLISH_SELL_SAVE = SERVER_URL
+			+ NAMESPACE_SELL + "save.action";
+	public static final String URL_PUBLISH_SELL_UPDATE = SERVER_URL
+			+ NAMESPACE_SELL + "update.action";
+	public static final String URL_PUBLISH_SELL_SAVEORUPDATE = SERVER_URL
+			+ NAMESPACE_SELL + "saveOrUpdate.action";
+	public static final String URL_PUBLISH_SELL_UPLOADSELL = SERVER_URL
+			+ NAMESPACE_SELL + "uploadLicense.action";
+	public static final String URL_PUBLISH_SELL_UPLOADIDCARD = SERVER_URL
+			+ NAMESPACE_SELL + "uploadIDCard.action";
+	/***
+	 * URL 个人认证
+	 */
+	public static final String URL_PUBLISH_MAN_GETSTU = SERVER_URL
+			+ NAMESPACE_STUDENT + "getStu.action";
+	public static final String URL_PUBLISH_MAN_SAVE = SERVER_URL
+			+ NAMESPACE_STUDENT + "save.action";
+	public static final String URL_PUBLISH_MAN_UPDATE = SERVER_URL
+			+ NAMESPACE_STUDENT + "update.action";
+	public static final String URL_PUBLISH_MAN_SAVEORUPDATE = SERVER_URL
+			+ NAMESPACE_STUDENT + "saveOrUpdate.action";
+	public static final String URL_PUBLISH_MAN_UPLOADSTU = SERVER_URL
+			+ NAMESPACE_STUDENT + "uploadStu.action";
+	public static final String URL_PUBLISH_MAN_UPLOADIDCARD = SERVER_URL
+			+ NAMESPACE_STUDENT + "uploadIDCard.action";
+	public static final String URL_USER_UPLOADUSERPHOTO = SERVER_URL
+			+ NAMESPACE_USER + "uploadUserPhoto.action";
+	/**
+	 * URL 上传二手物品的图片
+	 */
+	public static final String URL_SECOND_UPLOADPIC = SERVER_URL
+			+ NAMESPACE_SECOND + "uploadPic.action";
+	/**
+	 * URL 获取二手物品列表
+	 */
+	public static final String URL_GET_SECOND_LIST = SERVER_URL
+			+ NAMESPACE_SECOND + "getByPage.action";
+	/**
+	 * URL 获取用户发布的二手物品总数
+	 */
+	public static final String URL_GET_SECOND_COUNT_BY_USER = SERVER_URL
+			+ NAMESPACE_SECOND + "getPublishedCount.action";
+	/**
+	 * URL 获取用户发布的二手物品列表
+	 */
+	public static final String URL_GET_SECOND_LIST_BY_USER = SERVER_URL
+			+ NAMESPACE_SECOND + "getPublishedSecond.action";
+	/**
+	 * URL 获取二手物品详细信息
+	 */
+	public static final String URL_GET_SECOND_DETAIL = SERVER_URL
+			+ NAMESPACE_SECOND + "getSecondHand.action";
+	/**
+	 * URL 获取二手物品的图片地址
+	 */
+	public static final String URL_GET_SECOND_PIC = SERVER_URL
+			+ NAMESPACE_SECOND + "getSecondPic.action";
+	/**
+	 * URL 获取用户的二手收藏列表
+	 */
+	public static final String URL_GET_SECOND_COLLECT_LIST = SERVER_URL
+			+ NAMESPACE_SECOND_COLLECTION + "getByPage.action";
+	/**
+	 * URL 获取用户二手收藏总数
+	 */
+	public static final String URL_GET_SECOND_COLLECT_COUNT = SERVER_URL
+			+ NAMESPACE_SECOND_COLLECTION + "getSecondCount.action";
+	/**
+	 * URL 收藏二手物品
+	 */
+	public static final String URL_SECOND_COLLECT = SERVER_URL
+			+ NAMESPACE_SECOND_COLLECTION + "save.action";
+	/**
+	 * URL 取消收藏二手物品
+	 */
+	public static final String URL_SECOND_UNCOLLECT = SERVER_URL
+			+ NAMESPACE_SECOND_COLLECTION + "deleteCollect.action";
+	/**
+	 * URL 提交意见反馈
+	 */
+	public static final String URL_ADVICE_SEND = SERVER_URL
+			+ NAMESPACE_USER_ADVICE + "save.action";
+	/**
+	 * URL 更新用户推送绑定的userId
+	 */
+	public static final String URL_UPDATE_PUSH_CHANNEL_ID = SERVER_URL
+			+ NAMESPACE_CLOUD_PUSH + "saveOrUpdate.action";
+	/**
+	 * 上传文件路径
+	 */
+	public static final String UPLOAD_PATH = SERVER_URL + "upload";
+	/**
+	 * 用户头像部分路径
+	 */
+	public static final String USER_PHOTO_PATH = UPLOAD_PATH + "/user/avatar";
+	/**
+	 * 二手物品图片路径
+	 */
+	public static final String SECOND_PIC_PATH = UPLOAD_PATH + "/secondHand";
+	/**
+	 * 二手物品略缩图片路径
+	 */
+	public static final String SECOND_PIC_PATH_THUM = SECOND_PIC_PATH
+			+ THUM_PIC_PATH;
+	/**
+	 * 二手物品评论路径
+	 */
+	public static final String SECOND_COMMENT_PATH = SECOND_PIC_PATH
+			+ "/comment";
+	/**
+	 * 兼职图片路径
+	 */
+	public static final String PART_PIC_PATH = UPLOAD_PATH + "/partTime";
+	/**
+	 * 兼职评论图片路径
+	 */
+	public static final String PART_COMMENT_PATH = PART_PIC_PATH + "/comment";
+	/**
+	 * 验证身份证图片路径
+	 */
+	public static final String IDCARD_PIC_PATH = UPLOAD_PATH + "/IDCard";
+	/**
+	 * 学生证验证图片
+	 */
+	public static final String STU_PIC_PATH = UPLOAD_PATH + "/Stu";
+	/**
+	 * 商家营业执照验证图片
+	 */
+	public static final String MERCHANT_LICENSE_PATH = UPLOAD_PATH
+			+ "/merchant";
+	/**
+	 * 首页推送路径
+	 */
+	public static final String HOME_PUSH_PATH = UPLOAD_PATH + "/push";
+	/**
+	 * 普通图片路径
+	 */
+	public static final String NORMAL_IMAGE_PATH = UPLOAD_PATH + "/Image";
+	/**
+	 * 普通文件路径
+	 */
+	public static final String NORMAL_FILE_PATH = UPLOAD_PATH + "/File";
+	/**
+	 * android安装包文件路径
+	 */
+	public static final String APK_FILE_PATH = UPLOAD_PATH + "/Apk";
+
+	/**
+	 * 设置信息文件名
+	 */
+	public static final String SHAREPREFERENCE_SETTING = "setting_info";
+
+	public static final String SETTING_HOME_INDEX = "home_index_location";
+	/**
+	 * 用户信息文件名
+	 */
+	public static final String SHAREPREFERENCE_USER_INFO = "user_info";
+
+	public static final String USER_INFO_NAME = "userName";
+
+	public static final String USER_INFO_PASSWORD = "userPwd";
+	/**
+	 * 已经向服务器上传的用户推送id
+	 */
+	public static final String USER_BIND_CHANNEL_ID = "channel_Id";
+	/**
+	 * 用户刮刮乐扣的积分
+	 */
+	public static final int GUAGUAKA_POINT = 3;
+
+	/**
+	 * 默认的分页大小
+	 */
+	public static final int LIST_PAGE_SIZE = 10;
+	/**
+	 * 上传图片的宽度
+	 */
+	public static final int UPLOAD_IMAGE_WIDTH = 1200;
+
+	/**
+	 * 上传图片的高度
+	 */
+	public static final int UPLOAD_IMAGE_HEIGHT = 900;
+	/**
+	 * 上传用户头像的宽高
+	 */
+	public static final int UPLOAD_USER_PHOTO_LEN = 180;
+
+	public static final String WORK_TIME_SPLIT = " ";
+
+	/**
+	 * URL 签到接口
+	 */
+	public static final String URL_CHECK_IN = SERVER_URL + NAMESPACE_CHECK
+			+ "checkIn.action";
+
+	public static final String CHECK_IN_OBJ_STRING = "obj";
+
+}

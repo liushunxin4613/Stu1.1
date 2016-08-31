@@ -1,0 +1,924 @@
+package com.fengyang.stu;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.Toast;
+
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.fengyang.activity.CheckPhoneActivity;
+import com.fengyang.activity.ChooseListActivity;
+import com.fengyang.activity.HistoryActivity;
+import com.fengyang.activity.LoginActivity;
+import com.fengyang.activity.PublishAuthenticationActivity;
+import com.fengyang.activity.PublishPartActivity;
+import com.fengyang.activity.PublishSecondActivity;
+import com.fengyang.db.AreaDAO;
+import com.fengyang.dialog.ConfirmDialog;
+import com.fengyang.entity.OubaArea;
+import com.fengyang.entity.User;
+import com.fengyang.fragment.CollectFragment;
+import com.fengyang.fragment.FindFragment;
+import com.fengyang.fragment.HomeFragment;
+import com.fengyang.fragment.MeFragment;
+import com.fengyang.fragment.VersionInfoFragment;
+import com.fengyang.tool.Tool;
+import com.fengyang.util.Config;
+import com.fengyang.util.ParseXmlService;
+import com.fengyang.util.VersionUtils;
+import com.fengyang.util.push.PushUtil;
+import com.fengyang.util.ui.ImmersionActivity;
+
+public class MainActivity extends ImmersionActivity implements
+NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+	private ActionBar actionBar;
+
+	private FrameLayout container;
+	/**
+	 * 底部四个Radio按钮
+	 */
+	private RadioButton[] bottomBtn;
+
+	private RadioGroup radioGroup;
+	/**
+	 * 当前fragment的位置
+	 */
+	private int location = 0;
+
+	/**
+	 * 确定退出
+	 */
+	private boolean confirm = false;
+	/**
+	 * Fragment managing the behaviors, interactions and presentation of the
+	 * navigation drawer.
+	 */
+	private NavigationDrawerFragment mNavigationDrawerFragment;
+	private Menu menu;
+
+	public BDLocationListener mMyLocationListener;
+	public LocationClient mLocationClient;
+	public boolean AU_location = false;
+	public static String locationAddress = null;
+	private static final int MAIN_REQUEST_CHOOSE_AREA = 1;
+	private static final int REQUEST_CHECK_STU = 2;
+	private static final int REQUEST_CHECK_SELLER = 3;
+	/* 下载中 */
+	private static final int DOWNLOAD = 1;
+	/* 下载结束 */
+	private static final int DOWNLOAD_FINISH = 2;
+	public static final int XML_HASHMAP = 3;
+	public static String LOCATION_DISTRICT = "locationAddress";
+	private static StuApplication application;
+	public static String LOCATION_CITY_ACTION = "city_action";
+	public static String LOCATION_CITY = "city";
+	public static String LOCATION_DISTRACT = "distract";
+	public String city = null;
+	public String distract = null;
+	
+	//TODO
+	/***
+	 * 软件下载地址
+	 */
+	public static String apkUrl;
+	
+	private static int versionCode;
+	/* 保存解析的XML信息 */
+	HashMap<String, String> mHashMap;
+	/* 下载保存路径 */
+	private String mSavePath;
+	/* 是否取消更新 */
+	private boolean cancelUpdate = false;
+	
+	private static boolean downUpdate = true;
+	
+	/**
+	 * 显示对话框的action
+	 */
+	public static final String ACTION_SHOW_DIALOG = "MainActivity.showDialog";
+	/**
+	 * 对话框的标题数据
+	 */
+	public static final String EXTRA_DIALOG_TITLE = "showDialog.title";
+	/**
+	 * 对话框的内容数据
+	 */
+	public static final String EXTRA_DIALOG_CONTENT = "showDialog.content";
+	
+	private URL url;
+	
+	private ProgressBar mProgress;
+	/* 记录进度条数量 */
+	private int progress;
+	
+	private Dialog mDownloadDialog;
+	
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (ACTION_SHOW_DIALOG.equals(action)) {
+				String title = intent.getStringExtra(EXTRA_DIALOG_TITLE);
+				String content = intent.getStringExtra(EXTRA_DIALOG_CONTENT);
+				ConfirmDialog dialog = new ConfirmDialog(
+						ConfirmDialog.CONFIRM_STYLE_CENTER, title, content,
+						context.getString(R.string.dialog_sure), null);
+				dialog.show(getSupportFragmentManager(), TAG);
+			}
+
+		}
+	};
+
+	private FragmentPagerAdapter pageAdapter = new FragmentPagerAdapter(
+			getSupportFragmentManager()) {
+
+		@Override
+		public int getCount() {
+			return 4;
+		}
+
+		@Override
+		public Fragment getItem(int pos) {
+			switch (pos) {
+			case R.id.radio_home:
+				return new HomeFragment();
+			case R.id.radio_collection:
+				return new CollectFragment();
+			case R.id.radio_find:
+				return new FindFragment();
+			case R.id.radio_me:
+				return new MeFragment();
+			}
+			return null;
+		}
+	};
+
+	/**
+	 * 登陆请求码
+	 */
+	public static final int REQUEST_LOGIN = 0x011;
+
+	private static final String TAG = "MainActivity";
+
+	public static void showToast(Context context, int resId) {
+		Toast.makeText(context, resId, Toast.LENGTH_SHORT).show();
+	}
+
+	public static void showToast(Context context, String msg) {
+		Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+	}
+
+	/**
+	 * 检查用户是否登陆
+	 * 
+	 * @return 用户是否登陆
+	 */
+	public static boolean checkUserLogin(final FragmentActivity activity) {
+		StuApplication application = (StuApplication) activity.getApplication();
+		Context context = application.getApplicationContext();
+		if (application.isLogin()) {
+			return true;
+		} else {
+			ConfirmDialog dialog = new ConfirmDialog(
+					ConfirmDialog.CONFIRM_STYLE_CENTER,
+					context.getString(R.string.login_title),
+					context.getString(R.string.login_content),
+					context.getString(R.string.login),
+					context.getString(R.string.dialog_cancel));
+			dialog.setOnclickListener(new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
+						activity.startActivity(new Intent(activity,
+								LoginActivity.class));
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						break;
+					}
+				}
+			});
+			dialog.show(
+					activity.getSupportFragmentManager().beginTransaction(),
+					TAG);
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * 检查用户是否验证
+	 * 
+	 * @param activity
+	 * @return
+	 */
+	public static boolean checkUserVerify(final FragmentActivity activity) {
+		StuApplication application = (StuApplication) activity.getApplication();
+		Context context = application.getApplicationContext();
+		if (application.getUser().getIsVerify() == User.VERIFY_TYPE_PASSED) {
+			return true;
+		} else if (application.getUser().getIsVerify() == User.VERIFY_TYPE_COMMIT) {
+			ConfirmDialog dialog = new ConfirmDialog(
+					ConfirmDialog.CONFIRM_STYLE_CENTER,
+					activity.getString(R.string.dialog_me_is_commit_title),
+					activity.getString(R.string.dialog_me_is_commit_content),
+					activity.getString(R.string.dialog_sure), null);
+			dialog.show(activity.getSupportFragmentManager(), TAG);
+			return false;
+		} else {
+			ConfirmDialog dialog = new ConfirmDialog(
+					ConfirmDialog.CONFIRM_STYLE_CENTER,
+					context.getString(R.string.dialog_verify_title),
+					context.getString(R.string.dialog_verify_content),
+					context.getString(R.string.dialog_verify_go_verify),
+					context.getString(R.string.dialog_cancel));
+			dialog.setOnclickListener(new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
+						showAuthenDialog(activity);
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						break;
+					}
+				}
+			});
+			dialog.show(activity.getSupportFragmentManager(), TAG);
+			return false;
+		}
+	}
+
+	/**
+	 * 显示选择验证类型的对话框
+	 * 
+	 * @param activity
+	 */
+	public static void showAuthenDialog(final FragmentActivity activity) {
+		final Intent intent = new Intent(activity,
+				CheckPhoneActivity.class);
+		ConfirmDialog dialog = new ConfirmDialog(
+				ConfirmDialog.CONFIRM_STYLE_CENTER,
+				activity.getString(R.string.fragment_me_publisher_authentication_BT),
+				activity.getString(R.string.fragment_me_auth_content), activity
+				.getString(R.string.fragment_me_auth_stu), activity
+				.getString(R.string.fragment_me_auth_merchant));
+
+		dialog.setOnclickListener(new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					intent.putExtra(
+							PublishAuthenticationActivity.KEY_AUTHENTICATION_TYPE,
+							PublishAuthenticationActivity.TYPE_STU);
+					activity.startActivity(intent);
+					break;
+				case DialogInterface.BUTTON_NEGATIVE:
+					intent.putExtra(
+							PublishAuthenticationActivity.KEY_AUTHENTICATION_TYPE,
+							PublishAuthenticationActivity.TYPE_MERCHANT);
+					activity.startActivity(intent);
+					break;
+				}
+				Log.i("which", "" + which);
+			}
+		});
+		dialog.show(activity.getSupportFragmentManager().beginTransaction(),
+				TAG);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == Activity.RESULT_OK) {
+			ArrayList<Integer> choosedId = null;
+			switch (requestCode) {
+			case MAIN_REQUEST_CHOOSE_AREA:
+				choosedId = data
+				.getIntegerArrayListExtra(ChooseListActivity.KEY_CHOOSED_LIST);
+				StringBuffer sb = new StringBuffer();
+				AreaDAO areaDAO = new AreaDAO(getApplicationContext());
+				for (int i = 0; i < choosedId.size(); i++) {
+					if (i == 1) {
+						OubaArea cityArea = areaDAO.queryById(choosedId.get(i));
+						String cityar = areaDAO.queryById(choosedId.get(i))
+								.getAreaName();
+						city = cityar;
+					}
+					if (i == 2) {
+						OubaArea distrct = areaDAO.queryById(choosedId.get(i));
+						String dis = areaDAO.queryById(choosedId.get(i))
+								.getAreaName();
+						if (location == 0) {
+							actionBar.setTitle(dis);
+							distract = dis;
+							Tool.PutSharePreferences(getApplicationContext(),
+									LOCATION_DISTRICT, dis);
+							AU_location = true;
+						}
+					}
+				}
+				break;
+			}
+		}
+
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		application = (StuApplication) getApplication();
+		
+		versionCode = VersionUtils.getVersionCode(this);
+		if (downUpdate) {
+			Log.i(TAG, "检测更新");
+			updateThread();
+		}
+		
+		actionBar = getActionBar();
+
+		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.navigation_drawer);
+		container = (FrameLayout) findViewById(R.id.container);
+		radioGroup = (RadioGroup) findViewById(R.id.BottomGroup);
+		bottomBtn = new RadioButton[4];
+		bottomBtn[0] = (RadioButton) findViewById(R.id.radio_home);
+		bottomBtn[1] = (RadioButton) findViewById(R.id.radio_collection);
+		bottomBtn[2] = (RadioButton) findViewById(R.id.radio_find);
+		bottomBtn[3] = (RadioButton) findViewById(R.id.radio_me);
+
+		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
+				(DrawerLayout) findViewById(R.id.drawer_layout));
+
+		PushManager.startWork(getApplicationContext(),
+				PushConstants.LOGIN_TYPE_API_KEY,
+				PushUtil.getMetaValue(MainActivity.this, "api_key"));
+
+		perpareUI();
+
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(ACTION_SHOW_DIALOG);
+		registerReceiver(receiver, filter);
+
+		mLocationClient = new LocationClient(getApplicationContext());
+		mMyLocationListener = new MyLocationListener();
+		mLocationClient.registerLocationListener(mMyLocationListener);
+		setLocationOption();
+		mLocationClient.start();
+
+		if (mLocationClient != null && mLocationClient.isStarted()) {
+
+			int i = mLocationClient.requestLocation();
+			// Tool.ToolToast(getApplicationContext(), "***1+++"+i);
+		} else {
+			Log.d("LocSDK5", "locClient is null or not started");
+			// Tool.ToolToast(getApplicationContext(), "888***");
+		}
+
+	}
+
+	private void updateThread(){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					url = new URL(Config.APK_FILE_VERSION_PATH);
+					HttpURLConnection Connection= (HttpURLConnection) url.openConnection(); 
+					Connection.connect();
+					InputStream is = Connection.getInputStream();
+					HashMap<String,String> map=ParseXmlService.parseXml(is);
+					if (null != map) {
+						Message msg = new Message();
+						msg.obj = map;
+						msg.what = VersionInfoFragment.XML_HASHMAP;
+						mHandler.sendMessage(msg);
+					}
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+			}
+		}).start();
+	}
+	private Handler mHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			// 正在下载
+			case DOWNLOAD:
+				// 设置进度条位置
+				mProgress.setProgress(progress);
+				break;
+			case DOWNLOAD_FINISH:
+				// 安装文件
+				installApk();
+				break;
+			case XML_HASHMAP:
+				HashMap<String,String> map = (HashMap<String, String>) msg.obj;
+				mHashMap = map;
+				apkUrl = map.get("url");
+				int serviceCode = Integer.valueOf(map.get("version"));
+				// 版本判断
+				if (serviceCode > versionCode) {
+					// 显示提示对话框
+					showNoticeDialog();
+				}
+				break;
+			}
+		};
+	};
+	public void showNoticeDialog() {
+		ConfirmDialog dialog = new ConfirmDialog(
+				ConfirmDialog.CONFIRM_STYLE_CENTER,
+				getString(R.string.soft_update_title),
+				getString(R.string.soft_update_info),
+				getString(R.string.soft_update_updatebtn),
+				getString(R.string.soft_update_later));
+		dialog.setOnclickListener(new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					showDownloadDialog();
+					break;
+				case DialogInterface.BUTTON_NEGATIVE:
+					downUpdate = false;
+					break;
+				}
+			}
+		});
+		dialog.show(getSupportFragmentManager().beginTransaction(),
+				TAG);
+	}
+	/**
+	 * 显示软件下载对话框
+	 */
+	private void showDownloadDialog() {
+		// 构造软件下载对话框
+		AlertDialog.Builder builder = new Builder(this);
+		builder.setTitle(R.string.soft_updating);
+		// 给下载对话框增加进度条
+		final LayoutInflater inflater = LayoutInflater.from(this);
+		View v = inflater.inflate(R.layout.update_progress, null);
+		mProgress = (ProgressBar) v.findViewById(R.id.update_progress);
+		builder.setView(v);
+		// 取消更新
+		builder.setNegativeButton(R.string.soft_update_cancel,
+				new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				// 设置取消状态
+				cancelUpdate = true;
+			}
+		});
+		mDownloadDialog = builder.create();
+		mDownloadDialog.show();
+		// 现在文件
+		downloadApk();
+		
+	}
+	/**
+	 * 安装APK文件
+	 */
+	private void installApk() {
+		File apkfile = new File(mSavePath, mHashMap.get("name"));
+		if (!apkfile.exists()) {
+			return;
+		}
+		// 通过Intent安装APK文件
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.parse("file://" + apkfile.toString()),
+				"application/vnd.android.package-archive");
+		startActivity(intent);
+	}
+	
+	/**
+	 * 下载apk文件
+	 */
+	private void downloadApk() {
+		// 启动新线程下载软件
+		new downloadApkThread().start();
+	}
+
+	/**
+	 * 下载文件线程
+	 */
+	private class downloadApkThread extends Thread {
+		@Override
+		public void run() {
+			try {
+				// 判断SD卡是否存在，并且是否具有读写权限
+				if (Environment.getExternalStorageState().equals(
+						Environment.MEDIA_MOUNTED)) {
+					// 获得存储卡的路径
+					String sdpath = Environment.getExternalStorageDirectory()
+							+ "/";
+					mSavePath = sdpath + "download";
+					URL url = new URL(mHashMap.get("url"));
+					// 创建连接
+					HttpURLConnection conn = (HttpURLConnection) url
+							.openConnection();
+					conn.connect();
+					// 获取文件大小
+					int length = conn.getContentLength();
+					// 创建输入流
+					InputStream is = conn.getInputStream();
+
+					File file = new File(mSavePath);
+					// 判断文件目录是否存在
+					if (!file.exists()) {
+						file.mkdir();
+					}
+					File apkFile = new File(mSavePath, mHashMap.get("name"));
+					FileOutputStream fos = new FileOutputStream(apkFile);
+					int count = 0;
+					// 缓存
+					byte buf[] = new byte[1024];
+					// 写入到文件中
+					do {
+						int numread = is.read(buf);
+						count += numread;
+						// 计算进度条位置
+						progress = (int) (((float) count / length) * 100);
+						// 更新进度
+						mHandler.sendEmptyMessage(DOWNLOAD);
+						if (numread <= 0) {
+							// 下载完成
+							mHandler.sendEmptyMessage(DOWNLOAD_FINISH);
+							break;
+						}
+						// 写入文件
+						fos.write(buf, 0, numread);
+					} while (!cancelUpdate);// 点击取消就停止下载.
+					fos.close();
+					is.close();
+				}
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// 取消下载对话框显示
+			mDownloadDialog.dismiss();
+		}
+	}
+	
+	
+	
+	/**
+	 * 初始化ui
+	 */
+	public void perpareUI() {
+		setStatusColor(getResources().getColor(R.color.immersionColor));
+
+		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				Fragment fragment = (Fragment) pageAdapter.instantiateItem(
+						container, checkedId);
+				pageAdapter.setPrimaryItem(container, 0, fragment);
+				pageAdapter.finishUpdate(container);
+
+				bottomBtn[location].setTextColor(getResources().getColor(
+						R.color.text_gray));
+				switch (checkedId) {
+				case R.id.radio_home:
+					location = 0;
+					setMenu(false);
+					break;
+				case R.id.radio_collection:
+					location = 1;
+					setMenu(false);
+					break;
+				case R.id.radio_find:
+					location = 2;
+					setMenu(false);
+					break;
+				case R.id.radio_me:
+					location = 3;
+					setMenu(true);
+					break;
+				}
+				setActionBar(location);
+				bottomBtn[location].setTextColor(getResources().getColor(
+						R.color.base_blue));
+			}
+		});
+
+		SharedPreferences sharedPre = getSharedPreferences(
+				Config.SHAREPREFERENCE_SETTING, MODE_PRIVATE);
+		location = sharedPre.getInt(Config.SETTING_HOME_INDEX, 0);
+		actionBar.setDisplayShowTitleEnabled(true);
+		setActionBar(location);
+		bottomBtn[location].setChecked(true);
+		bottomBtn[location].setTextColor(getResources().getColor(
+				R.color.base_blue));
+		Fragment fragment = null;
+		switch (location) {
+		case 0:
+			fragment = (Fragment) pageAdapter.instantiateItem(container,
+					R.id.radio_home);
+			break;
+		case 1:
+			fragment = (Fragment) pageAdapter.instantiateItem(container,
+					R.id.radio_collection);
+			break;
+		case 2:
+			fragment = (Fragment) pageAdapter.instantiateItem(container,
+					R.id.radio_find);
+			break;
+		case 3:
+			fragment = (Fragment) pageAdapter.instantiateItem(container,
+					R.id.radio_me);
+			break;
+		}
+		pageAdapter.setPrimaryItem(container, 0, fragment);
+		pageAdapter.finishUpdate(container);
+	}
+
+	private void setActionBar(int pos) {
+		if (actionBar == null)
+			return;
+		switch (pos) {
+		case 0:
+			actionBar.setDisplayShowHomeEnabled(true);
+			actionBar.setHomeButtonEnabled(true);
+			if (Tool.GetLONGSharedPreferences(getApplicationContext(),
+					LOCATION_DISTRICT, null) != null) {
+				actionBar.setTitle(Tool.GetLONGSharedPreferences(
+						getApplicationContext(), LOCATION_DISTRICT, null));
+			} else {
+				actionBar.setTitle(R.string.action_located);
+			}
+
+			break;
+		case 1:
+		case 2:
+		case 3:
+			actionBar.setHomeButtonEnabled(false);
+			actionBar.setDisplayShowHomeEnabled(false);
+			actionBar.setTitle(R.string.app_name);
+			break;
+		}
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		this.menu = menu;
+		if (location == 3) {
+			setMenu(true);
+		} else {
+			setMenu(false);
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch (id) {
+		case R.id.action_publish_setting:
+			if (mNavigationDrawerFragment.isDrawerOpen()) {
+				mNavigationDrawerFragment.colseDrawer();
+			} else {
+				mNavigationDrawerFragment.openDrawer();
+			}
+			return true;
+		case R.id.action_publish_part:
+			if (checkUserLogin(this) && checkUserVerify(this)){
+				startActivity(new Intent(this, PublishPartActivity.class));
+			}
+			break;
+		case R.id.action_publish_secondHand:
+			if (checkUserLogin(this) && checkUserVerify(this)){
+				startActivity(new Intent(this, PublishSecondActivity.class));
+			}
+			break;
+		case R.id.action_publish_history:
+			if (checkUserLogin(this) && checkUserVerify(this))
+				startActivity(new Intent(getApplicationContext(),
+						HistoryActivity.class));
+			break;
+		case android.R.id.home:
+			ConfirmDialog dialog = new ConfirmDialog(
+					ConfirmDialog.CONFIRM_STYLE_BOTTOM,
+					getString(R.string.dialog_location),
+					getString(R.string.dialog_location_au),
+					getString(R.string.dialog_location_sure),
+					getString(R.string.dialog_location_cancle));
+			dialog.setOnclickListener(new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which) {
+					case DialogInterface.BUTTON_POSITIVE:
+						chooseArea();
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						AU_location = false;
+						mLocationClient.start();
+						mLocationClient.requestLocation();
+						break;
+					}
+				}
+			});
+			dialog.show(getSupportFragmentManager().beginTransaction(), TAG);
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * 设置相关参数
+	 */
+	private void setLocationOption() {
+		LocationClientOption option = new LocationClientOption();
+		option.setOpenGps(true);
+		option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
+		option.setAddrType("all");// 返回的定位结果包含地址信息
+		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
+		option.setScanSpan(24 * 60 * 60 * 1000);// 设置发起定位请求的间隔时间为5000ms
+		mLocationClient.setLocOption(option);
+	}
+
+	/**
+	 * 实现实位回调监听
+	 */
+
+	public class MyLocationListener implements BDLocationListener {
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			if (location == null)
+				return;
+			/*
+			 * StringBuffer sb = new StringBuffer(256); sb.append("当前时间 : ");
+			 * sb.append(location.getTime()); sb.append("\n错误码 : ");
+			 * sb.append(location.getLocType()); sb.append("\n纬度 : ");
+			 * sb.append(location.getLatitude()); sb.append("\n经度 : ");
+			 * sb.append(location.getLongitude()); sb.append("\n半径 : ");
+			 * sb.append(location.getRadius()); if (location.getLocType() ==
+			 * BDLocation.TypeGpsLocation) { sb.append("\n速度 : ");
+			 * sb.append(location.getSpeed()); sb.append("\n卫星数 : ");
+			 * sb.append(location.getSatelliteNumber()); } else if
+			 * (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+			 * sb.append("\n地址 : "); sb.append(location.getAddrStr()); }
+			 */
+			locationAddress = location.getDistrict();
+			city = location.getCity();
+			distract = locationAddress;
+			Intent intent = new Intent();
+			intent.setAction(LOCATION_CITY_ACTION);
+			intent.putExtra(LOCATION_CITY, city);
+			intent.putExtra(LOCATION_DISTRACT, distract);
+			MainActivity.this.sendBroadcast(intent);
+			if (MainActivity.this.location == 0 && AU_location == false
+					&& locationAddress != null) {
+				actionBar.setTitle(locationAddress);
+				Tool.PutSharePreferences(getApplicationContext(),
+						LOCATION_DISTRICT, locationAddress);
+			} else {
+				if (Tool.GetLONGSharedPreferences(getApplicationContext(),
+						LOCATION_DISTRICT, null) != null
+						&& MainActivity.this.location == 0) {
+					// Tool.ToolToast(getApplicationContext(),
+					// getResources().getString(R.string.main_no_net).toString());
+					actionBar.setTitle(Tool.GetLONGSharedPreferences(
+							getApplicationContext(), LOCATION_DISTRICT, null));
+				}
+			}
+			Log.d(TAG, "onReceiveLocation " + locationAddress);
+		}
+
+	}
+
+	@Override
+	protected void onDestroy() {
+		SharedPreferences.Editor editor = getSharedPreferences(
+				Config.SHAREPREFERENCE_SETTING, MODE_PRIVATE).edit();
+		editor.putInt(Config.SETTING_HOME_INDEX, location);
+		editor.commit();
+		// mLocationClient.stop();
+		PushManager.stopWork(this);
+
+		unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (!confirm) {
+			confirm = true;
+			Toast.makeText(this, R.string.exit_remind, Toast.LENGTH_SHORT)
+			.show();
+			Timer timer = new Timer();
+			timer.schedule(new TimerTask() {
+
+				@Override
+				public void run() {
+					confirm = false;
+				}
+			}, 2000);
+		} else {
+			super.onBackPressed();
+		}
+	}
+
+	@Override
+	public void onNavigationDrawerItemSelected(int position) {
+		// update the main content by replacing fragments
+		// FragmentManager fragmentManager = getFragmentManager();
+		// fragmentManager
+		// .beginTransaction()
+		// .replace(R.id.container,
+		// PlaceholderFragment.newInstance(position + 1)).commit();
+	}
+
+	private void setMenu(boolean showSetting) {
+		if (menu == null)
+			return;
+		if (showSetting) {
+			menu.findItem(R.id.action_menu_main).setVisible(false);
+			// menu.findItem(R.id.action_publish_part).setVisible(false);
+			// menu.findItem(R.id.action_publish_history).setVisible(false);
+			menu.findItem(R.id.action_publish_setting).setVisible(true);
+		} else {
+			menu.findItem(R.id.action_menu_main).setVisible(true);
+			// menu.findItem(R.id.action_publish_part).setVisible(true);
+			// menu.findItem(R.id.action_publish_history).setVisible(true);
+			menu.findItem(R.id.action_publish_setting).setVisible(false);
+		}
+
+	}
+
+	/**
+	 * 选择地区
+	 */
+	private void chooseArea() {
+		Intent intent = new Intent(getApplicationContext(),
+				ChooseListActivity.class);
+		intent.putExtra(ChooseListActivity.KEY_DAO_CLASS, AreaDAO.class);
+		startActivityForResult(intent, MAIN_REQUEST_CHOOSE_AREA);
+	}
+
+}

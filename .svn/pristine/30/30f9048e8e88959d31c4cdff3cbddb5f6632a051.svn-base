@@ -1,0 +1,145 @@
+package com.fengyang.dialog;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.fengyang.adapter.DialogItemAdapter;
+import com.fengyang.stu.R;
+
+/**
+ * 单选对话框
+ * 
+ * @author HeJie
+ *
+ */
+public class SingleChoiceDialog extends BaseDialog {
+
+	private ListView listView;
+
+	private DialogItemAdapter adapter;
+
+	private int checkedItem;
+
+	private String[] itemStr;
+
+	private OnItemSelectedListener onItemSelectedListener;
+
+	private static final String KEY_CHOICE_ITEM = "choiceItem";
+	private static final String KEY_CHECKED_ITEM = "checkedItemStr";
+
+	public SingleChoiceDialog() {
+	}
+
+	public SingleChoiceDialog(Context context, String title, int checkedItem,
+			int itemsId) {
+		super(context);
+		this.checkedItem = checkedItem;
+		this.title = title;
+		this.itemStr = context.getResources().getStringArray(itemsId);
+		this.theme = R.style.StuDialogTheme_Center;
+	}
+
+	public SingleChoiceDialog(Context context, String title, int checkedItem,
+			int itemsId, String posText, String nevText) {
+		super(context);
+		this.checkedItem = checkedItem;
+		this.title = title;
+		this.itemStr = context.getResources().getStringArray(itemsId);
+		this.positiveText = posText;
+		this.nevigativeText = nevText;
+		this.theme = R.style.StuDialogTheme_Center;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (savedInstanceState != null) {
+			itemStr = savedInstanceState.getStringArray(KEY_CHOICE_ITEM);
+			checkedItem = savedInstanceState.getInt(KEY_CHECKED_ITEM);
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putStringArray(KEY_CHOICE_ITEM, itemStr);
+		outState.putInt(KEY_CHECKED_ITEM, checkedItem);
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.dialog_single_choice,
+				container, false);
+		listView = (ListView) rootView.findViewById(R.id.dialog_listview);
+		titleView = (TextView) rootView.findViewById(R.id.dialog_title);
+		LinearLayout buttonLy = (LinearLayout) rootView
+				.findViewById(R.id.dialog_botton_container);
+		positiveBtn = (Button) rootView
+				.findViewById(R.id.dialog_positive_button);
+		nevigativeBtn = (Button) rootView
+				.findViewById(R.id.dialog_nevigative_button);
+
+		listView.setSelection(checkedItem);
+		adapter = new DialogItemAdapter(getActivity(), itemStr, checkedItem);
+		listView.setAdapter(adapter);
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+//				if (checkedItem == position)
+//					return;
+				checkedItem = position;
+				adapter.setSelectedItem(position);
+				if (onItemSelectedListener != null)
+					onItemSelectedListener.onItemSelected(position);
+				SingleChoiceDialog.this.dismiss();
+			}
+		});
+
+		if (title != null)
+			titleView.setText(title);
+		if (positiveText != null || nevigativeText != null) {
+			buttonLy.setVisibility(View.VISIBLE);
+			positiveBtn.setText(positiveText);
+			nevigativeBtn.setText(nevigativeText);
+			positiveBtn.setOnClickListener(this);
+			nevigativeBtn.setOnClickListener(this);
+		}
+		return rootView;
+	}
+
+	public OnItemSelectedListener getOnItemSelectedListener() {
+		return onItemSelectedListener;
+	}
+
+	public void setOnItemSelectedListener(
+			OnItemSelectedListener onItemSelectedListener) {
+		this.onItemSelectedListener = onItemSelectedListener;
+	}
+
+	public int getSelectedItem() {
+		return listView.getSelectedItemPosition();
+	}
+
+	public interface OnItemSelectedListener {
+
+		/**
+		 * 当用户点击选项时调用
+		 * 
+		 * @param pos
+		 *            选项的位置，从0开始
+		 */
+		public void onItemSelected(int pos);
+	}
+}

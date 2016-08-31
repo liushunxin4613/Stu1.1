@@ -1,0 +1,233 @@
+package com.fengyang.fragment;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONObject;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.activity.MallActivity;
+import com.fengyang.activity.PartDetailActivity;
+import com.fengyang.activity.PartTimeActivity;
+import com.fengyang.activity.SecondDetailActivity;
+import com.fengyang.activity.SecondHandActivity;
+import com.fengyang.adapter.HomeGridViewAdapter;
+import com.fengyang.adapter.VolleyErrorAdapter;
+import com.fengyang.customLib.ExpandGridView;
+import com.fengyang.customLib.SlideView;
+import com.fengyang.entity.AppHomePush;
+import com.fengyang.model.HomeGridItem;
+import com.fengyang.model.Json;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.stu.WebViewActivity;
+import com.fengyang.util.Config;
+import com.fengyang.util.ui.AccordionTransformer;
+
+public class HomeFragment extends Fragment implements
+		com.fengyang.customLib.SlideView.OnItemClickListener {
+
+	private RequestQueue mQueue;
+
+	private SlideView slideView;
+
+	private ArrayList<AppHomePush> homePushs;
+
+	private ExpandGridView gridView;
+
+	private static final String TAG = "homeFragment";
+
+	private static final String TAG_GET_PUSH = "getHomePush";
+	/**
+	 * 推送图片切换时长
+	 */
+	private static final int HOME_PUSH_IMG_CHANGE_TIME = 5000;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mQueue = Volley.newRequestQueue(getActivity());
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		Log.i(TAG, "onCreateView");
+		View rootView = inflater.inflate(R.layout.fragment_home, container,
+				false);
+		slideView = (SlideView) rootView.findViewById(R.id.slideViewContainer);
+		gridView = (ExpandGridView) rootView.findViewById(R.id.home_grid);
+
+		slideView.setTransformer(new AccordionTransformer());
+		slideView.setDuration(300);
+		slideView.setOnItemClickListener(this);
+		getHomePush();
+
+		ArrayList<HomeGridItem> datalist = new ArrayList<HomeGridItem>();
+		datalist.add(new HomeGridItem(getResources().getString(
+				R.string.homepage_parttime_TV), R.drawable.icon_home_part));
+		datalist.add(new HomeGridItem(getResources().getString(
+				R.string.homepage_second_hand_TV),
+				R.drawable.icon_home_second));
+		datalist.add(new HomeGridItem(getResources().getString(
+				R.string.homepage_oubamall_BT), R.drawable.icon_home_mall));
+		datalist.add(new HomeGridItem(getResources().getString(
+				R.string.homepage_add_TV), R.drawable.icon_home_more));
+
+		HomeGridViewAdapter adapter = new HomeGridViewAdapter(datalist,
+				getActivity());
+		gridView.setAdapter(adapter);
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				switch (position) {
+				case 0:
+					startActivity(new Intent(getActivity(),
+							PartTimeActivity.class));
+					break;
+				case 1:
+					startActivity(new Intent(getActivity(),
+							SecondHandActivity.class));
+					break;
+				case 2:
+					startActivity(new Intent(getActivity(), MallActivity.class));
+					break;
+				case 3:
+					MainActivity.showToast(getActivity(),
+							R.string.pleace_wait_for_wonderful);
+					break;
+
+				default:
+					break;
+				}
+			}
+		});
+		return rootView;
+	}
+
+	private void getHomePush() {
+		Uri.Builder builder = Uri.parse(Config.URL_GET_HOME_PUSH).buildUpon();
+		JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							homePushs = new ArrayList<AppHomePush>();
+							@SuppressWarnings("unchecked")
+							List<com.alibaba.fastjson.JSONObject> list = JSON
+									.parseObject(json.getObj().toString(),
+											List.class);
+
+							int len = list.size();
+							if (len == 0) {
+								getDefaultHomePush();
+								return;
+							}
+							String imgUrl[] = new String[len];
+							for (int i = 0; i < len; i++) {
+								AppHomePush push = JSON.parseObject(list.get(i)
+										.toJSONString(), AppHomePush.class);
+								imgUrl[i] = Config.HOME_PUSH_PATH + "/"
+										+ push.getPushImage();
+								homePushs.add(push);
+							}
+							slideView.setUp(imgUrl,
+									R.drawable.default_home_push,
+									R.drawable.default_home_push,
+									HOME_PUSH_IMG_CHANGE_TIME);
+						} else {
+							getDefaultHomePush();
+						}
+					}
+				}, new VolleyErrorAdapter(getActivity()) {
+					@Override
+					protected void onOccurError(VolleyError error) {
+						getDefaultHomePush();
+					}
+				});
+		request.setTag(TAG_GET_PUSH);
+		mQueue.add(request);
+		mQueue.start();
+	}
+
+	/**
+	 * 获取首页推送内容失败或没有推送内容时，设置默认图片
+	 */
+	private void getDefaultHomePush() {
+		slideView.setUp(new int[] { R.drawable.item_2, R.drawable.item_3,
+				R.drawable.item_4, R.drawable.item_1 },
+				HOME_PUSH_IMG_CHANGE_TIME);
+	}
+
+	@Override
+	public void setMenuVisibility(boolean menuVisible) {
+		super.setMenuVisibility(menuVisible);
+		if (this.getView() != null)
+			this.getView()
+					.setVisibility(menuVisible ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		slideView.startPlay();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		slideView.stopPlay();
+	}
+
+	@Override
+	public void onItemClick(SlideView sView, View view, int position) {
+		if (homePushs == null)
+			return;
+		AppHomePush push = homePushs.get(position);
+		if (push != null && push.getPushJumpTo() != null) {
+			Intent intent = null;
+			switch (push.getPushJumpType()) {
+			case 0:// 商城商品
+				intent = new Intent(getActivity(), WebViewActivity.class);
+				intent.putExtra(WebViewActivity.KEY_WEB_URL,
+						push.getPushJumpTo());
+				break;
+			case 1:// 二手物品
+				intent = new Intent(getActivity(), SecondDetailActivity.class);
+				intent.putExtra(SecondDetailActivity.KEY_SECOND_HAND_ID,
+						Integer.parseInt(push.getPushJumpTo()));
+				break;
+			case 2:
+				intent = new Intent(getActivity(), PartDetailActivity.class);
+				intent.putExtra(PartDetailActivity.KEY_PART_ID,
+						Integer.parseInt(push.getPushJumpTo()));
+				break;
+			}
+			startActivity(intent);
+		}
+	}
+}

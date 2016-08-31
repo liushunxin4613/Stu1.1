@@ -1,0 +1,53 @@
+package com.fengyang.entity;
+
+/**
+ * AppUserPush entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppUserPush implements java.io.Serializable {
+
+	// Fields
+
+	private Integer id;
+	private User oubaMember;
+	private String pushUid;
+
+	// Constructors
+
+	/** default constructor */
+	public AppUserPush() {
+	}
+
+	/** full constructor */
+	public AppUserPush(User oubaMember, String pushUid) {
+		this.oubaMember = oubaMember;
+		this.pushUid = pushUid;
+	}
+
+	// Property accessors
+
+	public Integer getId() {
+		return this.id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public User getOubaMember() {
+		return this.oubaMember;
+	}
+
+	public void setOubaMember(User oubaMember) {
+		this.oubaMember = oubaMember;
+	}
+
+	public String getPushUid() {
+		return this.pushUid;
+	}
+
+	public void setPushUid(String pushUid) {
+		this.pushUid = pushUid;
+	}
+
+}

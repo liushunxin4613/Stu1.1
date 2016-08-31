@@ -1,0 +1,62 @@
+package com.fengyang.util;
+
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+
+import com.fengyang.stu.R;
+
+public class VersionUtils {
+
+	/**
+	 * 获取版本名称 VersionName
+	 * @param context
+	 * @return
+	 */
+	public static String getVersionName(Context context)// 获取版本号 eg:1.1
+	{
+		try {
+			PackageInfo pi = context.getPackageManager().getPackageInfo(
+					context.getPackageName(), 0);
+			return pi.versionName;
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+			return context.getString(R.string.version_unknown);
+		}
+	}
+
+	/**
+	 * 获取版本号 VersionCode
+	 * @param context
+	 * @return
+	 */
+	public static int getVersionCode(Context context)// 获取版本号(内部识别号)eg:2
+	{
+		try {
+			PackageInfo pi = context.getPackageManager().getPackageInfo(
+					context.getPackageName(), 0);
+			return pi.versionCode;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}
+	}
+	
+	/**
+	 * 获取App名称
+	 * @param context
+	 * @return
+	 */
+	public static String getAppName(Context context){
+        String appName = null;
+        try {
+        	PackageInfo pi = context.getPackageManager().getPackageInfo(
+					context.getPackageName(), 0);
+            return pi.applicationInfo.loadLabel(context.getPackageManager()).toString(); 
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
+		return appName;
+     }
+}

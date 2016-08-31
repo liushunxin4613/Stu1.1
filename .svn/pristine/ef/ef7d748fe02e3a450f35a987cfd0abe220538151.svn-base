@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/container_padding_large"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/find_pwd_reset"
+        style="@style/edit_input_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/view_margin_less"
+        android:layout_marginTop="@dimen/view_margin_less"
+        android:hint="@string/resetactivity_new_psd"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/find_pwd_reset_repeat"
+        style="@style/edit_input_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/view_margin_less"
+        android:layout_marginTop="@dimen/view_margin_less"
+        android:hint="@string/register_repassword_et"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/reset_psd_submit_bt"
+        style="@style/big_white_textstyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/view_margin_less"
+        android:layout_marginTop="@dimen/view_margin_less"
+        android:background="@drawable/button_blue_selector"
+        android:text="@string/submit" />
+
+</LinearLayout>

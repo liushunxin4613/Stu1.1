@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/fragment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/container_padding" >
+
+        <!-- 账号 -->
+
+        <EditText
+            android:id="@+id/register_account_ET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_margin"
+            android:background="@drawable/register_edittext_seletor_bg"
+            android:hint="@string/register_account_et"
+            android:inputType="textEmailAddress"
+            android:textSize="16sp" />
+
+        <!-- 密码 -->
+
+        <EditText
+            android:id="@+id/register_password_ET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_margin"
+            android:background="@drawable/register_edittext_seletor_bg"
+            android:hint="@string/register_password_et"
+            android:inputType="textPassword"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/register_repassword_ET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/view_margin"
+            android:background="@drawable/register_edittext_seletor_bg"
+            android:hint="@string/register_repassword_et"
+            android:inputType="textPassword"
+            android:textSize="16sp" >
+        </EditText>
+
+        <Button
+            android:id="@+id/register_register_BT"
+            style="@style/mid_white_textstyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/view_margin"
+            android:background="@drawable/button_blue_selector"
+            android:text="@string/title_activity_register" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical" >
+
+            <CheckBox
+                android:id="@+id/register_checkbox"
+                style="@style/small_black_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/register_checkbox" />
+
+            <TextView
+                android:id="@+id/regist_pravcy_link"
+                style="@style/small_black_textstyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:paddingBottom="@dimen/container_padding"
+                android:onClick="onClick"
+                android:paddingTop="@dimen/container_padding"
+                android:text="@string/register_pravcy"
+                android:textColor="@drawable/text_linked_selector" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

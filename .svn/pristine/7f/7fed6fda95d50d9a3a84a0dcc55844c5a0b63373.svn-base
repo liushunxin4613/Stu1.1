@@ -1,0 +1,141 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * AppPrize entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppPrize implements java.io.Serializable {
+
+	// Fields
+
+	private Long prizeId;
+	private String prizeName;
+	private Integer prizeSize;
+	private String prizeDepict;
+	private String prizeRemarks;
+	private Timestamp prizeStartTime;
+	private Timestamp prizeClosingTime;
+	private Integer prizeOddSize;
+	private Set appPrizePictures = new HashSet(0);
+	private Set appWinnings = new HashSet(0);
+
+	// Constructors
+
+	/** default constructor */
+	public AppPrize() {
+	}
+
+	/** minimal constructor */
+	public AppPrize(String prizeName, Integer prizeSize,
+			Timestamp prizeStartTime, Timestamp prizeClosingTime,
+			Integer prizeOddSize) {
+		this.prizeName = prizeName;
+		this.prizeSize = prizeSize;
+		this.prizeStartTime = prizeStartTime;
+		this.prizeClosingTime = prizeClosingTime;
+		this.prizeOddSize = prizeOddSize;
+	}
+
+	/** full constructor */
+	public AppPrize(String prizeName, Integer prizeSize, String prizeDepict,
+			String prizeRemarks, Timestamp prizeStartTime,
+			Timestamp prizeClosingTime, Integer prizeOddSize,
+			Set appPrizePictures, Set appWinnings) {
+		this.prizeName = prizeName;
+		this.prizeSize = prizeSize;
+		this.prizeDepict = prizeDepict;
+		this.prizeRemarks = prizeRemarks;
+		this.prizeStartTime = prizeStartTime;
+		this.prizeClosingTime = prizeClosingTime;
+		this.prizeOddSize = prizeOddSize;
+		this.appPrizePictures = appPrizePictures;
+		this.appWinnings = appWinnings;
+	}
+
+	// Property accessors
+
+	public Long getPrizeId() {
+		return this.prizeId;
+	}
+
+	public void setPrizeId(Long prizeId) {
+		this.prizeId = prizeId;
+	}
+
+	public String getPrizeName() {
+		return this.prizeName;
+	}
+
+	public void setPrizeName(String prizeName) {
+		this.prizeName = prizeName;
+	}
+
+	public Integer getPrizeSize() {
+		return this.prizeSize;
+	}
+
+	public void setPrizeSize(Integer prizeSize) {
+		this.prizeSize = prizeSize;
+	}
+
+	public String getPrizeDepict() {
+		return this.prizeDepict;
+	}
+
+	public void setPrizeDepict(String prizeDepict) {
+		this.prizeDepict = prizeDepict;
+	}
+
+	public String getPrizeRemarks() {
+		return this.prizeRemarks;
+	}
+
+	public void setPrizeRemarks(String prizeRemarks) {
+		this.prizeRemarks = prizeRemarks;
+	}
+
+	public Timestamp getPrizeStartTime() {
+		return this.prizeStartTime;
+	}
+
+	public void setPrizeStartTime(Timestamp prizeStartTime) {
+		this.prizeStartTime = prizeStartTime;
+	}
+
+	public Timestamp getPrizeClosingTime() {
+		return this.prizeClosingTime;
+	}
+
+	public void setPrizeClosingTime(Timestamp prizeClosingTime) {
+		this.prizeClosingTime = prizeClosingTime;
+	}
+
+	public Integer getPrizeOddSize() {
+		return this.prizeOddSize;
+	}
+
+	public void setPrizeOddSize(Integer prizeOddSize) {
+		this.prizeOddSize = prizeOddSize;
+	}
+
+	public Set getAppPrizePictures() {
+		return this.appPrizePictures;
+	}
+
+	public void setAppPrizePictures(Set appPrizePictures) {
+		this.appPrizePictures = appPrizePictures;
+	}
+
+	public Set getAppWinnings() {
+		return this.appWinnings;
+	}
+
+	public void setAppWinnings(Set appWinnings) {
+		this.appWinnings = appWinnings;
+	}
+
+}

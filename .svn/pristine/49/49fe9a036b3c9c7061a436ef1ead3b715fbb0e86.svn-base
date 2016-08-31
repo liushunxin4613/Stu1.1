@@ -1,0 +1,370 @@
+package com.fengyang.fragment;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONObject;
+
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.alibaba.fastjson.JSON;
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.fengyang.activity.PartDetailHistoryActivity;
+import com.fengyang.activity.PartTimeDetailEditActivity;
+import com.fengyang.adapter.PartHistoryAdapter;
+import com.fengyang.adapter.VolleyErrorAdapter;
+import com.fengyang.customLib.DynamicListView;
+import com.fengyang.customLib.DynamicListView.LoadMoreListener;
+import com.fengyang.customLib.DynamicListView.RefreshListener;
+import com.fengyang.db.PublishHistoryDAO;
+import com.fengyang.entity.AppPartTime;
+import com.fengyang.model.Json;
+import com.fengyang.stu.MainActivity;
+import com.fengyang.stu.R;
+import com.fengyang.stu.StuApplication;
+import com.fengyang.util.Config;
+import com.fengyang.util.FixedThread;
+import com.fengyang.util.OnBackTaskFinishedListener;
+
+public class HistoryPartFrament extends Fragment implements RefreshListener,
+		LoadMoreListener, OnItemClickListener {
+	private final static int REQUEST_CODE = 1;
+	private DynamicListView listView;
+
+	private PartHistoryAdapter adapter;
+	private int page = 1;
+
+	private int count = 0;
+
+	/**
+	 * 已经同步的数据总数
+	 */
+	private int syncedCount = 0;
+	/**
+	 * 已经同步的页数
+	 */
+	private int syncedPage = 1;
+
+	private int uId;
+
+	private PublishHistoryDAO dao;
+
+	private RequestQueue mQueue;
+
+	private FixedThread thread;
+
+	private MyHandler handler = new MyHandler(this);
+
+	private OnBackTaskFinishedListener onBackTaskFinishedListener;
+
+	private static final int MSG_UPDATE_ADAPTER = 1;
+
+	private static final int MSG_LOAD_MORE = 2;
+
+	private static final int MSG_DO_REFRESH = 3;
+
+	private static final String TAG = "historyPartFrament";
+	private static final String TAG_SYNC = "SyncData";
+	private static final String TAG_GET_COUNT = "getCount";
+	private static final String PART_HISTORY_DELETE_ACTION = "PartTimeDelete";
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_history_part,
+				container, false);
+		listView = (DynamicListView) rootView
+				.findViewById(R.id.history_listView_part);
+		listView.setOnRefreshListener(this);
+		listView.setOnMoreListener(this);
+		listView.setOnItemClickListener(this);
+		listView.invalidate();
+
+		mQueue = Volley.newRequestQueue(getActivity());
+		StuApplication application = (StuApplication) getActivity()
+				.getApplication();
+		uId = application.getUser().getId();
+		// Tool.ToolToast(getActivity(),uId+"////");
+		loadData();
+		IntentFilter inf = new IntentFilter();
+		inf.addAction(PART_HISTORY_DELETE_ACTION);
+		inf.addAction(PartTimeDetailEditActivity.PARTTIME_DETAIL_EDITACTION);
+		getActivity().registerReceiver(receiver, inf);
+
+		return rootView;
+	}
+
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+		public void onReceive(android.content.Context context, Intent intent) {
+			Log.i(TAG, intent.getAction());
+			if (PART_HISTORY_DELETE_ACTION.equals(intent.getAction())) {
+				int partId = intent
+						.getIntExtra(
+								PartDetailHistoryActivity.PART_DETAIL_HISTORY_PAETTIMEID,
+								-1);
+				adapter.removeItemById(partId);
+			} else if (PartTimeDetailEditActivity.PARTTIME_DETAIL_EDITACTION
+					.equals(intent.getAction())) {
+				int partId = intent
+						.getIntExtra(
+								PartTimeDetailEditActivity.PARTTIME_DETAIL_EDITA_PARTTIMEID,
+								-1);
+				adapter.updateItemById(partId);
+			}
+
+		};
+	};
+
+	private void loadData() {
+		thread = new FixedThread(new Runnable() {
+
+			@Override
+			public void run() {
+				adapter = new PartHistoryAdapter(getLocalData(), getActivity());
+				if (!thread.isStop() && !thread.isInterrupted())
+					handler.sendEmptyMessage(MSG_UPDATE_ADAPTER);
+			}
+		});
+		thread.start();
+
+	}
+
+	private List<AppPartTime> getLocalData() {
+		dao = new PublishHistoryDAO(getActivity());
+		List<AppPartTime> data = dao
+				.queryPart(uId, page, Config.LIST_PAGE_SIZE);
+		if (data.size() == 0) {
+			handler.sendEmptyMessage(MSG_DO_REFRESH);
+			syncHistory();
+		}
+		if (data.size() < Config.LIST_PAGE_SIZE) {
+			listView.setOnMoreListener(null);
+		}
+		return data;
+	}
+
+	/**
+	 * 网络同步发布兼职的历史数据
+	 */
+	private void syncHistory() {
+		Uri.Builder builder = Uri.parse(Config.URL_GET_PART_COUNT_BY_USER)
+				.buildUpon();
+		builder.appendQueryParameter("id", String.valueOf(uId));
+		builder.appendQueryParameter("isEnable", "true");
+		JsonObjectRequest request = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							count = (Integer) json.getObj();
+							if (count > 0) {
+								syncedCount = 0;
+								syncedPage = 1;
+								dao.deletePartAll();
+								listView.setOnMoreListener(HistoryPartFrament.this);
+								checkSync();
+							} else {
+								listView.doneRefresh();
+							}
+						} else {
+							listView.doneRefresh();
+							MainActivity.showToast(getActivity(),
+									R.string.error_get_data);
+						}
+					}
+				}, new VolleyErrorAdapter(getActivity()) {
+
+					@Override
+					protected void onOccurError(VolleyError error) {
+						listView.doneRefresh();
+						super.onOccurError(error);
+					}
+				});
+		request.setTag(TAG_GET_COUNT);
+		mQueue.add(request);
+		mQueue.start();
+	}
+
+	private void checkSync() {
+		if (count > syncedCount) {
+			getPage(syncedPage++);
+		} else {
+			listView.doneRefresh();
+			page = 1;
+			loadData();
+		}
+	}
+
+	/**
+	 * 分页获取数据
+	 * 
+	 * @param page
+	 */
+	private void getPage(int page) {
+		Uri.Builder builder = Uri.parse(Config.URL_GET_PART_LIST_BY_USER)
+				.buildUpon();
+		builder.appendQueryParameter("id", String.valueOf(uId));
+		builder.appendQueryParameter("sort", "publishTime");
+		builder.appendQueryParameter("order", "DESC");
+		builder.appendQueryParameter("page", String.valueOf(page));
+		builder.appendQueryParameter("pageSize", "50");
+		builder.appendQueryParameter("isEnable", "true");
+		JsonObjectRequest requestData = new JsonObjectRequest(Method.GET,
+				builder.toString(), null, new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						Log.d(TAG, " response = " + response);
+						Json json = JSON.parseObject(response.toString(),
+								Json.class);
+						if (json.isSuccess()) {
+							List<AppPartTime> data = new ArrayList<AppPartTime>();
+							@SuppressWarnings("unchecked")
+							List<com.alibaba.fastjson.JSONObject> list = JSON
+									.parseObject(json.getObj().toString(),
+											List.class);
+							for (com.alibaba.fastjson.JSONObject jsonObject : list) {
+								data.add(JSON.parseObject(
+										jsonObject.toJSONString(),
+										AppPartTime.class));
+							}
+							int insertCount = dao.insertPart(uId, data);
+							syncedCount += insertCount;
+							if (insertCount == data.size())
+								checkSync();
+							else
+								syncHistory();
+						} else {
+							listView.doneRefresh();
+							MainActivity.showToast(getActivity(),
+									R.string.error_get_data);
+						}
+					}
+				}, new VolleyErrorAdapter(getActivity()) {
+					@Override
+					protected void onOccurError(VolleyError error) {
+						listView.doneRefresh();
+						super.onOccurError(error);
+					}
+				});
+		requestData.setTag(TAG_SYNC);
+		mQueue.add(requestData);
+		mQueue.start();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		mQueue.cancelAll(TAG_GET_COUNT);
+		mQueue.cancelAll(TAG_SYNC);
+		if (thread != null && !thread.isInterrupted()) {
+			thread.stopThread();
+			thread.interrupt();
+		}
+	}
+
+	static class MyHandler extends Handler {
+
+		WeakReference<HistoryPartFrament> PartRef;
+
+		public MyHandler(HistoryPartFrament partFrament) {
+			this.PartRef = new WeakReference<HistoryPartFrament>(partFrament);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			HistoryPartFrament fragment = PartRef.get();
+			switch (msg.what) {
+			case MSG_UPDATE_ADAPTER:
+				fragment.listView.setAdapter(fragment.adapter);
+				if (fragment.onBackTaskFinishedListener != null)
+					fragment.onBackTaskFinishedListener
+							.onBackTaskFinish(fragment);
+				break;
+			case MSG_LOAD_MORE:
+
+				break;
+			case MSG_DO_REFRESH:
+				fragment.listView.doRefresh();
+				break;
+			}
+		}
+	}
+
+	public OnBackTaskFinishedListener getOnBackTaskFinishedListener() {
+		return onBackTaskFinishedListener;
+	}
+
+	public void setOnBackTaskFinishedListener(
+			OnBackTaskFinishedListener onBackTaskFinishedListener) {
+		this.onBackTaskFinishedListener = onBackTaskFinishedListener;
+	}
+
+	@Override
+	public boolean onRefresh(DynamicListView dynamicListView) {
+		syncHistory();
+		return false;
+	}
+
+	@Override
+	public boolean onLoadMore(DynamicListView dynamicListView) {
+		List<AppPartTime> data = dao.queryPart(uId, ++page,
+				Config.LIST_PAGE_SIZE);
+		adapter.addItems(data);
+		if (data.size() < Config.LIST_PAGE_SIZE)
+			listView.setOnMoreListener(null);
+		return true;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Intent intent = new Intent(getActivity(),
+				PartDetailHistoryActivity.class);
+		intent.putExtra(PartDetailHistoryActivity.KEY_PART_ID, (int) id);
+		startActivityForResult(intent, REQUEST_CODE);
+	}
+
+	@Override
+	public void onCancelRefresh(DynamicListView dynamicListView) {
+		if (mQueue != null) {
+			mQueue.cancelAll(TAG_GET_COUNT);
+			mQueue.cancelAll(TAG_SYNC);
+		}
+	}
+
+	@Override
+	public void onCancelLoadMore(DynamicListView dynamicListView) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		getActivity().unregisterReceiver(receiver);
+	}
+}

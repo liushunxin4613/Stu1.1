@@ -1,0 +1,133 @@
+package com.fengyang.entity;
+
+import java.sql.Timestamp;
+
+/**
+ * AppSecondHandReport entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppSecondHandReport implements java.io.Serializable {
+
+	// Fields
+
+	private Integer secondReportId;
+	private User oubaMember;
+	private AppSecondHand appSecondHand;
+	private Boolean handFalseInformation;
+	private Boolean handFlaseContactWay;
+	private Boolean handOtherReason;
+	private String handDetailReportReason;
+	private String memberMobile;
+	private Timestamp handReportTime;
+
+	// Constructors
+
+	/** default constructor */
+	public AppSecondHandReport() {
+	}
+
+	/** minimal constructor */
+	public AppSecondHandReport(User oubaMember,
+			AppSecondHand appSecondHand, Boolean handFalseInformation,
+			Boolean handFlaseContactWay, Boolean handOtherReason,
+			String memberMobile, Timestamp handReportTime) {
+		this.oubaMember = oubaMember;
+		this.appSecondHand = appSecondHand;
+		this.handFalseInformation = handFalseInformation;
+		this.handFlaseContactWay = handFlaseContactWay;
+		this.handOtherReason = handOtherReason;
+		this.memberMobile = memberMobile;
+		this.handReportTime = handReportTime;
+	}
+
+	/** full constructor */
+	public AppSecondHandReport(User oubaMember,
+			AppSecondHand appSecondHand, Boolean handFalseInformation,
+			Boolean handFlaseContactWay, Boolean handOtherReason,
+			String handDetailReportReason, String memberMobile,
+			Timestamp handReportTime) {
+		this.oubaMember = oubaMember;
+		this.appSecondHand = appSecondHand;
+		this.handFalseInformation = handFalseInformation;
+		this.handFlaseContactWay = handFlaseContactWay;
+		this.handOtherReason = handOtherReason;
+		this.handDetailReportReason = handDetailReportReason;
+		this.memberMobile = memberMobile;
+		this.handReportTime = handReportTime;
+	}
+
+	// Property accessors
+
+	public Integer getSecondReportId() {
+		return this.secondReportId;
+	}
+
+	public void setSecondReportId(Integer secondReportId) {
+		this.secondReportId = secondReportId;
+	}
+
+	public User getOubaMember() {
+		return this.oubaMember;
+	}
+
+	public void setOubaMember(User oubaMember) {
+		this.oubaMember = oubaMember;
+	}
+
+	public AppSecondHand getAppSecondHand() {
+		return this.appSecondHand;
+	}
+
+	public void setAppSecondHand(AppSecondHand appSecondHand) {
+		this.appSecondHand = appSecondHand;
+	}
+
+	public Boolean getHandFalseInformation() {
+		return this.handFalseInformation;
+	}
+
+	public void setHandFalseInformation(Boolean handFalseInformation) {
+		this.handFalseInformation = handFalseInformation;
+	}
+
+	public Boolean getHandFlaseContactWay() {
+		return this.handFlaseContactWay;
+	}
+
+	public void setHandFlaseContactWay(Boolean handFlaseContactWay) {
+		this.handFlaseContactWay = handFlaseContactWay;
+	}
+
+	public Boolean getHandOtherReason() {
+		return this.handOtherReason;
+	}
+
+	public void setHandOtherReason(Boolean handOtherReason) {
+		this.handOtherReason = handOtherReason;
+	}
+
+	public String getHandDetailReportReason() {
+		return this.handDetailReportReason;
+	}
+
+	public void setHandDetailReportReason(String handDetailReportReason) {
+		this.handDetailReportReason = handDetailReportReason;
+	}
+
+	public String getMemberMobile() {
+		return this.memberMobile;
+	}
+
+	public void setMemberMobile(String memberMobile) {
+		this.memberMobile = memberMobile;
+	}
+
+	public Timestamp getHandReportTime() {
+		return this.handReportTime;
+	}
+
+	public void setHandReportTime(Timestamp handReportTime) {
+		this.handReportTime = handReportTime;
+	}
+
+}

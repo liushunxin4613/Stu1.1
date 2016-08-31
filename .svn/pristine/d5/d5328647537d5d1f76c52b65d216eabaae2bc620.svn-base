@@ -1,0 +1,53 @@
+package com.fengyang.entity;
+
+/**
+ * AppPrizePicture entity. @author MyEclipse Persistence Tools
+ */
+
+public class AppPrizePicture implements java.io.Serializable {
+
+	// Fields
+
+	private Long ppId;
+	private AppPrize appPrize;
+	private String prizeImage;
+
+	// Constructors
+
+	/** default constructor */
+	public AppPrizePicture() {
+	}
+
+	/** full constructor */
+	public AppPrizePicture(AppPrize appPrize, String prizeImage) {
+		this.appPrize = appPrize;
+		this.prizeImage = prizeImage;
+	}
+
+	// Property accessors
+
+	public Long getPpId() {
+		return this.ppId;
+	}
+
+	public void setPpId(Long ppId) {
+		this.ppId = ppId;
+	}
+
+	public AppPrize getAppPrize() {
+		return this.appPrize;
+	}
+
+	public void setAppPrize(AppPrize appPrize) {
+		this.appPrize = appPrize;
+	}
+
+	public String getPrizeImage() {
+		return this.prizeImage;
+	}
+
+	public void setPrizeImage(String prizeImage) {
+		this.prizeImage = prizeImage;
+	}
+
+}
